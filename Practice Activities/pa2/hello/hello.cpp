@@ -1,12 +1,16 @@
 #include <iostream>
 using namespace std;
 
+// Aaryan Jain
+// May 6th, 2024
+
+// Prints my first name using the symbols '* @ +'
 int main()
 {
-    cout << "    A     aaaaa   rrrrr   y   y  aaaaa  n   n\n";
-    cout << "   A A    a   a   r   r    y y   a   a  nn  n\n";
-    cout << "  AAAAA   aaaaa   rrrr      y    aaaaa  n n n\n";
-    cout << " A     A  a   a   r  r      y    a   a  n  nn\n";
-    cout << "A       A a   a   r   r     y    a   a  n   n\n";
-    return 0;
+    cout << "   *     @@@@   ++++    @   @   @@@    +      +\n";
+    cout << "  * *   @    @  +  +     @ @   @   @   + +    +\n";
+    cout << " *****  @@@@@@  ++++      @    @@@@@   +   +  +\n";
+    cout << " *   *  @    @  +   +     @    @   @   +    + +\n";
+    cout << " *   *  @    @  +    +    @    @   @   +     ++\n";
+    // return 0;
 }
