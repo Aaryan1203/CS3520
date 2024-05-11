@@ -1,0 +1,46 @@
+Aaryan Jain
+This work shows the 12 bit 2's complement of the following 5 numbers
+
+Steps for negative number:
+- Convert to binary digits for the positive version of the number
+- Add 0's to the front until it has 12 bits
+- Flip all the bits (0's to 1's and 1's to 0's)
+- Add 1 to the final to get your binary number
+
+Steps for positive number:
+- Convery number to binary digits
+- Add 0's to the front until it has 12 bits
+
+-13:
+Convert the positive number 13 to binary: 
+13 base(10) = 1101 base(2)
+Add 0's to the front until it has 12 bits: 000000001101
+Flip the bits because it was origanally negative: 111111110010
+Add 1 because it was organally negative: 111111110011
+111111110011
+
+56:
+convert 56 to binary:
+56 base(10) = 111000 base(2)
+Add 0's to the front until it has 12 bits: 000000111000
+000000111000
+
+-1:
+Convert the positive number 1 to binary: 
+1 base(10) = 1 base(2)
+Add 0's to the front until it has 12 bits: 000000000001
+Flip the bits because it is negative: 111111111110
+Add 1 because it is negative: 111111111111
+111111111111
+
+-2048:
+Convert the positive number 2048 to binary: 
+2048 base(10) = 100000000000 base(2)
+Already has 12 bits so no need to add anymore
+Flip the bits becasue it is negative: 011111111111
+Add 1 because it is negative: 100000000000
+100000000000
+
+2048:
+Using 12 bits, the range of numbers is from -2048 to 2047
+so trying to represent 2048 would result in an overflow. 
