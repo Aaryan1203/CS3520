@@ -1,9 +1,31 @@
-#include<stdio.h>
+/* slider.cpp --- 
+ * 
+ * Filename: slider.cpp
+ * Description: 
+ * Author: Adeel Bhutta 
+ * Maintainer: 
+ * Created: Wed May 15 2024
+ * Last-Updated: 
+ *           By: 
+ *     Update #: 0
+ * Keywords: 
+ * Compatibility: 
+ * 
+ */
+
+/* Copyright (c) 2016 Adeel Bhutta
+ * 
+ * All rights reserved. 
+ * 
+ * Additional copyrights may follow 
+ */
+#include "slider.hpp"
 #include <ncurses.h>
-#include <time.h>
-#include "slider.h"
-#include <stdlib.h>
-#include <string.h>
+#include <cstdio>
+#include <ctime>
+#include <cstdlib>
+#include <cstring>
+
 // This intializes the properties of the slider
 const slider_t slider_types[2] = {
     {
@@ -33,7 +55,7 @@ void moveSlider(slider_t *s, int x, int y) {
 
 // Intializes the slider
 slider_t *init_slider (int initial_x, int initial_y, char type) {
-  slider_t *s = malloc(sizeof(slider_t));
+  slider_t *s = (slider *) malloc(sizeof(slider_t));
   if (type == 'T'){
       memcpy(s, &slider_types[0], sizeof(slider_t));
   }

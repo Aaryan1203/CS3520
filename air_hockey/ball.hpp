@@ -1,5 +1,5 @@
-#include "zone.h"
-#include "slider.h"
+#include "zone.hpp"
+#include "slider.hpp"
 
 // ball_t holds all properties of the ball
 typedef struct ball {

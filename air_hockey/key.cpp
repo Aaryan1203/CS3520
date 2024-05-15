@@ -1,10 +1,10 @@
-/* key.c --- 
+/* key.cpp --- 
  * 
- * Filename: key.c
+ * Filename: key.cpp
  * Description: 
- * Author: Bryce Himebaugh
+ * Author: Adeel Bhutta 
  * Maintainer: 
- * Created: Thu Sep 15 16:35:07 2016
+ * Created: Wed May 15 2024
  * Last-Updated: 
  *           By: 
  *     Update #: 0
@@ -13,19 +13,7 @@
  * 
  */
 
-/* Commentary: 
- * 
- * 
- * 
- */
-
-/* Change log:
- * 
- * 
- */
-
-/* Copyright (c) 2016 The Trustees of Indiana University and 
- * Indiana University Research and Technology Corporation.  
+/* Copyright (c) 2016 Adeel Bhutta
  * 
  * All rights reserved. 
  * 
@@ -34,7 +22,7 @@
 
 /* Code: */
 #include <ncurses.h> 
-#include "key.h"
+#include "key.hpp"
 
 int read_escape(int *read_char) {
   int c; 
@@ -93,8 +81,8 @@ int read_escape(int *read_char) {
       default:
         return (REGCHAR);
     }
-    
   }
+  return (REGCHAR);
 }
 
-/* key.c ends here */
+/* key.cpp ends here */

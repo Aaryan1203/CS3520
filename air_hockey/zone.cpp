@@ -1,13 +1,34 @@
-#include<stdio.h>
+/* zone.cpp --- 
+ * 
+ * Filename: zone.cpp
+ * Description: 
+ * Author: Adeel Bhutta 
+ * Maintainer: 
+ * Created: Wed May 15 2024
+ * Last-Updated: 
+ *           By: 
+ *     Update #: 0
+ * Keywords: 
+ * Compatibility: 
+ * 
+ */
+
+/* Copyright (c) 2016 Adeel Bhutta
+ * 
+ * All rights reserved. 
+ * 
+ * Additional copyrights may follow 
+ */
+#include "zone.hpp"
 #include <ncurses.h>
-#include <time.h>
-#include "zone.h"
-#include <stdlib.h>
+#include <cstdio>
+#include <ctime>
+#include <cstdlib>
 
 // Initializes zone position and dimensions
 zone_t *init_zone(int upper_left_x, int upper_left_y, int width, int height) {
   zone_t *z;
-  z = malloc(sizeof(zone_t));
+  z = (zone_t *) malloc(sizeof(zone_t));
   z->upper_left_x = upper_left_x + 10;    // added 10 to create some space on the left side of the zone to display messages
   z->upper_left_y = upper_left_y;
   z->width = width-10;

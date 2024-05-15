@@ -1,11 +1,32 @@
-#include<stdio.h>
+/* air_hockey.cpp --- 
+ * 
+ * Filename: air_hockey.cpp
+ * Description: 
+ * Author: Adeel Bhutta 
+ * Maintainer: 
+ * Created: Wed May 15 2024
+ * Last-Updated: 
+ *           By: 
+ *     Update #: 0
+ * Keywords: 
+ * Compatibility: 
+ * 
+ */
+
+/* Copyright (c) 2016 Adeel Bhutta
+ * 
+ * All rights reserved. 
+ * 
+ * Additional copyrights may follow 
+ */
+#include "key.hpp"
+#include "ball.hpp"
+#include "air_hockey.hpp"
 #include <ncurses.h>
-#include "key.h"
-#include <time.h>
-#include "ball.h"
-#include "air_hockey.h"
-#include <stdlib.h>
-#include <string.h>
+#include <cstdio>
+#include <ctime>
+#include <cstdlib>
+#include <cstring>
 
 
 // Main Game function

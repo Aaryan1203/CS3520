@@ -1,8 +1,8 @@
-/* key.h --- 
+/* key.hpp --- 
  * 
- * Filename: key.h
+ * Filename: key.hpp
  * Description: 
- * Author: Bryce Himebaugh
+ * Author: Adeel Bhutta
  * Maintainer: 
  * Created: Thu Sep 15 16:36:21 2016
  * Last-Updated: 
@@ -24,17 +24,18 @@
  * 
  */
 
-/* Copyright (c) 2016 The Trustees of Indiana University and 
- * Indiana University Research and Technology Corporation.  
+/* Copyright (c) 2016  Adeel Bhutta
  * 
  * All rights reserved. 
  * 
  * Additional copyrights may follow 
  */
 
+#include <cstdbool>
+
 /* Code: */
 enum {NOCHAR, REGCHAR, UP, DOWN, LEFT, RIGHT, BADESC, W, A, S, D}; 
 
 int read_escape(int *);
 
-/* key.h ends here */
+/* key.hpp ends here */

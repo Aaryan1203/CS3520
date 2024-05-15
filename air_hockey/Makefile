@@ -1,5 +1,5 @@
 IDIR =../include
-CC=gcc
+CC=g++
 CFLAGS= -I$(IDIR) -g -O0
 
 ODIR=.
@@ -12,11 +12,11 @@ DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))
 _OBJ = main.o slider.o air_hockey.o zone.o ball.o key.o
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
-$(ODIR)/%.o: %.c $(DEPS)
+$(ODIR)/%.o: %.cpp $(DEPS)
 	$(CC) -c -o $@ $< $(CFLAGS)
 
 air_hockey: $(OBJ)
-	gcc -o $@ $^ $(CFLAGS) $(LIBS)
+	g++ -o $@ $^ $(CFLAGS) $(LIBS)
 
 .PHONY: clean
 
