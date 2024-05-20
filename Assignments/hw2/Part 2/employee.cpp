@@ -4,6 +4,7 @@
 #include <fstream>
 #include <sstream>
 #include <limits>
+#include <algorithm>
 #include "./include/employee.hpp"
 #include "./include/seat.hpp"
 #include "./include/shared.hpp"
