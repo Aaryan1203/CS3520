@@ -1,0 +1,73 @@
+We have two numbers in hexacecimal format. In order to find the sum and product of them,
+I will be converting them both to decimal numbers, perform the operation,
+and then converting them back to hexacecimal
+
+1C01 base (16) to decimal:
+1C01 base (16) = 1*16^3 + 12*16^2 + 0*16^1 + 1*16^0 
+4096 + 3072 + 0 + 1
+7169 base (10)
+
+1C01 base (16) = 7169 base(10)
+
+7169 + 9010 = 16179
+7169 * 9010 = 64592690
+
+Now, we have to convert these numbers back to hexadecimal. In order to do that,
+the easiest thing to do would be to turn them into binary digits, and then convert them to decimal
+
+Converting 16179 base (10) to binary:
+16179 / 2 = 8089 R 1
+8089 / 2 = 4044 R 1
+4044 / 2 = 2022 R 0
+2022 / 2 = 1011 R 0
+1011 / 2 = 505 R 1
+505 / 2 = 252 R 1
+252 / 2 = 126 R 0
+126 / 2 = 63 R 0
+63 / 2 = 31 R 1
+31 / 2 = 15 R 1
+15 / 2 = 7 R 1
+7 / 2 = 3 R 1
+3 / 2 = 1 R 1
+1 / 2 = 0 R 1
+16179 base (10) = 11111100110011 base (2)
+
+
+Converting 64592690 base (10) to binary:
+64592690 / 2 = 32296345 remainder 0
+32296345 / 2 = 16148172 remainder 1
+16148172 / 2 = 8074086 remainder 0
+8074086 / 2 = 4037043 remainder 0
+4037043 / 2 = 2018521 remainder 1
+2018521 / 2 = 1009260 remainder 1
+1009260 / 2 = 504630 remainder 0
+504630 / 2 = 252315 remainder 0
+252315 / 2 = 126157 remainder 1
+126157 / 2 = 63078 remainder 1
+63078 / 2 = 31539 remainder 0
+31539 / 2 = 15769 remainder 1
+15769 / 2 = 7884 remainder 1
+7884 / 2 = 3942 remainder 0
+3942 / 2 = 1971 remainder 0
+1971 / 2 = 985 remainder 1
+985 / 2 = 492 remainder 1
+492 / 2 = 246 remainder 0
+246 / 2 = 123 remainder 0
+123 / 2 = 61 remainder 1
+61 / 2 = 30 remainder 1
+30 / 2 = 15 remainder 0
+15 / 2 = 7 remainder 1
+7 / 2 = 3 remainder 1
+3 / 2 = 1 remainder 1
+1 / 2 = 0 remainder 1
+64592690 base (10) = 11110110011001101100110010 base (2)
+
+
+To convert these into hexadecimal, I can group the bits into groups of 4 and find the corresponding digit for it
+1111 1100 1100 11
+= F C C 3 (base 16)
+16179 base (10) = FCC3 base (16)
+
+1111 0110 0110 0110 1100 1100 10
+= F 6 6 6 C C 2 (base 16)
+64592690 base (10) = F666CC2 base (16)

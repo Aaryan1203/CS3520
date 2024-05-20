@@ -1,0 +1,36 @@
+Convert Hexadecimal 3A2 to...
+
+Binary:
+We first convert each of the hexadecimal digits to four 
+digit binary numbers and then comine them all together
+
+3 base(16) = 0011 base(2)
+A base(16) = 1010 base(2)
+2 base(16) = 0010 base(2)
+
+Combining them, 3A2 base(16) = 001110100010 base(2)
+
+
+Octal:
+In order to convert it to octal, we can use the binary digits
+and group them in sets of three and then combine them together to 
+create the octal representation
+
+001 110 100 010
+001 base(2) = 1 base(8)
+110 base(2) = 6 base(8)
+100 base(2) = 4 base(8)
+010 base(2) = 2 base(8)
+
+001110100010 base(2) = 1642 base(8)
+So, 3A2 base(16) = 1642 base(8)
+
+
+Decimal:
+To convert a hexadecimal to decimal, we can just use the base
+16 position values. and add them together
+
+3A2 base(16) = (3 * 16^2) + (A * 16^1) + (2 * 16^0)
+A = 10 in decimal
+(3 * 256) + (10 * 16) + (2 * 1)
+930
