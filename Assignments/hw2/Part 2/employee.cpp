@@ -3,6 +3,7 @@
 #include <vector>
 #include <fstream>
 #include <sstream>
+#include <limits>
 #include "./include/employee.hpp"
 #include "./include/seat.hpp"
 #include "./include/shared.hpp"
@@ -125,7 +126,7 @@ void reorder_manifest(vector<Seat> seats_from_manifest) {
 
         if (cin.fail()) {
             cin.clear();
-            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            cin.ignore();
         }
         else if (user_option >= 1 && user_option <= 6) {
             break;

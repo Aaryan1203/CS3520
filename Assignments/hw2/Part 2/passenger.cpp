@@ -1,6 +1,8 @@
 #include <string>
 #include <iostream>
 #include <vector>
+#include <algorithm>
+#include <limits>
 #include "./include/passenger.hpp"
 #include "./include/seat.hpp"
 #include "./include/shared.hpp"
