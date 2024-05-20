@@ -2,7 +2,7 @@
 For your project you will be implementing the game Air Hockey.
 
 #### Air Hockey has the following components
-   * Puck
+   * Puck/Ball
    * Zone
    * Two sliders
 
