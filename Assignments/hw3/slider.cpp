@@ -19,7 +19,7 @@
  * 
  * Additional copyrights may follow 
  */
-#include "slider.hpp"
+#include "include/slider.hpp"
 #include <ncurses.h>
 #include <cstdio>
 #include <ctime>

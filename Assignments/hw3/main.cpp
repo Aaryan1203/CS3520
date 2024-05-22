@@ -22,9 +22,11 @@
 #include <stdio.h>
 #include <ctime>
 #include <ncurses.h>
-#include "air_hockey.hpp"
+#include "include/air_hockey.hpp"
+#include "include/welcome.hpp"
 
 int main(){
+    welcome_screen();
     air_hockey();
     return 0;
 }

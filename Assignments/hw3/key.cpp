@@ -22,7 +22,7 @@
 
 /* Code: */
 #include <ncurses.h> 
-#include "key.hpp"
+#include "include/key.hpp"
 
 int read_escape(int *read_char) {
   int c; 

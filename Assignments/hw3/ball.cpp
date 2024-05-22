@@ -25,8 +25,8 @@
 #include <ctime>
 #include <cstdbool>
 #include <ncurses.h>
-#include "key.hpp"
-#include "ball.hpp"
+#include "include/key.hpp"
+#include "include/ball.hpp"
 
 // Move the ball based on its speed
 void moveBall(ball_t *b){

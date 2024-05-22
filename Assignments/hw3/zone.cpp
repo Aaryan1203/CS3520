@@ -19,7 +19,7 @@
  * 
  * Additional copyrights may follow 
  */
-#include "zone.hpp"
+#include "include/zone.hpp"
 #include <ncurses.h>
 #include <cstdio>
 #include <ctime>

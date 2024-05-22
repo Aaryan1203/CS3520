@@ -19,9 +19,9 @@
  * 
  * Additional copyrights may follow 
  */
-#include "key.hpp"
-#include "ball.hpp"
-#include "air_hockey.hpp"
+#include "include/key.hpp"
+#include "include/ball.hpp"
+#include "include/air_hockey.hpp"
 #include <ncurses.h>
 #include <cstdio>
 #include <ctime>
