@@ -19,7 +19,7 @@
  * 
  * Additional copyrights may follow 
  */
-#include "include/slider.hpp"
+#include "slider.hpp"
 #include <ncurses.h>
 #include <cstdio>
 #include <ctime>
@@ -48,9 +48,9 @@ const slider_t slider_types[2] = {
 
 // Changes the location of the slider
 void moveSlider(slider_t *s, int x, int y) {
-    
-    s->upper_left_x = x;
-    s->upper_left_y = y;
+    // Adjusted so the slider is moved based on its relative location, not the absolute location
+    s->upper_left_x += x;
+    s->upper_left_y += y;
 }
 
 // Intializes the slider
@@ -93,5 +93,4 @@ void undraw_slider(slider_t *s){
       }
     }
   }
-
 }

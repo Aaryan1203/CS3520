@@ -1,6 +1,8 @@
 #include <ncurses.h>
-#include "include/welcome.hpp"
 #include <string.h>
+#include <stdlib.h>
+#include "screens.hpp"
+
 
 void welcome_screen()
 {
@@ -36,5 +38,38 @@ void welcome_screen()
 
     // clear and end the ncurses window
     clear();
-    endwin();
+}
+
+void pause_screen()
+{
+    // save current screen content to a file
+    scr_dump("pause_screen");
+    clear();
+    refresh();
+
+    int zone_height, zone_width;
+    initscr();
+    noecho();
+
+    getmaxyx(stdscr, zone_height, zone_width);
+
+    char mesg[] = "The game is paused, press p to unpause the game";
+    mvprintw(zone_height / 2, (zone_width - strlen(mesg)) / 2, "%s", mesg);
+
+    // wait for the user to press 't' to exit the welcome screen
+    while (true)
+    {
+        int ch = getch();
+        if (ch == 'p' || ch == 'P')
+        {
+            break;
+        }
+    }
+
+    clear();
+    scr_restore("pause_screen_dump");
+    refresh();
+
+    // deleting the extra file
+    remove("pause_screen");
 }

@@ -22,7 +22,7 @@
 
 /* Code: */
 #include <ncurses.h> 
-#include "include/key.hpp"
+#include "key.hpp"
 
 int read_escape(int *read_char) {
   int c; 
@@ -40,7 +40,7 @@ int read_escape(int *read_char) {
         return (D);
       else if( c=='w')
         return (W);
-      
+
       switch (c) {
         case 'A':
           return (UP);
@@ -77,7 +77,15 @@ int read_escape(int *read_char) {
       case 'd':
       case 'D': 
         return D;
+      
+      case 'p':
+      case 'P':
+        return P;
         
+      case 'q':
+      case 'Q':
+        return Q;
+
       default:
         return (REGCHAR);
     }

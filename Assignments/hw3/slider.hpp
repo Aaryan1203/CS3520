@@ -1,7 +1,7 @@
 // Properties of the slider
 typedef struct slider {
   char type_str[7];
-  char piece[1][4];             
+  char piece[1][7];             
   int upper_left_x;
   int upper_left_y;
   char draw_char;

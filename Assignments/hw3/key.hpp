@@ -34,7 +34,7 @@
 #include <cstdbool>
 
 /* Code: */
-enum {NOCHAR, REGCHAR, UP, DOWN, LEFT, RIGHT, BADESC, W, A, S, D}; 
+enum {NOCHAR, REGCHAR, UP, DOWN, LEFT, RIGHT, BADESC, W, A, S, D, P, Q}; 
 
 int read_escape(int *);
 
