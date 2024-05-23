@@ -113,3 +113,57 @@ void game_over_screen(int player_one_score, int player_two_score, int seconds_le
         }
     }
 }
+
+int select_slider_size_screen()
+{
+    int zone_height, zone_width;
+    initscr();
+    noecho();
+
+    getmaxyx(stdscr, zone_height, zone_width);
+
+    char mesg1[] = "Welcome to two player air hockey!";
+    char mesg2[] = "Please enter the size of the slider you would like to use (4-7)";
+    char error_msg[] = "Please enter a valid size (4-7)";
+
+    mvprintw(zone_height / 2 - 2, (zone_width - strlen(mesg1)) / 2, "%s", mesg1);
+    mvprintw(zone_height / 2 - 1, (zone_width - strlen(mesg2)) / 2, "%s", mesg2);
+
+    int slider_size;
+    while (true)
+    {
+        char input[3];
+        // Clear the input area
+        mvprintw(zone_height / 2, (zone_width - strlen(mesg2)) / 2, " ");
+        // Move cursor to input position
+        move(zone_height / 2, (zone_width - strlen(mesg2)) / 2);
+        // Echo to show the user input
+        echo();
+        getstr(input);
+        // Disable echo after input is entered
+        noecho();
+        slider_size = atoi(input);
+
+        if (slider_size >= 4 && slider_size <= 7)
+        {
+            // clear the error message
+            mvprintw(zone_height / 2 + 1, (zone_width - strlen(error_msg)) / 2, "                               ");
+            mvprintw(zone_height / 2 + 1, (zone_width - strlen(mesg2)) / 2, "You selected slider size: %d", slider_size);
+            refresh();
+            break;
+        }
+        else
+        {
+            // Defining the error message to easily get the length
+            mvprintw(zone_height / 2 + 1, (zone_width - strlen(error_msg)) / 2, "%s", error_msg);
+            refresh();
+        }
+    }
+
+    // Wait for a few seconds before clearing the screen so the user can view their selected size
+    napms(500);
+    clear();
+    endwin();
+
+    return slider_size;
+}

@@ -25,8 +25,10 @@
 #include "air_hockey.hpp"
 #include "screens.hpp"
 
-int main() {
+int main()
+{
+    int size = select_slider_size_screen();
     welcome_screen();
-    air_hockey();
+    air_hockey(size);
     return 0;
 }

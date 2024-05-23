@@ -1,41 +1,61 @@
-/* key.hpp --- 
- * 
+/* key.hpp ---
+ *
  * Filename: key.hpp
- * Description: 
+ * Description:
  * Author: Adeel Bhutta
- * Maintainer: 
+ * Maintainer:
  * Created: Thu Sep 15 16:36:21 2016
- * Last-Updated: 
- *           By: 
+ * Last-Updated:
+ *           By:
  *     Update #: 0
- * Keywords: 
- * Compatibility: 
- * 
+ * Keywords:
+ * Compatibility:
+ *
  */
 
-/* Commentary: 
- * 
- * 
- * 
+/* Commentary:
+ *
+ *
+ *
  */
 
 /* Change log:
- * 
- * 
+ *
+ *
  */
 
 /* Copyright (c) 2016  Adeel Bhutta
- * 
- * All rights reserved. 
- * 
- * Additional copyrights may follow 
+ *
+ * All rights reserved.
+ *
+ * Additional copyrights may follow
  */
+
+#ifndef KEY_H
+#define KEY_H
 
 #include <cstdbool>
 
 /* Code: */
-enum {NOCHAR, REGCHAR, UP, DOWN, LEFT, RIGHT, BADESC, W, A, S, D, P, Q}; 
+enum
+{
+    NOCHAR,
+    REGCHAR,
+    UP,
+    DOWN,
+    LEFT,
+    RIGHT,
+    BADESC,
+    W,
+    A,
+    S,
+    D,
+    P,
+    Q
+};
 
 int read_escape(int *);
 
 /* key.hpp ends here */
+
+#endif

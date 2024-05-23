@@ -51,9 +51,9 @@ void moveSlider(slider_t *s, int x, int y)
 }
 
 // Intializes the slider
-slider_t *init_slider(int initial_x, int initial_y, char type)
+slider_t *init_slider(int initial_x, int initial_y, char type, int size)
 {
-  slider_t *s = (slider *)malloc(sizeof(slider_t));
+  slider_t *s = (slider_t *)malloc(sizeof(slider_t));
   if (type == 'T')
   {
     memcpy(s, &slider_types[0], sizeof(slider_t));
@@ -62,41 +62,28 @@ slider_t *init_slider(int initial_x, int initial_y, char type)
   {
     memcpy(s, &slider_types[1], sizeof(slider_t));
   }
-
   s->upper_left_x = initial_x;
   s->upper_left_y = initial_y;
-  return (s);
+  s->size = size;
+  return s;
 }
 
 // Renders the slider on the screen
+
 void draw_slider(slider_t *s)
 {
-  int x, y;
-  for (x = 0; x < 4; x++)
+  for (int x = 0; x < s->size; ++x)
   {
-    for (y = 0; y < 1; y++)
-    {
-      if (s->piece[y][x])
-      {
-        mvprintw(s->upper_left_y + y, s->upper_left_x + x, "%c", s->draw_char);
-      }
-    }
+    mvprintw(s->upper_left_y, s->upper_left_x + x, "%c", s->draw_char);
   }
 }
 
 // Replaces the slider with blank spaces
 void undraw_slider(slider_t *s)
 {
-  int x, y;
-  for (x = 0; x < 4; x++)
+  for (int x = 0; x < s->size; ++x)
   {
-    for (y = 0; y < 1; y++)
-    {
-      if (s->piece[y][x])
-      {
-        mvprintw(s->upper_left_y + y, s->upper_left_x + x, " ", s->draw_char);
-      }
-    }
+    mvprintw(s->upper_left_y, s->upper_left_x + x, " ");
   }
 }
 

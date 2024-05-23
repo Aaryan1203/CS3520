@@ -29,9 +29,10 @@
 #include "key.hpp"
 #include "ball.hpp"
 #include "air_hockey.hpp"
+#include "zone.hpp"
 
 // Main Game function
-void air_hockey()
+void air_hockey(int slider_size)
 {
   int zone_height, zone_width;
   struct timespec tim = {0, 200000000};
@@ -48,8 +49,8 @@ void air_hockey()
   int seconds_left = 120;
   zone_t *z = init_zone(0, 0, zone_width, zone_height);
   ball_t *b = init_ball(zone_width / 2, zone_height / 2, 1, 1);
-  slider_t *top = init_slider(zone_width / 2, 5, 'T');
-  slider_t *bottom = init_slider(zone_width / 2, zone_height - 5, 'U');
+  slider_t *top = init_slider(zone_width / 2, 5, 'T', slider_size);
+  slider_t *bottom = init_slider(zone_width / 2, zone_height - 5, 'U', slider_size);
   draw_zone(z);
   draw_slider(top);
   draw_slider(bottom);
@@ -57,36 +58,11 @@ void air_hockey()
   refresh();
   nodelay(stdscr, TRUE); // Do not wait for characters using getch.
   noecho();
-
   time_t start_time = time(NULL);
   time_t last_update_time = start_time;
 
   while (1)
   {
-
-      time_t current_time = time(NULL);
-      double elapsed_time = difftime(current_time, start_time);
-      double time_since_last_update = difftime(current_time, last_update_time);
-
-      // Update the timer every second
-      if (time_since_last_update >= 1.0)
-      {
-          seconds_left--;
-          int minutes = seconds_left / 60;
-          int seconds = seconds_left % 60;
-          mvprintw(1, 0, "Time left");
-          mvprintw(2, 0, "%i:%02d", minutes, seconds);
-          refresh();
-          last_update_time = current_time;
-      }
-
-      if (seconds_left <= 0)
-      {
-          game_over_screen(player_one_score, player_two_score, seconds_left);
-          break;
-      }
-
-
     if ((arrow = read_escape(&c)) != NOCHAR)
     {
       switch (arrow)
@@ -165,30 +141,37 @@ void air_hockey()
         break;
       }
     }
-
+    show_time(start_time, last_update_time, seconds_left, player_one_score, player_two_score);
     check_borders(top, bottom, zone_width, zone_height, center_line);
+    display_score(&player_one_score, &player_two_score);
+
+    // Undraw before moving elements
+    undraw_ball(b);
+    undraw_zone(z);
+
+    // Move and draw elements
+    moveBall(b);
+    draw_zone(z);
     draw_slider(bottom);
     draw_slider(top);
+    draw_ball(b);
 
+    // Check collisions
+    checkCollisionWithZone(b, z);
+    score_goal(b, z, bottom, top, &player_one_score, &player_two_score);
     refresh();
-    undraw_zone(z);
-    draw_zone(z);
-    undraw_ball(b);
-    moveBall(b);
+
     // Allow sliders to strike the puck only on their side of the center line
     if (b->upper_left_y >= center_line)
     {
-      checkCollisionSlider(bottom, b);
+      checkCollisionSlider(bottom, b, slider_size);
     }
     if (b->upper_left_y < center_line)
     {
-      checkCollisionSlider(top, b);
+      checkCollisionSlider(top, b, slider_size);
     }
-    checkCollisionWithZone(b, z);
-    draw_ball(b);
-    refresh();
 
-    if (player_one_score == 1 || player_two_score == 7)
+    if (player_one_score == 7 || player_two_score == 7)
     {
       game_over_screen(player_one_score, player_two_score, seconds_left);
     }
