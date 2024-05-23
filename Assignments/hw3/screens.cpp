@@ -1,8 +1,9 @@
 #include <ncurses.h>
 #include <string.h>
 #include <stdlib.h>
+#include <string>
 #include "screens.hpp"
-
+using namespace std;
 
 void welcome_screen()
 {
@@ -72,4 +73,43 @@ void pause_screen()
 
     // deleting the extra file
     remove("pause_screen");
+}
+
+void game_over_screen(int player_one_score, int player_two_score, int seconds_left)
+{
+    clear();
+    refresh();
+
+    int zone_height, zone_width;
+    initscr();
+    noecho();
+
+    getmaxyx(stdscr, zone_height, zone_width);
+    int elapsed_time = 120 - seconds_left;
+    int minutes = elapsed_time / 60;
+    int seconds = static_cast<int>(elapsed_time) % 60;
+
+    char time_total[6];
+    snprintf(time_total, sizeof(time_total), "%01d:%02d", minutes, seconds);
+
+    string mesg1 = "The game is over! Player 1 scored " + to_string(player_one_score) + " points and Player 2 scored " + to_string(player_two_score) + " points";
+    string mesg2 = "Player " + to_string(player_one_score == 7 ? 1 : 2) + " is the winner!";
+    string mesg3 = "The game took " + string(time_total) + " to complete! Press q to exit the game";
+
+    mvprintw(zone_height / 2 - 1, (zone_width - mesg1.length()) / 2, "%s", mesg1.c_str());
+    mvprintw(zone_height / 2, (zone_width - mesg2.length()) / 2, "%s", mesg2.c_str());
+    mvprintw(zone_height / 2 + 1, (zone_width - mesg3.length()) / 2, "%s", mesg3.c_str());
+
+    // wait for the user to press 't' to exit the welcome screen
+    while (true)
+    {
+        int ch = getch();
+        if (ch == 'q' || ch == 'q')
+        {
+            clear();
+            endwin();
+            exit(0);
+            break;
+        }
+    }
 }

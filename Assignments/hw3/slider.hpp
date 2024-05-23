@@ -13,3 +13,4 @@ slider_t *init_slider (int initial_x, int initial_y, char type);
 void draw_slider(slider_t *s);
 void undraw_slider(slider_t *s);
 void moveSlider(slider_t *s, int x, int y);
+void check_borders(slider_t *top, slider_t *bottom, int zone_width, int zone_height, int center_line);
