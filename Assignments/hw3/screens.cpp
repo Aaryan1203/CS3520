@@ -59,7 +59,7 @@ ScreenInput input_screen()
     refresh();
     int max_width = zone_width - 2;
     char goal_prompt[] = "Please enter a size for the goal (4 - 20)";
-    input_struct.goal_width = prompt_input(goal_prompt, &input_struct, "goal_width", 4, 20);
+    input_struct.goal_width = prompt_input(goal_prompt, &input_struct, "goal_width", 4, 500);
     clear();
     refresh();
     char game_prompt[] = "Please enter the number of games per level (3 - 11)";
@@ -184,9 +184,9 @@ void game_over_screen(slider_t *player_one, slider_t *player_two, int seconds_le
     char time_total[6];
     snprintf(time_total, sizeof(time_total), "%01d:%02d", minutes, seconds);
 
-    string mesg1 = "The game is over! Player 1 scored " + to_string(player_one->game_score) + " points and Player 2 scored " + to_string(player_two->game_score) + " points";
-    string mesg2 = "Player " + to_string(player_one->game_score == 7 ? 1 : 2) + " is the winner!";
-    string mesg3 = "The game took " + string(time_total) + " to complete! Press q to exit the game";
+    string mesg1 = "The game is over! Player 1 won " + to_string(player_one->series_score) + " game(s) and Player 2 won " + to_string(player_two->series_score) + " game(s)";
+    string mesg2 = "Player " + to_string(player_one->series_score > player_two->series_score ? 1 : 2) + " is the winner!";
+    string mesg3 = "The last game took " + string(time_total) + " to complete! Press q to exit the game";
 
     mvprintw(zone_height / 2 - 1, (zone_width - mesg1.length()) / 2, "%s", mesg1.c_str());
     mvprintw(zone_height / 2, (zone_width - mesg2.length()) / 2, "%s", mesg2.c_str());

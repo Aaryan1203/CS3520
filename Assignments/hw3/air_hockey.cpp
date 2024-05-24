@@ -46,7 +46,7 @@ void air_hockey(int slider_size, int goal_size, int game_size)
   int center_line = zone_height / 2;
   int seconds_left = 120;
   zone_t *z = init_zone(0, 0, zone_width, zone_height);
-  ball_t *b = init_ball(zone_width / 2, zone_height / 2, 1, 1);
+  ball_t *b = init_ball(zone_width / 2, zone_height / 2, z);
   // Top
   slider_t *player_two = init_slider(zone_width / 2, 5, 'T', slider_size);
   // Bottom
@@ -130,6 +130,7 @@ void air_hockey(int slider_size, int goal_size, int game_size)
         break;
 
       // quitting the game
+      // TODO: bring back to start screen instead
       case Q:
         clear();
         endwin();
@@ -171,9 +172,27 @@ void air_hockey(int slider_size, int goal_size, int game_size)
       checkCollisionSlider(player_two, b, slider_size);
     }
 
-    if (player_one->game_score == 7 || player_two->game_score == 7)
+    if (player_one->game_score + player_two->game_score == game_size)
     {
-      game_over_screen(player_one, player_two, seconds_left);
+      if (player_one->series_score + player_two->series_score == 2) {
+          // TODO: game over should use series and game score
+          game_over_screen(player_one, player_two, seconds_left);
+      }  
+
+        if (player_one->game_score > player_two->game_score)
+        {
+          player_one->series_score++;
+        }
+        else
+        {
+          player_two->series_score++;
+        }
+
+        player_one->game_score = 0;
+        player_two->game_score = 0;
+
+        // reset the game score after each game
+        new_round(player_one, player_two, b, z, true);
     }
 
     // usleep(200000);

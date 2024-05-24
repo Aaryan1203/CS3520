@@ -43,6 +43,7 @@ zone_t *init_zone(int upper_left_x, int upper_left_y, int width, int height)
   z->color[0] = 0;
   z->color[1] = 0;
   z->color[2] = 0;
+  z->difficulty = EASY;
   return (z);
 }
 
@@ -77,6 +78,12 @@ void draw_zone(zone_t *z)
     mvprintw((z->upper_left_y + z->height), row_counter, "%c", z->draw_char);
     // printf("*****\n");
   }
+
+  // If the zone is in HARD, draw 3 obstacles in the middle of the zone, make them a random shape
+  // if (z->difficulty == HARD)
+  // {
+  //
+  // }
 }
 
 // Replaces the zone boundary with blank spaces
@@ -109,11 +116,28 @@ void undraw_zone(zone_t *z)
   }
 }
 
-void new_round(slider_t *bottom, slider_t *top, ball_t *b, zone_t *z)
+void new_round(slider_t *bottom, slider_t *top, ball_t *b, zone_t *z, bool next_level)
 {
   undraw_ball(b);
   undraw_slider(bottom);
   undraw_slider(top);
+
+  if (next_level)
+  {
+    // Change the difficulty of the zone (EASY -> MEDIUM -> HARD)
+    if (z->difficulty == EASY)
+    {
+      z->difficulty = MEDIUM;
+      b->speed_x = 1.2;
+      b->speed_y = -1.2;
+    }
+    else if (z->difficulty == MEDIUM)
+    {
+      z->difficulty = HARD;
+      b->speed_x = 1.44;
+      b->speed_y = -1.44;
+    }
+  }
 
   // Reset the ball's position to the center of the zone
   b->upper_left_x = z->upper_left_x + z->width / 2;
@@ -158,18 +182,16 @@ void show_time(time_t start_time, time_t &last_update_time, int &seconds_left, s
   }
 }
 
+// TODO: move to the side
+// TODO: add the level difficulty
 void display_score(slider_t *player_one, slider_t *player_two)
 {
   int max_x, max_y;
   getmaxyx(stdscr, max_y, max_x);
 
-  string player_one_text = "Player 1: " + to_string(player_one->game_score);
-  string player_two_text = "Player 2: " + to_string(player_two->game_score);
+  string series_score = "Series: Player One: " + to_string(player_one->series_score) + " - " + "Player Two: " + to_string(player_two->series_score);
+  string game_score = "Game: " + to_string(player_one->game_score) + " - " + to_string(player_two->game_score);
 
-  // calculate the x positions for the two scores
-  int player_one_x = max_x / 3 - player_one_text.length() / 2;
-  int player_two_x = 2 * max_x / 3 - player_two_text.length() / 2;
-
-  mvprintw(1, player_one_x, player_one_text.c_str());
-  mvprintw(1, player_two_x, player_two_text.c_str());
+  mvprintw(2, max_x / 2 - series_score.length() / 2, series_score.c_str());
+  mvprintw(3, max_x / 2 - game_score.length() / 2, game_score.c_str());
 }

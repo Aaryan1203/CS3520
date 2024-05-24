@@ -11,11 +11,11 @@ typedef struct slider
   char draw_char;
   char color[3];
   int size;
-  int set_score;
+  int series_score;
   int game_score;
 } slider_t;
 
-slider_t *init_slider (int initial_x, int initial_y, char type, int size);
+slider_t *init_slider(int initial_x, int initial_y, char type, int size);
 void draw_slider(slider_t *s);
 void undraw_slider(slider_t *s);
 void moveSlider(slider_t *s, int x, int y);

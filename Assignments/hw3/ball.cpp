@@ -43,7 +43,7 @@ void score_goal(ball_t *b, zone_t *z, slider_t *player_one, slider_t *player_two
     int end = start + goal_width;
 
     // Check if the ball is above the highest y coordinate and in between the goal.
-    if (b->upper_left_y <= z->upper_left_y  && b->upper_left_x >= start && b->upper_left_x <= end)
+    if (b->upper_left_y <= z->upper_left_y && b->upper_left_x >= start && b->upper_left_x <= end)
     {
         (player_one->game_score)++;
         new_round(player_one, player_two, b, z);
@@ -53,7 +53,8 @@ void score_goal(ball_t *b, zone_t *z, slider_t *player_one, slider_t *player_two
     {
         (player_two->game_score)++;
         new_round(player_one, player_two, b, z);
-    }}
+    }
+}
 
 // Check if the ball collides with the slider.
 // Change Y direction of the ball if it collides
@@ -102,9 +103,8 @@ bool checkCollisionWithZone(ball_t *b, zone_t *z, int goal_width)
     return false;
 }
 
-
-// Inititialize ball with its position and speed in the X & Y directions
-ball_t *init_ball(int upper_left_x, int upper_left_y, int speed_x, int speed_y)
+// Initialize ball with its position and speed in the X & Y directions
+ball_t *init_ball(int upper_left_x, int upper_left_y, zone_t *z)
 {
     ball_t *b;
     b = (ball_t *)malloc(sizeof(ball_t));
@@ -114,9 +114,9 @@ ball_t *init_ball(int upper_left_x, int upper_left_y, int speed_x, int speed_y)
     b->color[0] = 0;
     b->color[1] = 0;
     b->color[2] = 0;
-    b->speed_x = speed_x;
-    b->speed_y = speed_y;
-    // printf("%c", b->draw_char);
+    b->speed_x = 1.0;
+    b->speed_y = 1.0;
+
     return (b);
 }
 

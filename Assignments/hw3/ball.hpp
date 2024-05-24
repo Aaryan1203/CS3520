@@ -13,13 +13,13 @@ typedef struct ball
 {
   int upper_left_x;
   int upper_left_y;
-  int speed_x;
-  int speed_y;
+  double speed_x;
+  double speed_y;
   char draw_char;
   char color[3];
 } ball_t;
 
-ball_t *init_ball(int upper_left_x, int upper_left_y, int speed_x, int speed_y);
+ball_t *init_ball(int upper_left_x, int upper_left_y, zone_t *z);
 void draw_ball(ball_t *b);
 void undraw_ball(ball_t *b);
 bool checkCollisionWithZone(ball_t *b, zone_t *z, int goal_width);
