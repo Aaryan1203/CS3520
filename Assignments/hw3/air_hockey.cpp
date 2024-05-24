@@ -144,7 +144,7 @@ void air_hockey(int slider_size, int goal_size, int game_size)
     }
     show_time(start_time, last_update_time, seconds_left, player_one, player_two);
     check_borders(player_one, player_two, zone_width, zone_height, center_line);
-    display_score(player_one, player_two);
+    display_score(player_one, player_two, z);
 
     // Undraw before moving elements
     undraw_ball(b);
@@ -174,25 +174,26 @@ void air_hockey(int slider_size, int goal_size, int game_size)
 
     if (player_one->game_score + player_two->game_score == game_size)
     {
-      if (player_one->series_score + player_two->series_score == 2) {
-          // TODO: game over should use series and game score
-          game_over_screen(player_one, player_two, seconds_left);
-      }  
+      if (player_one->game_score > player_two->game_score)
+      {
+        player_one->series_score++;
+      }
+      else
+      {
+        player_two->series_score++;
+      }
 
-        if (player_one->game_score > player_two->game_score)
-        {
-          player_one->series_score++;
-        }
-        else
-        {
-          player_two->series_score++;
-        }
+      if (player_one->series_score + player_two->series_score == 3)
+      {
+        // TODO: game over should use series and game score
+        game_over_screen(player_one, player_two, seconds_left);
+      }
+      
+      player_one->game_score = 0;
+      player_two->game_score = 0;
 
-        player_one->game_score = 0;
-        player_two->game_score = 0;
-
-        // reset the game score after each game
-        new_round(player_one, player_two, b, z, true);
+      // reset the game score after each game
+      new_round(player_one, player_two, b, z, true);
     }
 
     // usleep(200000);

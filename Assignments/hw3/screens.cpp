@@ -58,12 +58,12 @@ ScreenInput input_screen()
     clear();
     refresh();
     int max_width = zone_width - 2;
-    char goal_prompt[] = "Please enter a size for the goal (4 - 20)";
-    input_struct.goal_width = prompt_input(goal_prompt, &input_struct, "goal_width", 4, 500);
+    char goal_prompt[] = "Please enter a size for the goal (4 - 20): ";
+    input_struct.goal_width = prompt_input(goal_prompt, &input_struct, "goal_width", 4, 20);
     clear();
     refresh();
-    char game_prompt[] = "Please enter the number of games per level (3 - 11)";
-    input_struct.game_size = prompt_input(game_prompt, &input_struct, "game_size", 4, 20);
+    char game_prompt[] = "Please enter the number of games per level (3 - 11): ";
+    input_struct.game_size = prompt_input(game_prompt, &input_struct, "game_size", 3, 11);
     clear();
     refresh();
 
@@ -79,7 +79,7 @@ int prompt_input(char message[], ScreenInput *input_struct, string input_type, i
     getmaxyx(stdscr, zone_height, zone_width);
 
     char welcome_message[] = "Welcome to two player air hockey!";
-    char error_msg[] = "Please enter a valid size";
+    char error_msg[] = "Please enter a valid size: ";
     char odd_error_msg[] = "Please enter an odd number";
 
     mvprintw(zone_height / 2 - 2, (zone_width - strlen(welcome_message)) / 2, "%s", welcome_message);
@@ -88,7 +88,6 @@ int prompt_input(char message[], ScreenInput *input_struct, string input_type, i
     while (true)
     {
         char input_text[3];
-        mvprintw(zone_height / 2, (zone_width - strlen(message)) / 2, " ");
         echo();
         getstr(input_text);
         noecho();
@@ -119,7 +118,6 @@ int prompt_input(char message[], ScreenInput *input_struct, string input_type, i
 
             // clear the error message
             mvprintw(zone_height / 2 + 1, (zone_width - strlen(error_msg)) / 2, "                               ");
-            mvprintw(zone_height / 2 + 1, (zone_width - strlen(message)) / 2, "You selected slider size: %d", *input_field);
             refresh();
             break;
         }

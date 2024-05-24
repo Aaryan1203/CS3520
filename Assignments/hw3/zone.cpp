@@ -184,14 +184,17 @@ void show_time(time_t start_time, time_t &last_update_time, int &seconds_left, s
 
 // TODO: move to the side
 // TODO: add the level difficulty
-void display_score(slider_t *player_one, slider_t *player_two)
+void display_score(slider_t *player_one, slider_t *player_two, zone_t *z)
 {
   int max_x, max_y;
   getmaxyx(stdscr, max_y, max_x);
 
   string series_score = "Series: Player One: " + to_string(player_one->series_score) + " - " + "Player Two: " + to_string(player_two->series_score);
-  string game_score = "Game: " + to_string(player_one->game_score) + " - " + to_string(player_two->game_score);
+  string game_score = "Game Player One: " + to_string(player_one->game_score) + " - Player Two: " + to_string(player_two->game_score);
+  string level = "Level: " + to_string(z->difficulty + 1);
 
-  mvprintw(2, max_x / 2 - series_score.length() / 2, series_score.c_str());
-  mvprintw(3, max_x / 2 - game_score.length() / 2, game_score.c_str());
+  mvprintw(2, 12, series_score.c_str());
+  mvprintw(3, 12, game_score.c_str());
+  mvprintw(max_y - 2, 12, level.c_str());
+
 }
