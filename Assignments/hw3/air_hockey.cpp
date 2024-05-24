@@ -32,7 +32,7 @@
 #include "zone.hpp"
 
 // Main Game function
-void air_hockey(int slider_size, int goal_size)
+void air_hockey(int slider_size, int goal_size, int game_size)
 {
   int zone_height, zone_width;
   struct timespec tim = {0, 200000000};

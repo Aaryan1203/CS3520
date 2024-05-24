@@ -31,9 +31,6 @@ int main()
 {
     welcome_screen();
     ScreenInput input = input_screen();
-    cout << input.slider_size << endl;
-    cout << input.goal_width << endl;
-
-    air_hockey(input.slider_size, input.goal_width);
+    air_hockey(input.slider_size, input.goal_width, input.game_size);
     return 0;
 }

@@ -7,6 +7,7 @@ struct ScreenInput
 {
     int slider_size;
     int goal_width;
+    int game_size;
 };
 
 void welcome_screen();

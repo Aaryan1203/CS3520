@@ -62,6 +62,11 @@ ScreenInput input_screen()
     input_struct.goal_width = prompt_input(goal_prompt, &input_struct, "goal_width", 4, 20);
     clear();
     refresh();
+    char game_prompt[] = "Please enter the number of games per level (3 - 11)";
+    input_struct.game_size = prompt_input(game_prompt, &input_struct, "game_size", 4, 20);
+    clear();
+    refresh();
+
     return input_struct;
 }
 
@@ -75,6 +80,7 @@ int prompt_input(char message[], ScreenInput *input_struct, string input_type, i
 
     char welcome_message[] = "Welcome to two player air hockey!";
     char error_msg[] = "Please enter a valid size";
+    char odd_error_msg[] = "Please enter an odd number";
 
     mvprintw(zone_height / 2 - 2, (zone_width - strlen(welcome_message)) / 2, "%s", welcome_message);
     mvprintw(zone_height / 2 - 1, (zone_width - strlen(message)) / 2, "%s", message);
@@ -94,11 +100,23 @@ int prompt_input(char message[], ScreenInput *input_struct, string input_type, i
         {
             *input_field = input_struct->goal_width;
         }
+        else if (input_type == "game_size")
+        {
+            *input_field = input_struct->game_size;
+        }
 
         *input_field = atoi(input_text);
 
         if (*input_field >= input_min && *input_field <= input_max)
         {
+            if (input_type == "game_size" && *input_field % 2 == 0)
+            {
+                // Display an error message if the number is not odd
+                mvprintw(zone_height / 2 + 1, (zone_width - strlen(odd_error_msg)) / 2, "%s", odd_error_msg);
+                refresh();
+                continue;
+            }
+
             // clear the error message
             mvprintw(zone_height / 2 + 1, (zone_width - strlen(error_msg)) / 2, "                               ");
             mvprintw(zone_height / 2 + 1, (zone_width - strlen(message)) / 2, "You selected slider size: %d", *input_field);
