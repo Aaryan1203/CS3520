@@ -134,7 +134,7 @@ void new_round(slider_t *bottom, slider_t *top, ball_t *b, zone_t *z)
   refresh();
 }
 
-void show_time(time_t start_time, time_t &last_update_time, int &seconds_left, int player_one_score, int player_two_score)
+void show_time(time_t start_time, time_t &last_update_time, int &seconds_left, slider_t *player_one, slider_t *player_two)
 {
   time_t current_time = time(NULL);
   double elapsed_time = difftime(current_time, start_time);
@@ -154,17 +154,17 @@ void show_time(time_t start_time, time_t &last_update_time, int &seconds_left, i
 
   if (seconds_left <= 0)
   {
-    game_over_screen(player_one_score, player_two_score, seconds_left);
+    game_over_screen(player_one, player_two, seconds_left);
   }
 }
 
-void display_score(int *player_one_score, int *player_two_score)
+void display_score(slider_t *player_one, slider_t *player_two)
 {
   int max_x, max_y;
   getmaxyx(stdscr, max_y, max_x);
 
-  string player_one_text = "Player 1: " + to_string(*player_one_score);
-  string player_two_text = "Player 2: " + to_string(*player_two_score);
+  string player_one_text = "Player 1: " + to_string(player_one->game_score);
+  string player_two_text = "Player 2: " + to_string(player_two->game_score);
 
   // calculate the x positions for the two scores
   int player_one_x = max_x / 3 - player_one_text.length() / 2;

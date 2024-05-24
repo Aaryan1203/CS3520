@@ -1,3 +1,4 @@
+
 /* main.cpp ---
  *
  * Filename: main.cpp
@@ -24,11 +25,15 @@
 #include <ncurses.h>
 #include "air_hockey.hpp"
 #include "screens.hpp"
-
+#include <iostream>
+using namespace std;
 int main()
 {
-    int size = select_slider_size_screen();
     welcome_screen();
-    air_hockey(size);
+    ScreenInput input = input_screen();
+    cout << input.slider_size << endl;
+    cout << input.goal_width << endl;
+
+    air_hockey(input.slider_size, input.goal_width);
     return 0;
 }

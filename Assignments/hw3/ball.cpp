@@ -36,19 +36,24 @@ void moveBall(ball_t *b)
     b->upper_left_y += b->speed_y;
 }
 
-void score_goal(ball_t *b, zone_t *z, slider_t *bottom, slider_t *top, int *player_one_score, int *player_two_score)
+void score_goal(ball_t *b, zone_t *z, slider_t *player_one, slider_t *player_two, int goal_width)
 {
-    if (b->upper_left_y <= z->upper_left_y)
+
+    int start = z->upper_left_x + ((z->width - goal_width) / 2);
+    int end = start + goal_width;
+
+    // Check if the ball is above the highest y coordinate and in between the goal.
+    if (b->upper_left_y <= z->upper_left_y  && b->upper_left_x >= start && b->upper_left_x <= end)
     {
-        (*player_one_score)++;
-        new_round(bottom, top, b, z);
+        (player_one->game_score)++;
+        new_round(player_one, player_two, b, z);
     }
-    if (b->upper_left_y >= z->upper_left_y + z->height)
+    // Check if the ball is below the lowest y coordinate and in between the goal.
+    if (b->upper_left_y >= z->upper_left_y + z->height && b->upper_left_x >= start && b->upper_left_x <= end)
     {
-        (*player_two_score)++;
-        new_round(bottom, top, b, z);
-    }
-}
+        (player_two->game_score)++;
+        new_round(player_one, player_two, b, z);
+    }}
 
 // Check if the ball collides with the slider.
 // Change Y direction of the ball if it collides
@@ -74,17 +79,29 @@ bool checkCollisionSlider(slider_t *s, ball_t *b, int slider_size)
 
 // Check if the ball collides with the left walls of the zone.
 // Change X direction of the ball if it collides
-bool checkCollisionWithZone(ball_t *b, zone_t *z)
+bool checkCollisionWithZone(ball_t *b, zone_t *z, int goal_width)
 {
+    int start = z->upper_left_x + (z->width - goal_width) / 2;
+    int end = start + goal_width;
 
+    // Check collision with left and right walls
     if (b->upper_left_x <= z->upper_left_x || b->upper_left_x >= z->upper_left_x + z->width)
     {
         b->speed_x *= -1;
-
         return true;
     }
+
+    // Check collision with top and bottom walls excluding the goal area
+    if ((b->upper_left_y <= z->upper_left_y && (b->upper_left_x < start || b->upper_left_x > end)) ||
+        (b->upper_left_y >= z->upper_left_y + z->height && (b->upper_left_x < start || b->upper_left_x > end)))
+    {
+        b->speed_y *= -1;
+        return true;
+    }
+
     return false;
 }
+
 
 // Inititialize ball with its position and speed in the X & Y directions
 ball_t *init_ball(int upper_left_x, int upper_left_y, int speed_x, int speed_y)

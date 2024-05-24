@@ -22,9 +22,9 @@ typedef struct ball
 ball_t *init_ball(int upper_left_x, int upper_left_y, int speed_x, int speed_y);
 void draw_ball(ball_t *b);
 void undraw_ball(ball_t *b);
-bool checkCollisionWithZone(ball_t *b, zone_t *z);
+bool checkCollisionWithZone(ball_t *b, zone_t *z, int goal_width);
 bool checkCollisionSlider(slider_t *s, ball_t *b, int slider_size);
-void score_goal(ball_t *b, zone_t *z, slider_t *bottom, slider_t *top, int *player_one_score, int *player_two_score);
+void score_goal(ball_t *b, zone_t *z, slider_t *bottom, slider_t *top, int goal_width);
 void moveBall(ball_t *b);
 
 #endif

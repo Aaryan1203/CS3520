@@ -28,12 +28,14 @@
 
 // This intializes the properties of the slider
 const slider_t slider_types[2] = {
+    // Player Two
     {"top",
      {{1, 1, 1, 1}},
      0,
      0,
      '%',
      {0, 0, 0}},
+    // Player One
     {"bottom",
      {{1, 1, 1, 1}},
      0,
@@ -62,6 +64,8 @@ slider_t *init_slider(int initial_x, int initial_y, char type, int size)
   {
     memcpy(s, &slider_types[1], sizeof(slider_t));
   }
+  s->set_score = 0;
+  s->game_score = 0;
   s->upper_left_x = initial_x;
   s->upper_left_y = initial_y;
   s->size = size;
@@ -87,24 +91,24 @@ void undraw_slider(slider_t *s)
   }
 }
 
-void check_borders(slider_t *top, slider_t *bottom, int zone_width, int zone_height, int center_line)
+void check_borders(slider_t *player_one, slider_t *player_two, int zone_width, int zone_height, int center_line)
 {
   // ensuring sliders are within bounds and don't cross the center line
-  if (top->upper_left_x - 12 < 0)
-    top->upper_left_x = 12;
-  if (top->upper_left_x + 5 > zone_width)
-    top->upper_left_x = zone_width - 5;
-  if (top->upper_left_y < 0)
-    top->upper_left_y = 0;
-  if (top->upper_left_y > center_line)
-    top->upper_left_y = center_line;
+  if (player_one->upper_left_x - 12 < 0)
+    player_one->upper_left_x = 12;
+  if (player_one->upper_left_x + 5 > zone_width)
+    player_one->upper_left_x = zone_width - 5;
+  if (player_one->upper_left_y < center_line)
+    player_one->upper_left_y = center_line;
+  if (player_one->upper_left_y > zone_height)
+    player_one->upper_left_y = zone_height;
 
-  if (bottom->upper_left_x - 12 < 0)
-    bottom->upper_left_x = 12;
-  if (bottom->upper_left_x + 5 > zone_width)
-    bottom->upper_left_x = zone_width - 5;
-  if (bottom->upper_left_y < center_line)
-    bottom->upper_left_y = center_line;
-  if (bottom->upper_left_y > zone_height)
-    bottom->upper_left_y = zone_height;
+  if (player_two->upper_left_x - 12 < 0)
+      player_two->upper_left_x = 12;
+  if (player_two->upper_left_x + 5 > zone_width)
+      player_two->upper_left_x = zone_width - 5;
+  if (player_two->upper_left_y < 0)
+      player_two->upper_left_y = 0;
+  if (player_two->upper_left_y > center_line)
+      player_two->upper_left_y = center_line;
 }
