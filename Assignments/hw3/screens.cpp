@@ -4,6 +4,7 @@
 #include <string>
 #include "screens.hpp"
 #include "slider.hpp"
+#include "save_scores.hpp"
 using namespace std;
 
 void welcome_screen()
@@ -62,7 +63,7 @@ ScreenInput input_screen()
     input_struct.goal_width = prompt_input(goal_prompt, &input_struct, "goal_width", 4, 20);
     clear();
     refresh();
-    char game_prompt[] = "Please enter the number of games per level (3 - 11): ";
+    char game_prompt[] = "Please enter the number of games per level (Odd number from 3 - 11): ";
     input_struct.game_size = prompt_input(game_prompt, &input_struct, "game_size", 3, 11);
     clear();
     refresh();
@@ -165,7 +166,7 @@ void pause_screen()
     remove("pause_screen");
 }
 
-void game_over_screen(slider_t *player_one, slider_t *player_two, int seconds_left)
+void game_over_screen(slider_t *player_one, slider_t *player_two, int total_time)
 {
     clear();
     refresh();
@@ -175,16 +176,15 @@ void game_over_screen(slider_t *player_one, slider_t *player_two, int seconds_le
     noecho();
 
     getmaxyx(stdscr, zone_height, zone_width);
-    int elapsed_time = 120 - seconds_left;
-    int minutes = elapsed_time / 60;
-    int seconds = static_cast<int>(elapsed_time) % 60;
+    int minutes = total_time / 60;
+    int seconds = static_cast<int>(total_time) % 60;
 
     char time_total[6];
     snprintf(time_total, sizeof(time_total), "%01d:%02d", minutes, seconds);
 
     string mesg1 = "The game is over! Player 1 won " + to_string(player_one->series_score) + " game(s) and Player 2 won " + to_string(player_two->series_score) + " game(s)";
     string mesg2 = "Player " + to_string(player_one->series_score > player_two->series_score ? 1 : 2) + " is the winner!";
-    string mesg3 = "The last game took " + string(time_total) + " to complete! Press q to exit the game";
+    string mesg3 = "The game took " + string(time_total) + " to complete! Press q to exit the game";
 
     mvprintw(zone_height / 2 - 1, (zone_width - mesg1.length()) / 2, "%s", mesg1.c_str());
     mvprintw(zone_height / 2, (zone_width - mesg2.length()) / 2, "%s", mesg2.c_str());
@@ -196,6 +196,7 @@ void game_over_screen(slider_t *player_one, slider_t *player_two, int seconds_le
         int ch = getch();
         if (ch == 'q' || ch == 'q')
         {
+            save_top_ten_scores(player_one, player_two);
             clear();
             endwin();
             exit(0);

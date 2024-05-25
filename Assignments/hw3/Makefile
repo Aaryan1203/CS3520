@@ -1,6 +1,6 @@
 IDIR =../include
 CC=g++
-CFLAGS= -I$(IDIR) -g -O0
+CFLAGS= -I$(IDIR) -g -O0 -std=c++11
 
 ODIR=.
 
@@ -9,7 +9,7 @@ LIBS=-lncurses
 _DEPS = 
 DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))
 
-_OBJ = main.o screens.o slider.o air_hockey.o zone.o ball.o key.o
+_OBJ = main.o screens.o slider.o air_hockey.o zone.o ball.o key.o save_scores.o
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
 $(ODIR)/%.o: %.cpp $(DEPS)

@@ -60,6 +60,7 @@ void air_hockey(int slider_size, int goal_size, int game_size)
   noecho();
   time_t start_time = time(NULL);
   time_t last_update_time = start_time;
+  int total_time = 0;
 
   while (1)
   {
@@ -142,7 +143,7 @@ void air_hockey(int slider_size, int goal_size, int game_size)
         break;
       }
     }
-    show_time(start_time, last_update_time, seconds_left, player_one, player_two);
+    show_time(start_time, last_update_time, seconds_left, b, z, player_one, player_two, total_time);
     check_borders(player_one, player_two, zone_width, zone_height, center_line);
     display_score(player_one, player_two, z);
 
@@ -159,42 +160,10 @@ void air_hockey(int slider_size, int goal_size, int game_size)
 
     // Check collisions
     checkCollisionWithZone(b, z, goal_size);
-    score_goal(b, z, player_one, player_two, goal_size);
+    score_goal(b, z, player_one, player_two, goal_size, seconds_left, game_size, total_time);
     refresh();
-
-    // Allow sliders to strike the puck only on their side of the center line
-    if (b->upper_left_y >= center_line)
-    {
-      checkCollisionSlider(player_one, b, slider_size);
-    }
-    if (b->upper_left_y < center_line)
-    {
-      checkCollisionSlider(player_two, b, slider_size);
-    }
-
-    if (player_one->game_score + player_two->game_score == game_size)
-    {
-      if (player_one->game_score > player_two->game_score)
-      {
-        player_one->series_score++;
-      }
-      else
-      {
-        player_two->series_score++;
-      }
-
-      if (player_one->series_score + player_two->series_score == 3)
-      {
-        // TODO: game over should use series and game score
-        game_over_screen(player_one, player_two, seconds_left);
-      }
-      
-      player_one->game_score = 0;
-      player_two->game_score = 0;
-
-      // reset the game score after each game
-      new_round(player_one, player_two, b, z, true);
-    }
+    checkCollisionSlider(player_one, b, slider_size);
+    checkCollisionSlider(player_two, b, slider_size);
 
     // usleep(200000);
     nanosleep(&tim, &tim_ret);

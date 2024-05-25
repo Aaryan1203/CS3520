@@ -29,8 +29,8 @@ typedef struct zone
 void undraw_zone(zone_t *z);
 void draw_zone(zone_t *z);
 zone_t *init_zone(int upper_left_x, int upper_left_y, int width, int height);
-void new_round(slider_t *player_one, slider_t *player_two, ball_t *b, zone_t *z, bool next_level=false);
-void show_time(time_t start_time, time_t &last_update_time, int &seconds_left, slider_t *player_one, slider_t *player_two_score);
+void new_round(slider_t *player_one, slider_t *player_two, ball_t *b, zone_t *z, bool next_level, int &seconds_left, int &total_time);
+void show_time(time_t start_time, time_t &last_update_time, int &seconds_left, ball_t *b, zone_t *z, slider_t *player_one, slider_t *player_two, int &total_time);
 void display_score(slider_t *player_one, slider_t *player_two, zone_t *z);
 
 #endif

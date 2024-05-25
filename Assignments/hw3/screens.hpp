@@ -14,6 +14,6 @@ void welcome_screen();
 ScreenInput input_screen();
 int prompt_input(char message[], ScreenInput *input_struct, string input_type, int input_min, int input_max);
 void pause_screen();
-void game_over_screen(slider_t *player_one, slider_t *player_two, int seconds_left);
+void game_over_screen(slider_t *player_one, slider_t *player_two, int total_time);
 
 #endif

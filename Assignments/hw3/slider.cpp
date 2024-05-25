@@ -66,6 +66,7 @@ slider_t *init_slider(int initial_x, int initial_y, char type, int size)
   }
   s->series_score = 0;
   s->game_score = 0;
+  s->total_score = 0;
   s->upper_left_x = initial_x;
   s->upper_left_y = initial_y;
   s->size = size;

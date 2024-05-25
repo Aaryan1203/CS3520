@@ -36,7 +36,7 @@ void moveBall(ball_t *b)
     b->upper_left_y += b->speed_y;
 }
 
-void score_goal(ball_t *b, zone_t *z, slider_t *player_one, slider_t *player_two, int goal_width)
+void score_goal(ball_t *b, zone_t *z, slider_t *player_one, slider_t *player_two, int goal_width, int &seconds_left, int game_size, int &total_time)
 {
 
     int start = z->upper_left_x + ((z->width - goal_width) / 2);
@@ -46,13 +46,19 @@ void score_goal(ball_t *b, zone_t *z, slider_t *player_one, slider_t *player_two
     if (b->upper_left_y <= z->upper_left_y && b->upper_left_x >= start && b->upper_left_x <= end)
     {
         (player_one->game_score)++;
-        new_round(player_one, player_two, b, z);
+        new_round(player_one, player_two, b, z, false, seconds_left, total_time);
     }
     // Check if the ball is below the lowest y coordinate and in between the goal.
     if (b->upper_left_y >= z->upper_left_y + z->height && b->upper_left_x >= start && b->upper_left_x <= end)
     {
         (player_two->game_score)++;
-        new_round(player_one, player_two, b, z);
+        new_round(player_one, player_two, b, z, false, seconds_left, total_time);
+    }
+
+    if (player_one->game_score + player_two->game_score == game_size)
+    {
+        // reset the game score after each game
+        new_round(player_one, player_two, b, z, true, seconds_left, total_time);
     }
 }
 

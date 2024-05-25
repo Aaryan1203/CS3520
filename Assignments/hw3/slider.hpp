@@ -13,6 +13,7 @@ typedef struct slider
   int size;
   int series_score;
   int game_score;
+  int total_score;
 } slider_t;
 
 slider_t *init_slider(int initial_x, int initial_y, char type, int size);

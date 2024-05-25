@@ -116,26 +116,47 @@ void undraw_zone(zone_t *z)
   }
 }
 
-void new_round(slider_t *bottom, slider_t *top, ball_t *b, zone_t *z, bool next_level)
+void new_round(slider_t *player_one, slider_t *player_two, ball_t *b, zone_t *z, bool next_level, int &seconds_left, int &total_time)
 {
   undraw_ball(b);
-  undraw_slider(bottom);
-  undraw_slider(top);
+  undraw_slider(player_one);
+  undraw_slider(player_two);
 
   if (next_level)
   {
+    if (player_one->game_score > player_two->game_score)
+    {
+      player_one->series_score++;
+    }
+    else
+    {
+      player_two->series_score++;
+    }
+    
+    player_one->total_score += player_one->game_score;
+    player_two->total_score += player_two->game_score;
+    player_one->game_score = 0;
+    player_two->game_score = 0;
+
+    if (player_one->series_score + player_two->series_score == 3)
+    {
+      game_over_screen(player_one, player_two, total_time);
+    }
+
     // Change the difficulty of the zone (EASY -> MEDIUM -> HARD)
     if (z->difficulty == EASY)
     {
       z->difficulty = MEDIUM;
       b->speed_x = 1.2;
       b->speed_y = -1.2;
+      seconds_left = 120;
     }
     else if (z->difficulty == MEDIUM)
     {
       z->difficulty = HARD;
       b->speed_x = 1.44;
       b->speed_y = -1.44;
+      seconds_left = 120;
     }
   }
 
@@ -144,21 +165,21 @@ void new_round(slider_t *bottom, slider_t *top, ball_t *b, zone_t *z, bool next_
   b->upper_left_y = z->upper_left_y + z->height / 2;
 
   // Reset the sliders to their starting positions
-  top->upper_left_x = z->width / 2 + 5;
-  top->upper_left_y = 5;
+  player_two->upper_left_x = z->width / 2 + 5;
+  player_two->upper_left_y = 5;
 
-  bottom->upper_left_x = z->width / 2 + 5;
-  bottom->upper_left_y = z->height - 5;
+  player_one->upper_left_x = z->width / 2 + 5;
+  player_one->upper_left_y = z->height - 5;
 
   // Clear the screen and redraw everything
   draw_zone(z);
-  draw_slider(bottom);
-  draw_slider(top);
+  draw_slider(player_one);
+  draw_slider(player_two);
   draw_ball(b);
   refresh();
 }
 
-void show_time(time_t start_time, time_t &last_update_time, int &seconds_left, slider_t *player_one, slider_t *player_two)
+void show_time(time_t start_time, time_t &last_update_time, int &seconds_left, ball_t *b, zone_t *z, slider_t *player_one, slider_t *player_two, int &total_time)
 {
   time_t current_time = time(NULL);
   double elapsed_time = difftime(current_time, start_time);
@@ -174,15 +195,15 @@ void show_time(time_t start_time, time_t &last_update_time, int &seconds_left, s
     mvprintw(8, 0, "%i:%02d", minutes, seconds);
     refresh();
     last_update_time = current_time;
+    total_time++;
   }
 
   if (seconds_left <= 0)
   {
-    game_over_screen(player_one, player_two, seconds_left);
+    new_round(player_one, player_two, b, z, true, seconds_left, total_time);
   }
 }
 
-// TODO: move to the side
 // TODO: add the level difficulty
 void display_score(slider_t *player_one, slider_t *player_two, zone_t *z)
 {
@@ -196,5 +217,4 @@ void display_score(slider_t *player_one, slider_t *player_two, zone_t *z)
   mvprintw(2, 12, series_score.c_str());
   mvprintw(3, 12, game_score.c_str());
   mvprintw(max_y - 2, 12, level.c_str());
-
 }
