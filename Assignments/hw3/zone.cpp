@@ -28,6 +28,7 @@
 #include <cstdlib>
 #include <string>
 #include "screens.hpp"
+#include "obstacle.hpp"
 using namespace std;
 
 // Initializes zone position and dimensions
@@ -44,6 +45,8 @@ zone_t *init_zone(int upper_left_x, int upper_left_y, int width, int height)
   z->color[1] = 0;
   z->color[2] = 0;
   z->difficulty = EASY;
+  z->obstacles = NULL;
+  z->num_obstacles = 0;
   return (z);
 }
 
@@ -79,11 +82,14 @@ void draw_zone(zone_t *z)
     // printf("*****\n");
   }
 
-  // If the zone is in HARD, draw 3 obstacles in the middle of the zone, make them a random shape
-  // if (z->difficulty == HARD)
-  // {
-  //
-  // }
+  // If in HARD mode, draw the obstacles onto the screen
+  if (z->difficulty == HARD && z->num_obstacles != 0)
+  {
+    for (int i = 0; i < z->num_obstacles; i++)
+    {
+      draw_obstacle(&z->obstacles[i]);
+    }
+  }
 }
 
 // Replaces the zone boundary with blank spaces
@@ -114,6 +120,36 @@ void undraw_zone(zone_t *z)
   {
     mvprintw(z->upper_left_y + z->height, row_counter, " ", z->draw_char);
   }
+
+  if (z->difficulty == HARD && z->num_obstacles != 0)
+  {
+    for (int i = 0; i < z->num_obstacles; i++)
+    {
+      undraw_obstacle(&z->obstacles[i]);
+    }
+  }
+}
+
+void init_obstacles(zone_t *z) {
+    // For some reason, the obstacles are one less than the number of obstacles declared here
+    z->num_obstacles = 3;
+    z->obstacles = (obstacle_t *)malloc(z->num_obstacles * sizeof(obstacle_t));
+
+    for (int i = 0; i <= z->num_obstacles; i++) {
+        // TODO: Make sure obstacles don't spawn on sliders & ball
+        int x = rand() % (z->width - 4) + z->upper_left_x + 2;
+        int y = rand() % (z->width - 4) + z->upper_left_x + 2;
+
+        z->obstacles[i] = *init_obstacle(x, y, 10, 5, 'X');    }
+}
+
+void clear_obstacles(zone_t *z) {
+    for (int i = 0; i < z->num_obstacles; i++) {
+        undraw_obstacle(&z->obstacles[i]);
+    }
+    free(z->obstacles);
+    z->obstacles = NULL;
+    z->num_obstacles = 0;
 }
 
 void new_round(slider_t *player_one, slider_t *player_two, ball_t *b, zone_t *z, bool next_level, int &seconds_left, int &total_time)
@@ -147,16 +183,17 @@ void new_round(slider_t *player_one, slider_t *player_two, ball_t *b, zone_t *z,
     if (z->difficulty == EASY)
     {
       z->difficulty = MEDIUM;
-      b->speed_x = 1.2;
-      b->speed_y = -1.2;
+      b->speed_x = 1;
+      b->speed_y = -1;
       seconds_left = 120;
     }
     else if (z->difficulty == MEDIUM)
     {
       z->difficulty = HARD;
-      b->speed_x = 1.44;
-      b->speed_y = -1.44;
+      b->speed_x = 1;
+      b->speed_y = -1;
       seconds_left = 120;
+      init_obstacles(z);
     }
   }
 

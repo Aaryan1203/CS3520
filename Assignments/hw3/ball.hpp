@@ -7,6 +7,7 @@
 // Forward declarations
 typedef struct zone zone_t;
 typedef struct slider slider_t;
+typedef struct obstacle obstacle_t;
 
 // ball_t holds all properties of the ball
 typedef struct ball
@@ -24,6 +25,7 @@ void draw_ball(ball_t *b);
 void undraw_ball(ball_t *b);
 bool checkCollisionWithZone(ball_t *b, zone_t *z, int goal_width);
 bool checkCollisionSlider(slider_t *s, ball_t *b, int slider_size);
+bool checkCollisionWithObstacle(ball_t *b, obstacle_t *o); 
 void score_goal(ball_t *b, zone_t *z, slider_t *player_one, slider_t *player_two, int goal_width, int &seconds_left, int game_size, int &total_time);
 void moveBall(ball_t *b);
 

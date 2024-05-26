@@ -26,6 +26,7 @@
 #include <cstdbool>
 #include <ncurses.h>
 #include "key.hpp"
+#include "obstacle.hpp"
 #include "ball.hpp"
 #include "zone.hpp"
 
@@ -106,6 +107,16 @@ bool checkCollisionWithZone(ball_t *b, zone_t *z, int goal_width)
         return true;
     }
 
+    return false;
+}
+
+bool checkCollisionWithObstacle(ball_t *b, obstacle_t *o) {
+    if (b->upper_left_x >= o->upper_left_x && b->upper_left_x <= o->upper_left_x + o->width &&
+            b->upper_left_y >= o->upper_left_y && b->upper_left_y <= o->upper_left_y + o->height) {
+        b->speed_x *= -1;
+        b->speed_y *= -1;
+        return true;
+    }
     return false;
 }
 

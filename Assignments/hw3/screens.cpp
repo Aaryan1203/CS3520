@@ -60,7 +60,7 @@ ScreenInput input_screen()
     refresh();
     int max_width = zone_width - 2;
     char goal_prompt[] = "Please enter a size for the goal (4 - 20): ";
-    input_struct.goal_width = prompt_input(goal_prompt, &input_struct, "goal_width", 4, 20);
+    input_struct.goal_width = prompt_input(goal_prompt, &input_struct, "goal_width", 4, 500);
     clear();
     refresh();
     char game_prompt[] = "Please enter the number of games per level (Odd number from 3 - 11): ";
@@ -148,7 +148,6 @@ void pause_screen()
     char mesg[] = "The game is paused, press p to unpause the game";
     mvprintw(zone_height / 2, (zone_width - strlen(mesg)) / 2, "%s", mesg);
 
-    // wait for the user to press 't' to exit the welcome screen
     while (true)
     {
         int ch = getch();
@@ -159,11 +158,49 @@ void pause_screen()
     }
 
     clear();
-    scr_restore("pause_screen_dump");
+    scr_restore("pause_screen");
     refresh();
 
     // deleting the extra file
     remove("pause_screen");
+}
+
+void quit_screen()
+{
+    // save current screen content to a file
+    scr_dump("quit_screen");
+    clear();
+    refresh();
+
+    int zone_height, zone_width;
+    initscr();
+    noecho();
+
+    getmaxyx(stdscr, zone_height, zone_width);
+
+    char mesg[] = "Are you sure you want to quit the game? Press 'y' for yes or 'n' to return back to the game";
+    mvprintw(zone_height / 2, (zone_width - strlen(mesg)) / 2, "%s", mesg);
+
+    while (true)
+    {
+        int ch = getch();
+        if (ch == 'n' || ch == 'N')
+        {
+            clear();
+            scr_restore("quit_screen");
+            refresh();
+            remove("quit_screen");
+            break;
+        }
+        if (ch == 'y' || ch == 'Y')
+        {
+            clear();
+            endwin();
+            remove("quit_screen");
+            exit(0);
+            break;
+        }
+    }
 }
 
 void game_over_screen(slider_t *player_one, slider_t *player_two, int total_time)
