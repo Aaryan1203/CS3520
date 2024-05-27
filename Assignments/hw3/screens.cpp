@@ -7,6 +7,7 @@
 #include "save_scores.hpp"
 using namespace std;
 
+// represents the welcome screen
 void welcome_screen()
 {
     int zone_height, zone_width;
@@ -45,6 +46,7 @@ void welcome_screen()
     clear();
 }
 
+// user can input all the different values
 ScreenInput input_screen()
 {
     int zone_height, zone_width;
@@ -54,15 +56,20 @@ ScreenInput input_screen()
     getmaxyx(stdscr, zone_height, zone_width);
 
     ScreenInput input_struct;
+    // users input for the size of the slider
     char slider_prompt[] = "Please enter a size for the slider (4 - 7): ";
     input_struct.slider_size = prompt_input(slider_prompt, &input_struct, "slider_size", 4, 7);
     clear();
     refresh();
+
+    // users input for the size of the goal
     int max_width = zone_width - 2;
     char goal_prompt[] = "Please enter a size for the goal (4 - 20): ";
     input_struct.goal_width = prompt_input(goal_prompt, &input_struct, "goal_width", 4, 500);
     clear();
     refresh();
+
+    // users input for the number of games per level
     char game_prompt[] = "Please enter the number of games per level (Odd number from 3 - 11): ";
     input_struct.game_size = prompt_input(game_prompt, &input_struct, "game_size", 3, 11);
     clear();
@@ -71,6 +78,7 @@ ScreenInput input_screen()
     return input_struct;
 }
 
+// helper method to allow the user to input their values
 int prompt_input(char message[], ScreenInput *input_struct, string input_type, int input_min, int input_max)
 {
     int zone_height, zone_width;
@@ -132,6 +140,7 @@ int prompt_input(char message[], ScreenInput *input_struct, string input_type, i
     return *input_field;
 }
 
+// represents the pause screen
 void pause_screen()
 {
     // Save current screen content to a file
@@ -165,6 +174,7 @@ void pause_screen()
     remove("pause_screen");
 }
 
+// displays the quit screen
 void quit_screen()
 {
     // Save current screen content to a file
@@ -181,6 +191,7 @@ void quit_screen()
     char mesg[] = "Are you sure you want to quit the game? Press 'y' for yes or 'n' to return back to the game";
     mvprintw(zone_height / 2, (zone_width - strlen(mesg)) / 2, "%s", mesg);
 
+    // waits for the user to press 'n' or 'y' to perform its action
     while (true)
     {
         int ch = getch();
@@ -203,6 +214,7 @@ void quit_screen()
     }
 }
 
+// displayes the game over screen
 void game_over_screen(slider_t *player_one, slider_t *player_two, int total_time)
 {
     clear();
@@ -232,7 +244,7 @@ void game_over_screen(slider_t *player_one, slider_t *player_two, int total_time
     mvprintw(zone_height / 2, (zone_width - mesg2.length()) / 2, "%s", mesg2.c_str());
     mvprintw(zone_height / 2 + 1, (zone_width - mesg3.length()) / 2, "%s", mesg3.c_str());
 
-    // Wait for the user to press 't' to exit the welcome screen
+    // Wait for the user to press 'q' to exit the quit screen
     while (true)
     {
         int ch = getch();

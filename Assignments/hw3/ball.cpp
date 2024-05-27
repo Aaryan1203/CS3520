@@ -142,6 +142,7 @@ bool checkCollisionWithZone(ball_t *b, zone_t *z, int goal_width)
 }
 
 bool checkCollisionWithObstacle(ball_t *b, obstacle_t *o) {
+    // checks for collisions with the obstacles
     if (b->upper_left_x >= o->upper_left_x && b->upper_left_x <= o->upper_left_x + o->width &&
             b->upper_left_y >= o->upper_left_y && b->upper_left_y <= o->upper_left_y + o->height) {
         b->speed_x *= -1;

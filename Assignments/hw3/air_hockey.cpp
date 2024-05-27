@@ -127,7 +127,7 @@ void air_hockey(int slider_size, int goal_size, int game_size)
         draw_slider(player_two);
         draw_ball(b);
 
-        // Check collisions
+        // Check collisions with the zone
         checkCollisionWithZone(b, z, goal_size);
         score_goal(b, z, player_one, player_two, goal_size, seconds_left, game_size, total_time);
 

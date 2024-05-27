@@ -1,3 +1,5 @@
+## Laith Taher and Aaryan Jain
+
 ## Air Hockey Game - README
 ### Introduction
 

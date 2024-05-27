@@ -3,6 +3,7 @@
 #include <ncurses.h>
 #include <stdlib.h>
 
+// initializes an obstacle
 obstacle_t *init_obstacle(int upper_left_x, int upper_left_y, int width, int height, char draw_char) {
     obstacle_t *obstacle = (obstacle_t *)malloc(sizeof(obstacle_t));
     obstacle->upper_left_x = upper_left_x;
@@ -13,6 +14,7 @@ obstacle_t *init_obstacle(int upper_left_x, int upper_left_y, int width, int hei
     return obstacle;
 }
 
+// draws an obstacle
 void draw_obstacle(obstacle_t *o) {
     for (int i = 0; i < o->height; ++i) {
         for (int j = 0; j < o->width; ++j) {
@@ -23,6 +25,7 @@ void draw_obstacle(obstacle_t *o) {
     }
 }
 
+// undraws an obstacle
 void undraw_obstacle(obstacle_t *o) {
     for (int i = 0; i < o->height; ++i) {
         for (int j = 0; j < o->width; ++j) {

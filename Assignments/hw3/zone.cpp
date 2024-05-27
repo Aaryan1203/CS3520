@@ -148,6 +148,7 @@ void clear_obstacles(zone_t *z) {
     z->num_obstacles = 0;
 }
 
+// creates a new round for te game
 void new_round(slider_t *player_one, slider_t *player_two, ball_t *b, zone_t *z, bool next_level, int &seconds_left, int &total_time)
 {
   undraw_ball(b);
@@ -156,6 +157,7 @@ void new_round(slider_t *player_one, slider_t *player_two, ball_t *b, zone_t *z,
 
   if (next_level)
   {
+    // updates score depending on whoo has more
     if (player_one->game_score > player_two->game_score)
     {
       player_one->series_score++;
@@ -170,11 +172,13 @@ void new_round(slider_t *player_one, slider_t *player_two, ball_t *b, zone_t *z,
       player_two->series_score++;
     }
     
+    // resets the game score
     player_one->total_score += player_one->game_score;
     player_two->total_score += player_two->game_score;
     player_one->game_score = 0;
     player_two->game_score = 0;
 
+    // displays the game over screen if the two plays have played all three levels
     if (player_one->series_score + player_two->series_score >= 3)
     {
       game_over_screen(player_one, player_two, total_time);
@@ -244,6 +248,7 @@ void show_time(time_t start_time, time_t &last_update_time, int &seconds_left, b
   }
 }
 
+// displays the score on the main screen
 void display_score(slider_t *player_one, slider_t *player_two, zone_t *z)
 {
   int max_x, max_y;
