@@ -31,7 +31,6 @@
 #include "obstacle.hpp"
 using namespace std;
 
-// Initializes zone position and dimensions
 zone_t *init_zone(int upper_left_x, int upper_left_y, int width, int height)
 {
   zone_t *z;
@@ -50,7 +49,6 @@ zone_t *init_zone(int upper_left_x, int upper_left_y, int width, int height)
   return (z);
 }
 
-// Renders zone on the screen
 void draw_zone(zone_t *z)
 {
   int row_counter, column_counter;
@@ -76,10 +74,7 @@ void draw_zone(zone_t *z)
   // Draw Bottom of zone
   for (row_counter = z->upper_left_x; row_counter < (z->upper_left_x + z->width); row_counter++)
   {
-    // printf("%d\n", row_counter);
-    // printf("%d\n", z->upper_left_y + z->height);
     mvprintw((z->upper_left_y + z->height), row_counter, "%c", z->draw_char);
-    // printf("*****\n");
   }
 
   // If in HARD mode, draw the obstacles onto the screen
@@ -92,7 +87,6 @@ void draw_zone(zone_t *z)
   }
 }
 
-// Replaces the zone boundary with blank spaces
 void undraw_zone(zone_t *z)
 {
   int row_counter, column_counter;
@@ -131,16 +125,18 @@ void undraw_zone(zone_t *z)
 }
 
 void init_obstacles(zone_t *z) {
-    // For some reason, the obstacles are one less than the number of obstacles declared here
-    z->num_obstacles = 3;
+    z->num_obstacles = 2;
     z->obstacles = (obstacle_t *)malloc(z->num_obstacles * sizeof(obstacle_t));
 
-    for (int i = 0; i <= z->num_obstacles; i++) {
-        // TODO: Make sure obstacles don't spawn on sliders & ball
-        int x = rand() % (z->width - 4) + z->upper_left_x + 2;
-        int y = rand() % (z->width - 4) + z->upper_left_x + 2;
+    int mid_y = z->upper_left_y + z->height / 2;
+    int left_x = z->upper_left_x + 15;
+    int right_x = z->upper_left_x + z->width - 20;
 
-        z->obstacles[i] = *init_obstacle(x, y, 10, 5, 'X');    }
+    // Left middle obstacle
+    z->obstacles[0] = *init_obstacle(left_x, mid_y, 10, 5, 'X');
+
+    // Right middle obstacle
+    z->obstacles[1] = *init_obstacle(right_x, mid_y, 10, 5, 'X');
 }
 
 void clear_obstacles(zone_t *z) {
@@ -164,8 +160,13 @@ void new_round(slider_t *player_one, slider_t *player_two, ball_t *b, zone_t *z,
     {
       player_one->series_score++;
     }
+    else if (player_one->game_score < player_two->game_score)
+    {
+      player_two->series_score++;
+    }
     else
     {
+      player_one->series_score++;
       player_two->series_score++;
     }
     
@@ -174,7 +175,7 @@ void new_round(slider_t *player_one, slider_t *player_two, ball_t *b, zone_t *z,
     player_one->game_score = 0;
     player_two->game_score = 0;
 
-    if (player_one->series_score + player_two->series_score == 3)
+    if (player_one->series_score + player_two->series_score >= 3)
     {
       game_over_screen(player_one, player_two, total_time);
     }
@@ -183,15 +184,15 @@ void new_round(slider_t *player_one, slider_t *player_two, ball_t *b, zone_t *z,
     if (z->difficulty == EASY)
     {
       z->difficulty = MEDIUM;
-      b->speed_x = 1;
-      b->speed_y = -1;
+      b->speed_x = 1.22;
+      b->speed_y = 1.22;
       seconds_left = 120;
     }
     else if (z->difficulty == MEDIUM)
     {
       z->difficulty = HARD;
-      b->speed_x = 1;
-      b->speed_y = -1;
+      b->speed_x = 1.44;
+      b->speed_y = 1.44;
       seconds_left = 120;
       init_obstacles(z);
     }
@@ -228,8 +229,10 @@ void show_time(time_t start_time, time_t &last_update_time, int &seconds_left, b
     seconds_left--;
     int minutes = seconds_left / 60;
     int seconds = seconds_left % 60;
+    attron(COLOR_PAIR(5));
     mvprintw(7, 0, "Time left");
     mvprintw(8, 0, "%i:%02d", minutes, seconds);
+    attroff(COLOR_PAIR(5));
     refresh();
     last_update_time = current_time;
     total_time++;
@@ -241,7 +244,6 @@ void show_time(time_t start_time, time_t &last_update_time, int &seconds_left, b
   }
 }
 
-// TODO: add the level difficulty
 void display_score(slider_t *player_one, slider_t *player_two, zone_t *z)
 {
   int max_x, max_y;
@@ -251,7 +253,9 @@ void display_score(slider_t *player_one, slider_t *player_two, zone_t *z)
   string game_score = "Game Player One: " + to_string(player_one->game_score) + " - Player Two: " + to_string(player_two->game_score);
   string level = "Level: " + to_string(z->difficulty + 1);
 
+  attron(COLOR_PAIR(5));
   mvprintw(2, 12, series_score.c_str());
   mvprintw(3, 12, game_score.c_str());
   mvprintw(max_y - 2, 12, level.c_str());
+  attroff(COLOR_PAIR(5));
 }

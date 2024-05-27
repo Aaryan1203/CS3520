@@ -19,12 +19,9 @@
  *
  * Additional copyrights may follow
  */
-#include <stdio.h>
-#include <ctime>
 #include <ncurses.h>
 #include "air_hockey.hpp"
 #include "screens.hpp"
-#include <iostream>
 using namespace std;
 int main()
 {

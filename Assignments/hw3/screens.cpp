@@ -31,7 +31,7 @@ void welcome_screen()
     mvprintw(zone_height / 2 + 2, (zone_width - strlen(mesg6)) / 2, "%s", mesg6);
     mvprintw(zone_height / 2 + 3, (zone_width - strlen(mesg7)) / 2, "%s", mesg7);
 
-    // wait for the user to press 't' to exit the welcome screen
+    // Wait for the user to press 't' to exit the welcome screen
     while (true)
     {
         int ch = getch();
@@ -41,7 +41,7 @@ void welcome_screen()
         }
     }
 
-    // clear and end the ncurses window
+    // Clear and end the ncurses window
     clear();
 }
 
@@ -134,7 +134,7 @@ int prompt_input(char message[], ScreenInput *input_struct, string input_type, i
 
 void pause_screen()
 {
-    // save current screen content to a file
+    // Save current screen content to a file
     scr_dump("pause_screen");
     clear();
     refresh();
@@ -161,13 +161,13 @@ void pause_screen()
     scr_restore("pause_screen");
     refresh();
 
-    // deleting the extra file
+    // Deleting the extra file
     remove("pause_screen");
 }
 
 void quit_screen()
 {
-    // save current screen content to a file
+    // Save current screen content to a file
     scr_dump("quit_screen");
     clear();
     refresh();
@@ -214,20 +214,25 @@ void game_over_screen(slider_t *player_one, slider_t *player_two, int total_time
 
     getmaxyx(stdscr, zone_height, zone_width);
     int minutes = total_time / 60;
-    int seconds = static_cast<int>(total_time) % 60;
+    int seconds = total_time % 60;
 
     char time_total[6];
     snprintf(time_total, sizeof(time_total), "%01d:%02d", minutes, seconds);
 
     string mesg1 = "The game is over! Player 1 won " + to_string(player_one->series_score) + " game(s) and Player 2 won " + to_string(player_two->series_score) + " game(s)";
     string mesg2 = "Player " + to_string(player_one->series_score > player_two->series_score ? 1 : 2) + " is the winner!";
+    if (player_one->series_score == player_two->series_score)
+    {
+        mesg1 = "The game is over! The game ended in a tie!";
+        mesg2 = "Both players won " + to_string(player_one->series_score) + " game(s)";
+    }
     string mesg3 = "The game took " + string(time_total) + " to complete! Press q to exit the game";
 
     mvprintw(zone_height / 2 - 1, (zone_width - mesg1.length()) / 2, "%s", mesg1.c_str());
     mvprintw(zone_height / 2, (zone_width - mesg2.length()) / 2, "%s", mesg2.c_str());
     mvprintw(zone_height / 2 + 1, (zone_width - mesg3.length()) / 2, "%s", mesg3.c_str());
 
-    // wait for the user to press 't' to exit the welcome screen
+    // Wait for the user to press 't' to exit the welcome screen
     while (true)
     {
         int ch = getch();

@@ -20,17 +20,13 @@
  * Additional copyrights may follow
  */
 
-#include <cstdio>
 #include <cstdlib>
-#include <ctime>
 #include <cstdbool>
 #include <ncurses.h>
-#include "key.hpp"
 #include "obstacle.hpp"
 #include "ball.hpp"
 #include "zone.hpp"
 
-// Move the ball based on its speed
 void moveBall(ball_t *b)
 {
     b->upper_left_x += b->speed_x;
@@ -42,6 +38,14 @@ void score_goal(ball_t *b, zone_t *z, slider_t *player_one, slider_t *player_two
 
     int start = z->upper_left_x + ((z->width - goal_width) / 2);
     int end = start + goal_width;
+
+    // Draw the goal area
+    attron(COLOR_PAIR(2)); // Turn on color pair 2 (yellow foreground)
+    for (int i = start; i <= end; ++i) {
+        mvprintw(z->upper_left_y, i, "#"); // Top goal
+        mvprintw(z->upper_left_y + z->height, i, "#"); // Bottom goal
+    }
+    attroff(COLOR_PAIR(2)); // Turn off color pair 2
 
     // Check if the ball is above the highest y coordinate and in between the goal.
     if (b->upper_left_y <= z->upper_left_y && b->upper_left_x >= start && b->upper_left_x <= end)
@@ -63,19 +67,33 @@ void score_goal(ball_t *b, zone_t *z, slider_t *player_one, slider_t *player_two
     }
 }
 
-// Check if the ball collides with the slider.
-// Change Y direction of the ball if it collides
 bool checkCollisionSlider(slider_t *s, ball_t *b, int slider_size)
 {
-    int x_ball = b->upper_left_x;
-    int y_ball = b->upper_left_y;
-    int x, y;
+    double next_x_ball = b->upper_left_x + b->speed_x;
+    double next_y_ball = b->upper_left_y + b->speed_y;
+
+    int x;
     for (x = 0; x < slider_size; x++)
     {
-        for (y = 0; y < 1; y++)
+        // Check for collision with player two's slider (top slider)
+        if (b->speed_y < 0 && s->player_number == 2)
         {
-
-            if (s->upper_left_y + y == y_ball && s->upper_left_x + x == x_ball)
+            if (s->upper_left_y >= next_y_ball - 1 &&
+                s->upper_left_y <= b->upper_left_y &&
+                s->upper_left_x + x >= next_x_ball - 0.5 && 
+                s->upper_left_x + x <= next_x_ball + 0.5)
+            {
+                b->speed_y *= -1; 
+                return true;
+            }
+        }
+        // Check for collision with player one's slider (bottom slider)
+        else if (b->speed_y > 0 && s->player_number == 1)
+        {
+            if (s->upper_left_y <= next_y_ball + 1 &&
+                s->upper_left_y >= b->upper_left_y &&
+                s->upper_left_x + x >= next_x_ball - 0.5 && 
+                s->upper_left_x + x <= next_x_ball + 0.5)
             {
                 b->speed_y *= -1;
                 return true;
@@ -85,25 +103,38 @@ bool checkCollisionSlider(slider_t *s, ball_t *b, int slider_size)
     return false;
 }
 
-// Check if the ball collides with the left walls of the zone.
-// Change X direction of the ball if it collides
 bool checkCollisionWithZone(ball_t *b, zone_t *z, int goal_width)
 {
+    double next_x_ball = b->upper_left_x + b->speed_x;
+    double next_y_ball = b->upper_left_y + b->speed_y;
+
     int start = z->upper_left_x + (z->width - goal_width) / 2;
     int end = start + goal_width;
 
     // Check collision with left and right walls
-    if (b->upper_left_x <= z->upper_left_x || b->upper_left_x >= z->upper_left_x + z->width)
+    if (next_x_ball <= z->upper_left_x || next_x_ball >= z->upper_left_x + z->width)
     {
         b->speed_x *= -1;
+        // Correct the position to ensure the ball doesn't go beyond the wall
+        if (next_x_ball <= z->upper_left_x) {
+            b->upper_left_x = z->upper_left_x + 1;
+        } else {
+            b->upper_left_x = z->upper_left_x + z->width - 1;
+        }
         return true;
     }
 
     // Check collision with top and bottom walls excluding the goal area
-    if ((b->upper_left_y <= z->upper_left_y && (b->upper_left_x < start || b->upper_left_x > end)) ||
-        (b->upper_left_y >= z->upper_left_y + z->height && (b->upper_left_x < start || b->upper_left_x > end)))
+    if ((next_y_ball <= z->upper_left_y && (next_x_ball < start || next_x_ball > end)) ||
+        (next_y_ball >= z->upper_left_y + z->height && (next_x_ball < start || next_x_ball > end)))
     {
         b->speed_y *= -1;
+        // Correct the position to ensure the ball doesn't go beyond the wall
+        if (next_y_ball <= z->upper_left_y) {
+            b->upper_left_y = z->upper_left_y + 1;
+        } else {
+            b->upper_left_y = z->upper_left_y + z->height - 1;
+        }
         return true;
     }
 
@@ -120,7 +151,6 @@ bool checkCollisionWithObstacle(ball_t *b, obstacle_t *o) {
     return false;
 }
 
-// Initialize ball with its position and speed in the X & Y directions
 ball_t *init_ball(int upper_left_x, int upper_left_y, zone_t *z)
 {
     ball_t *b;
@@ -137,13 +167,13 @@ ball_t *init_ball(int upper_left_x, int upper_left_y, zone_t *z)
     return (b);
 }
 
-// Renders the ball on the screen
 void draw_ball(ball_t *b)
 {
+    attron(COLOR_PAIR(1));
     mvprintw(b->upper_left_y, b->upper_left_x, "%c", b->draw_char);
+    attroff(COLOR_PAIR(1));
 }
 
-// Replaces the ball with blank space
 void undraw_ball(ball_t *b)
 {
     mvprintw(b->upper_left_y, b->upper_left_x, " ", b->draw_char);

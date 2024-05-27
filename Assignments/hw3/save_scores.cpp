@@ -2,11 +2,9 @@
 #include <vector>
 #include <algorithm>
 #include <string>
-#include "screens.hpp"
 #include "slider.hpp"
 using namespace std;
 
-// Function to load scores from the file
 vector<int> load_scores(const string &filename)
 {
     ifstream file(filename);
@@ -24,7 +22,6 @@ vector<int> load_scores(const string &filename)
     return scores;
 }
 
-// Function to save scores to the file
 void save_scores(const vector<int> &scores, const string &filename)
 {
     ofstream file(filename);
@@ -35,7 +32,6 @@ void save_scores(const vector<int> &scores, const string &filename)
     }
 }
 
-// Function to update the top ten scores
 void update_top_ten_scores(vector<int> &scores, int new_score)
 {
     scores.push_back(new_score);

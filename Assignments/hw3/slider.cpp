@@ -21,8 +21,6 @@
  */
 #include "slider.hpp"
 #include <ncurses.h>
-#include <cstdio>
-#include <ctime>
 #include <cstdlib>
 #include <cstring>
 
@@ -44,7 +42,6 @@ const slider_t slider_types[2] = {
      {0, 0, 0}},
 };
 
-// Changes the location of the slider
 void moveSlider(slider_t *s, int x, int y)
 {
   // Adjusted so the slider is moved based on its relative location, not the absolute location
@@ -52,8 +49,7 @@ void moveSlider(slider_t *s, int x, int y)
   s->upper_left_y += y;
 }
 
-// Intializes the slider
-slider_t *init_slider(int initial_x, int initial_y, char type, int size)
+slider_t *init_slider(int initial_x, int initial_y, char type, int size, int player_number)
 {
   slider_t *s = (slider_t *)malloc(sizeof(slider_t));
   if (type == 'T')
@@ -70,20 +66,20 @@ slider_t *init_slider(int initial_x, int initial_y, char type, int size)
   s->upper_left_x = initial_x;
   s->upper_left_y = initial_y;
   s->size = size;
+  s->player_number = player_number;
   return s;
 }
-
-// Renders the slider on the screen
 
 void draw_slider(slider_t *s)
 {
   for (int x = 0; x < s->size; ++x)
   {
+    attron(COLOR_PAIR(3));
     mvprintw(s->upper_left_y, s->upper_left_x + x, "%c", s->draw_char);
+    attroff(COLOR_PAIR(3));
   }
 }
 
-// Replaces the slider with blank spaces
 void undraw_slider(slider_t *s)
 {
   for (int x = 0; x < s->size; ++x)
@@ -94,7 +90,7 @@ void undraw_slider(slider_t *s)
 
 void check_borders(slider_t *player_one, slider_t *player_two, int zone_width, int zone_height, int center_line)
 {
-  // ensuring sliders are within bounds and don't cross the center line
+  // Ensuring sliders are within bounds and don't cross the center line
   if (player_one->upper_left_x - 12 < 0)
     player_one->upper_left_x = 12;
   if (player_one->upper_left_x + 5 > zone_width)

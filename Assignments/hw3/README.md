@@ -35,11 +35,15 @@ Arrow keys to move: Left, Right, Up, Down
 
 ### Best Scores
 - The top 10 best scores are saved in ./saves/save_best_10.game.
-- The scores are saved after the user quits from the game over screen
+- NOTE: The scores are only saved after the user quits from the game over screen
 
 ### Difficulty Levels
 - The ball starts at a default low speed and increases in speed with each level.
 - On level 3 (the hardest level) there will be two obstacles on the course
+
+### Quitting the game
+- You can press 'q' at any time to go to a quit screen.
+- From there you can either confirm to quit the game or go back
 
 
 

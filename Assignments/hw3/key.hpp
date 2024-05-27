@@ -36,24 +36,34 @@
 
 #include <cstdbool>
 
-/* Code: */
+/*
+ * @enum KEYS
+ * @brief This enum represents the keys that can be pressed.
+ */
 enum
 {
-    NOCHAR,
-    REGCHAR,
-    UP,
-    DOWN,
-    LEFT,
-    RIGHT,
-    BADESC,
-    W,
-    A,
-    S,
-    D,
-    P,
-    Q
+    NOCHAR,  /**< No character */
+    REGCHAR, /**< Regular character */
+    UP,      /**< Up arrow key */
+    DOWN,    /**< Down arrow key */
+    LEFT,    /**< Left arrow key */
+    RIGHT,   /**< Right arrow key */
+    BADESC,  /**< Bad escape character */
+    W,       /**< W key */
+    A,       /**< A key */
+    S,       /**< S key */
+    D,       /**< D key */
+    P,       /**< P key */
+    Q        /**< Q key */
 };
 
+/*
+ * @brief This function reads the escape key.
+ *
+ * @param key: The key to read.
+ *
+ * @return int: The key.
+ */
 int read_escape(int *);
 
 /* key.hpp ends here */
