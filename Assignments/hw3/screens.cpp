@@ -65,7 +65,7 @@ ScreenInput input_screen()
     // users input for the size of the goal
     int max_width = zone_width - 2;
     char goal_prompt[] = "Please enter a size for the goal (4 - 20): ";
-    input_struct.goal_width = prompt_input(goal_prompt, &input_struct, "goal_width", 4, 500);
+    input_struct.goal_width = prompt_input(goal_prompt, &input_struct, "goal_width", 4, 20);
     clear();
     refresh();
 
@@ -93,31 +93,20 @@ int prompt_input(char message[], ScreenInput *input_struct, string input_type, i
 
     mvprintw(zone_height / 2 - 2, (zone_width - strlen(welcome_message)) / 2, "%s", welcome_message);
     mvprintw(zone_height / 2 - 1, (zone_width - strlen(message)) / 2, "%s", message);
-    int *input_field;
+    int input_field;
+
     while (true)
     {
         char input_text[3];
         echo();
         getstr(input_text);
         noecho();
-        if (input_type == "slider_size")
-        {
-            *input_field = input_struct->slider_size;
-        }
-        else if (input_type == "goal_width")
-        {
-            *input_field = input_struct->goal_width;
-        }
-        else if (input_type == "game_size")
-        {
-            *input_field = input_struct->game_size;
-        }
 
-        *input_field = atoi(input_text);
+        input_field = atoi(input_text);
 
-        if (*input_field >= input_min && *input_field <= input_max)
+        if (input_field >= input_min && input_field <= input_max)
         {
-            if (input_type == "game_size" && *input_field % 2 == 0)
+            if (input_type == "game_size" && input_field % 2 == 0)
             {
                 // Display an error message if the number is not odd
                 mvprintw(zone_height / 2 + 1, (zone_width - strlen(odd_error_msg)) / 2, "%s", odd_error_msg);
@@ -137,7 +126,21 @@ int prompt_input(char message[], ScreenInput *input_struct, string input_type, i
             refresh();
         }
     }
-    return *input_field;
+
+    if (input_type == "slider_size")
+    {
+        input_struct->slider_size = input_field;
+    }
+    else if (input_type == "goal_width")
+    {
+        input_struct->goal_width = input_field;
+    }
+    else if (input_type == "game_size")
+    {
+        input_struct->game_size = input_field;
+    }
+
+    return input_field;
 }
 
 // represents the pause screen

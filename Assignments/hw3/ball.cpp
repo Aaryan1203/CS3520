@@ -41,8 +41,9 @@ void score_goal(ball_t *b, zone_t *z, slider_t *player_one, slider_t *player_two
 
     // Draw the goal area
     attron(COLOR_PAIR(2)); // Turn on color pair 2 (yellow foreground)
-    for (int i = start; i <= end; ++i) {
-        mvprintw(z->upper_left_y, i, "#"); // Top goal
+    for (int i = start; i <= end; ++i)
+    {
+        mvprintw(z->upper_left_y, i, "#");             // Top goal
         mvprintw(z->upper_left_y + z->height, i, "#"); // Bottom goal
     }
     attroff(COLOR_PAIR(2)); // Turn off color pair 2
@@ -80,10 +81,10 @@ bool checkCollisionSlider(slider_t *s, ball_t *b, int slider_size)
         {
             if (s->upper_left_y >= next_y_ball - 1 &&
                 s->upper_left_y <= b->upper_left_y &&
-                s->upper_left_x + x >= next_x_ball - 0.5 && 
+                s->upper_left_x + x >= next_x_ball - 0.5 &&
                 s->upper_left_x + x <= next_x_ball + 0.5)
             {
-                b->speed_y *= -1; 
+                b->speed_y *= -1;
                 return true;
             }
         }
@@ -92,7 +93,7 @@ bool checkCollisionSlider(slider_t *s, ball_t *b, int slider_size)
         {
             if (s->upper_left_y <= next_y_ball + 1 &&
                 s->upper_left_y >= b->upper_left_y &&
-                s->upper_left_x + x >= next_x_ball - 0.5 && 
+                s->upper_left_x + x >= next_x_ball - 0.5 &&
                 s->upper_left_x + x <= next_x_ball + 0.5)
             {
                 b->speed_y *= -1;
@@ -116,9 +117,12 @@ bool checkCollisionWithZone(ball_t *b, zone_t *z, int goal_width)
     {
         b->speed_x *= -1;
         // Correct the position to ensure the ball doesn't go beyond the wall
-        if (next_x_ball <= z->upper_left_x) {
+        if (next_x_ball <= z->upper_left_x)
+        {
             b->upper_left_x = z->upper_left_x + 1;
-        } else {
+        }
+        else
+        {
             b->upper_left_x = z->upper_left_x + z->width - 1;
         }
         return true;
@@ -130,9 +134,12 @@ bool checkCollisionWithZone(ball_t *b, zone_t *z, int goal_width)
     {
         b->speed_y *= -1;
         // Correct the position to ensure the ball doesn't go beyond the wall
-        if (next_y_ball <= z->upper_left_y) {
+        if (next_y_ball <= z->upper_left_y)
+        {
             b->upper_left_y = z->upper_left_y + 1;
-        } else {
+        }
+        else
+        {
             b->upper_left_y = z->upper_left_y + z->height - 1;
         }
         return true;
@@ -141,10 +148,12 @@ bool checkCollisionWithZone(ball_t *b, zone_t *z, int goal_width)
     return false;
 }
 
-bool checkCollisionWithObstacle(ball_t *b, obstacle_t *o) {
+bool checkCollisionWithObstacle(ball_t *b, obstacle_t *o)
+{
     // checks for collisions with the obstacles
     if (b->upper_left_x >= o->upper_left_x && b->upper_left_x <= o->upper_left_x + o->width &&
-            b->upper_left_y >= o->upper_left_y && b->upper_left_y <= o->upper_left_y + o->height) {
+        b->upper_left_y >= o->upper_left_y && b->upper_left_y <= o->upper_left_y + o->height)
+    {
         b->speed_x *= -1;
         b->speed_y *= -1;
         return true;
