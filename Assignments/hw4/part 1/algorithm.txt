@@ -1,0 +1,39 @@
+Input Reading:
+    Read the student data from a CSV file, then parse the data into the appropriate data structures.
+
+    This will be done by opening the CSV file and parsing each line into a student struct, then storing that struct in a vector.
+
+Data Structures:
+    Use a struct to represent a student
+    Use a vector to store the students
+    Use a map to store the students as well as there preferences
+
+    The student struct should have the following fields:
+        username
+        programming
+        debugging
+        algorithm
+        do_not_work_with
+        prefer_to_work_with
+    The struct is the best option so all data per line can be encapsulated in one object
+
+    vector<Student> students will store all the students
+    A vector allows for a way to efficiently store and manage data
+
+    map<string, Student> student_map will store the students as well as their preferences
+    A map allows for quick access to a student and their preferences + constraints
+
+Forming Teams:
+    Prompt the user to select the size teams should be
+    Allow for one of two team formation strategies:
+        The prioritization of student preferences
+        The prioritization of balancing student skills
+
+    This will be done by implementing a function to form teams based on user choice (skill balance or preference)
+    To assign students to teams, use a greedy approach while still honoring the constraints
+
+Score Calculation:
+    Calculate each team's score based on their skills
+    Neatly display the scores and the team composition
+
+    This will be done by iterating through each team and summing up their skills
