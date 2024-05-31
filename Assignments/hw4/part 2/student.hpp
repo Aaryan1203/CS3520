@@ -45,4 +45,8 @@ void read_students_results(const string &file_name, vector<Student> &students);
 
 skill_rating convert_skill_rating(const string &level);
 
+void categorizeStudents(const vector<Student> &students,
+                        map<int, vector<Student>> &programming_students,
+                        map<int, vector<Student>> &debugging_students,
+                        map<int, vector<Student>> &design_students);
 #endif
