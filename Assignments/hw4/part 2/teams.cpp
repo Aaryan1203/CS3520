@@ -3,8 +3,168 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <algorithm>
+#include <set>
 
 using namespace std;
+
+
+void create_teams(vector<Student> &students, int team_size, const string &preference, map<int, vector<Student>> &teams)
+{
+    int team_number = 1;
+    unordered_map<string, set<string>> student_groups;
+    vector<Student> remaining_students;
+
+    // Group students based on their preferences
+    for (const auto &student : students)
+    {
+        if (!student.prefer_to_work_with.empty())
+        {
+            for (const auto &preferred : student.prefer_to_work_with)
+            {
+                student_groups[student.username].insert(preferred);
+                student_groups[preferred].insert(student.username);
+            }
+        }
+        else
+        {
+            remaining_students.push_back(student);
+        }
+    }
+
+    // Process groups and form initial teams
+    for (const auto &group : student_groups)
+    {
+        vector<Student> team;
+        map<string, int> team_score = {{"programming", 0}, {"design", 0}, {"debugging", 0}};
+        vector<string> team_not_work_with; // Reset for each team
+
+        for (const auto &member : group.second)
+        {
+            auto it = find_if(students.begin(), students.end(), [&](const Student &s)
+                              { return s.username == member; });
+            if (it != students.end() && allowed_to_work_with(team_not_work_with, *it, team))
+            {
+                team.push_back(*it);
+                update_team_score(team_score, *it);
+                add_to_team_not_work_with(team_not_work_with, *it);
+            }
+        }
+
+        if (!team.empty())
+        {
+            teams[team_number++] = team;
+        }
+    }
+
+    // Ensure each team has at least one advanced or intermediate programmer
+    for (auto &team_entry : teams)
+    {
+        auto &team = team_entry.second;
+        bool has_advanced_programmer = any_of(team.begin(), team.end(), [](const Student &s)
+                                              { return s.programming == 3; });
+        bool has_intermediate_programmer = any_of(team.begin(), team.end(), [](const Student &s)
+                                                  { return s.programming == 2; });
+
+        if (!has_advanced_programmer && !has_intermediate_programmer)
+        {
+            auto it = find_if(remaining_students.begin(), remaining_students.end(), [](const Student &s)
+                              { return s.programming >= 2; });
+            if (it != remaining_students.end() && allowed_to_work_with({}, *it, team))
+            {
+                team.push_back(*it);
+                remaining_students.erase(it);
+            }
+        }
+    }
+
+    // Fill remaining slots in teams
+    while (!remaining_students.empty())
+    {
+        bool added = false;
+        for (auto &team_entry : teams)
+        {
+            auto &team = team_entry.second;
+            if (team.size() < team_size && !remaining_students.empty())
+            {
+                for (auto it = remaining_students.begin(); it != remaining_students.end(); ++it)
+                {
+                    if (allowed_to_work_with({}, *it, team))
+                    {
+                        team.push_back(*it);
+                        remaining_students.erase(it);
+                        added = true;
+                        break;
+                    }
+                }
+            }
+        }
+        if (!added)
+        {
+            break;
+        }
+    }
+
+    // If there are still remaining students, create new teams for them
+    while (!remaining_students.empty())
+    {
+        vector<Student> new_team;
+        vector<string> team_not_work_with; // Reset for each team
+        map<string, int> team_score = {{"programming", 0}, {"design", 0}, {"debugging", 0}};
+
+        while (new_team.size() < team_size && !remaining_students.empty())
+        {
+            auto it = remaining_students.begin();
+            if (allowed_to_work_with(team_not_work_with, *it, new_team))
+            {
+                new_team.push_back(*it);
+                update_team_score(team_score, *it);
+                add_to_team_not_work_with(team_not_work_with, *it);
+                remaining_students.erase(it);
+            }
+        }
+
+        if (!new_team.empty())
+        {
+            teams[team_number++] = new_team;
+        }
+    }
+}
+
+void add_to_team_not_work_with(vector<string> &team_not_work_with, Student &student)
+{
+    for (const auto &partner : student.do_not_work_with)
+    {
+        team_not_work_with.push_back(partner);
+    }
+}
+
+bool allowed_to_work_with(const vector<string> &team_not_work_with, const Student &student, const vector<Student> &team)
+{
+    // Check if the student is in the team_not_work_with list
+    bool student_in_team_not_work_with = find(team_not_work_with.begin(), team_not_work_with.end(), student.username) != team_not_work_with.end();
+
+    // Check if any student in the team is in the student's do_not_work_with list
+    bool team_member_in_student_not_work_with = false;
+    for (const auto &team_member : team)
+    {
+        if (find(student.do_not_work_with.begin(), student.do_not_work_with.end(), team_member.username) != student.do_not_work_with.end())
+        {
+            team_member_in_student_not_work_with = true;
+            break;
+        }
+    }
+
+    // Return false if either condition is met
+    return !(student_in_team_not_work_with || team_member_in_student_not_work_with);
+}
+
+void update_team_score(map<string, int> &team_score, Student &current_student)
+{
+    team_score["programming"] += current_student.programming;
+    team_score["debugging"] += current_student.debugging;
+    team_score["desgign"] += current_student.design;
+}
 
 int calculate_total_score(const vector<Student> &team, string skill)
 {
@@ -31,130 +191,6 @@ int calculate_total_score(const vector<Student> &team, string skill)
         }
     }
     return sum;
-}
-
-void populate_team_not_work_with(vector<string> &team_not_work_with, Student &student)
-{
-    for (const auto &partner : student.do_not_work_with)
-    {
-        team_not_work_with.push_back(partner);
-    }
-}
-
-void create_teams(vector<Student> &students, int team_size, const string &preference, map<int, vector<Student>> &teams)
-{
-    int team_number = 1;
-
-    // if (preference == "P")
-    // {
-    //     vector<Student> students_copy = students;
-    //     while (!students_copy.empty())
-    //     {
-    //         vector<Student> team;
-    //         vector<Student> team_not_work_with;
-    //         for (const auto &student : students)
-    //         {
-    //             team.push_back(student);
-    //             students_copy.remove(student);
-    //             for (const auto &partner : student.prefer_to_work_with)
-    //             {
-    //                 if (students.contains(partner))
-    //                 {
-    //                     team.push_back(partner);
-    //                 }
-    //                 else
-    //                 {
-    //                 }
-    //             }
-    //         }
-    //         teams[team_number++] = team;
-    //         team.clear();
-    //     }
-    // }
-    /*else*/ if (preference == "L")
-    {
-        vector<Student> students; // Assume this is populated with data
-        map<int, vector<Student>> programming_students;
-        map<int, vector<Student>> debugging_students;
-        map<int, vector<Student>> design_students;
-
-        categorizeStudents(students, programming_students, debugging_students, design_students);
-
-        // for (const auto& student : programming_students) {
-        //     student.
-        // }
-
-        while (!programming_students[3].empty() || !programming_students[2].empty() || !programming_students[1].empty())
-        {
-            vector<Student> team;
-
-            if (!programming_students[3].empty())
-            {
-                team.push_back(programming_students[3].back());
-                programming_students[3].pop_back();
-            }
-            else if (!programming_students[2].empty())
-            {
-                team.push_back(programming_students[2].back());
-                programming_students[2].pop_back();
-            }
-            else if (!programming_students[1].empty())
-            {
-                team.push_back(programming_students[1].back());
-                programming_students[1].pop_back();
-            }
-
-            if (!debugging_students[3].empty())
-            {
-                team.push_back(debugging_students[3].back());
-                debugging_students[3].pop_back();
-            }
-            else if (!debugging_students[2].empty())
-            {
-                team.push_back(debugging_students[2].back());
-                debugging_students[2].pop_back();
-            }
-            else if (!debugging_students[1].empty())
-            {
-                team.push_back(debugging_students[1].back());
-                debugging_students[1].pop_back();
-            }
-
-            if (!design_students[3].empty())
-            {
-                team.push_back(design_students[3].back());
-                design_students[3].pop_back();
-            }
-            else if (!design_students[2].empty())
-            {
-                team.push_back(design_students[2].back());
-                design_students[2].pop_back();
-            }
-            else if (!design_students[1].empty())
-            {
-                team.push_back(design_students[1].back());
-                design_students[1].pop_back();
-            }
-
-            // removing assigned students from the main list
-            for (const auto &student : team)
-            {
-                auto it = find_if(students.begin(), students.end(), [&](const Student &s)
-                                  { return s.username == student.username; });
-                if (it != students.end())
-                {
-                    students.erase(it);
-                }
-            }
-
-            teams[team_number++] = team;
-
-            if (team.size() < team_size)
-            {
-                break;
-            }
-        }
-    }
 }
 
 // prints each team with the scores of each skill

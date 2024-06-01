@@ -32,4 +32,9 @@ void print_teams(map<int, vector<Student>> &teams);
 
 int calculate_total_score(const vector<Student> &team, string skill);
 
+bool allowed_to_work_with(const vector<string> &team_not_work_with, const Student &student, const vector<Student> &team);
+
+void update_team_score(map<string, int> &team_score, Student &current_student);
+
+void add_to_team_not_work_with(vector<string> &team_not_work_with, Student &student);
 #endif
