@@ -78,6 +78,7 @@ int main()
     }
 
     read_students_results(file_name, students);
-    create_teams(students, team_size, teams);
+    create_teams(students, team_size, teams, preference);
     print_teams(teams);
+    create_teams_csv(teams);
 }

@@ -24,6 +24,7 @@ clean:
 	rm -f *~ core $(INCDIR)/*~ 
 	rm -f main
 	rm -f *.o
+	rm teams.csv
 
 etags: 
 	find . -type f -iname "*.[ch]" | xargs etags --append         

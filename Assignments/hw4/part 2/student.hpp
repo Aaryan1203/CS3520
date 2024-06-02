@@ -3,7 +3,6 @@
 
 #include <string>
 #include <vector>
-#include <map>
 
 using namespace std;
 
@@ -43,10 +42,13 @@ struct Student
  */
 void read_students_results(const string &file_name, vector<Student> &students);
 
+/*
+ * @brief This function converts the skill rating written in the csv, to the enum
+ *
+ * @param level: The skill rating written in the csv
+ *
+ * @return: skill_rating
+ */
 skill_rating convert_skill_rating(const string &level);
 
-void categorizeStudents(const vector<Student> &students,
-                        map<int, vector<Student>> &programming_students,
-                        map<int, vector<Student>> &debugging_students,
-                        map<int, vector<Student>> &design_students);
 #endif

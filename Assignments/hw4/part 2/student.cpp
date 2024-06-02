@@ -73,4 +73,3 @@ void read_students_results(const string &file_name, vector<Student> &students)
     }
     file.close();
 }
-
