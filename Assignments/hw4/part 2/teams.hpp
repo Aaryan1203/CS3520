@@ -8,7 +8,6 @@
 
 using namespace std;
 
-
 /*
  * @brief This function creates teams of students based on the team size and
  * student preferences
@@ -19,7 +18,7 @@ using namespace std;
  *
  * @return: void
  */
-void create_teams(vector<Student> &students, int team_size, const string &preference, map<int, vector<Student>> &teams);
+void create_teams(vector<Student> &students, int team_size, map<int, vector<Student>> &teams);
 
 /*
  * @brief This function prints the teams of students
@@ -34,7 +33,8 @@ int calculate_total_score(const vector<Student> &team, string skill);
 
 bool allowed_to_work_with(const vector<string> &team_not_work_with, const Student &student, const vector<Student> &team);
 
-void update_team_score(map<string, int> &team_score, Student &current_student);
+void add_students_to_team(const vector<int> &skill_levels, vector<Student> &current_team, vector<string> &team_not_work_with,
+                          map<int, vector<Student>> &programming_students, vector<Student> &students_not_in_team);
 
 void add_to_team_not_work_with(vector<string> &team_not_work_with, Student &student);
 #endif

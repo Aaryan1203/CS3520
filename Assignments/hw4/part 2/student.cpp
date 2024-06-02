@@ -74,16 +74,3 @@ void read_students_results(const string &file_name, vector<Student> &students)
     file.close();
 }
 
-void categorizeStudents(const vector<Student> &students,
-                        map<int, vector<Student>> &programming_students,
-                        map<int, vector<Student>> &debugging_students,
-                        map<int, vector<Student>> &design_students)
-{
-
-    for (const auto &student : students)
-    {
-        programming_students[student.programming].push_back(student);
-        debugging_students[student.debugging].push_back(student);
-        design_students[student.design].push_back(student);
-    }
-}
