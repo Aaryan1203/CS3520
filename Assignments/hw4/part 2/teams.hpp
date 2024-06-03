@@ -89,8 +89,6 @@ void add_students_to_team(const vector<int> &skill_levels,
 void add_to_team_not_work_with(vector<string> &team_not_work_with,
                                Student &student);
 
-void add_to_team_could_work_with(vector<string> &team_could_work_with,
-                                 Student &student);
 /*
  * @brief This function creates a csv file of the teams
  *
@@ -99,5 +97,7 @@ void add_to_team_could_work_with(vector<string> &team_could_work_with,
  * @return: void
  */
 void create_teams_csv(map<int, vector<Student>> &teams);
+
+vector<Student> students_that_favor_user(vector<Student> &students, string &student);
 
 #endif

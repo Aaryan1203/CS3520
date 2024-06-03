@@ -4,6 +4,7 @@
 #include <iostream>
 #include <vector>
 #include "student.hpp"
+#include <algorithm> // For find_if_not
 
 using namespace std;
 
@@ -27,6 +28,15 @@ skill_rating convert_skill_rating(const string &level)
     }
 }
 
+// Function to trim trailing whitespace from a string
+void trim_trailing_whitespace(string &str)
+{
+    str.erase(find_if_not(str.rbegin(), str.rend(), [](int ch)
+                               { return isspace(ch); })
+                  .base(),
+              str.end());
+}
+
 void read_students_results(const string &file_name, vector<Student> &students)
 {
     ifstream file(file_name);
@@ -48,7 +58,10 @@ void read_students_results(const string &file_name, vector<Student> &students)
         getline(ss, level_debug, ',');
         getline(ss, level_design, ',');
         getline(ss, do_not_work_with, ',');
-        getline(ss, prefer_to_work_with, ',');
+        getline(ss, prefer_to_work_with);
+
+        // Remove trailing whitespace
+        trim_trailing_whitespace(prefer_to_work_with);
 
         Student student;
         student.username = username;

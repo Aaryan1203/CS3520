@@ -29,7 +29,12 @@ struct Student
   skill_rating design;                /**< The student's design  rating */
   vector<string> do_not_work_with;    /**< The students the student does not want to work with */
   vector<string> prefer_to_work_with; /**< The students the student prefers to work with */
+  bool operator==(const Student &other) const
+  {
+    return username == other.username;
+  }
 };
+void trim_trailing_whitespace(std::string &str);
 
 /*
  * @brief This function reads the students' results from a file and populates
