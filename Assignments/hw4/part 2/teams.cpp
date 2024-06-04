@@ -8,10 +8,11 @@
 
 using namespace std;
 
-//
+// main function to create the teams
 void create_teams(vector<Student> &students, int team_size,
                   map<int, vector<Student>> &teams, string preference)
 {
+    // user specifies they want to create teams based on level
     if (preference == "L")
     {
         map<int, vector<Student>> programming_students;
@@ -20,6 +21,7 @@ void create_teams(vector<Student> &students, int team_size,
             programming_students[student.programming].push_back(student);
         }
 
+        // map which describes the levels we want the students to have
         map<int, vector<int>> priority_map = {
             {1, {3, 2, 1}}, {2, {2, 1, 3}}, {3, {1, 2, 3}}};
 
@@ -51,6 +53,7 @@ void create_teams(vector<Student> &students, int team_size,
             teams[team_number++] = current_team;
         }
     }
+    // user decides to create teams by preference
     else if (preference == "P")
     {
         int team_number = 1;
