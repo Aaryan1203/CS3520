@@ -98,8 +98,24 @@ void add_to_team_not_work_with(vector<string> &team_not_work_with,
  */
 void create_teams_csv(map<int, vector<Student>> &teams);
 
+/*
+ * @brief This function finds the students that favors (prefers) the specified student
+ *
+ * @param students: The vector of students to search from
+ * @param student: The student to find the students that favors them
+ *
+ * @return: vector<Student>
+ */
 vector<Student> students_that_favor_user(vector<Student> &students, string &student);
 
+/*
+ * @brief This function removes the specified student from the preferred students list
+ *
+ * @param students_with_preferred_students: The vector of students with preferred students
+ * @param student: The student to remove from the preferred students list
+ *
+ * @return: void
+ */
 void remove_from_preferred_students(vector<Student> &students_with_preferred_students, Student &student);
 
 #endif

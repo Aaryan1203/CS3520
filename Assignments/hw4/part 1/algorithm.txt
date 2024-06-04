@@ -24,15 +24,35 @@ Data Structures:
         algorithm
         do_not_work_with
         prefer_to_work_with
-    Justification: Encapsulates all data per line in one object.
+    Justification: Encapsulates all the necessary information needed for a student in a single object.
 
     Vector of Students:
         vector<Student> students
-        Justification: Efficiently stores and manages student data dynamically.
+        Justification: Stores and manages student data dynamically, allowing for the addition and removal of students.
 
-    Map for Student Preferences:
-        map<string, Student> student_map
-        Justification: Allows quick access to a student and their preferences and constraints.
+    Map of int to vector Student:
+        map<int, vector<Student>> teams
+        Justification: Stores and manages each team (by #) and all the students associated with that team.
+
+    Vector of Student:
+        vector<Student> students_with_preferred_students
+        Justification: Allows easy access to students with preferences.
+
+    Vector of Strings:
+        vector<string> team_not_work_with
+        Justification: Stores the usernames of students a student does not want to work with.
+
+    Vector of Student:
+        vector<Student> current_team
+        Justification: Stores the current team members.
+
+    Vector of Student:
+        vector<Student> students_not_in_team
+        Justification: Stores students who are not in a team yet.
+
+    Map of int to vector Students:
+        map<int, vector<Student>> programming_students
+        Justification: Efficiently stores and manages each programming level and all the students associated with that level.
 
 Forming Teams:
 
@@ -47,7 +67,7 @@ Forming Teams:
 
         Function: create_teams(vector<Student> &students, int team_size, map<int, vector<Student>> &teams, string preference)
             Preference "L":
-                Categorize students by skill levels.
+                Categorize students by skill levels, specifically, only keep account of the programming skill.
                 Use a priority map to determine the order of skill levels added to teams.
                 Form teams ensuring each team is skill-balanced.
             Preference "P":
