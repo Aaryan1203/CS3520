@@ -4,10 +4,11 @@
 #include <iostream>
 #include <vector>
 #include "student.hpp"
-#include <algorithm> // For find_if_not
+#include <algorithm>
 
 using namespace std;
 
+// given a skill rating will return the enum related to the level
 skill_rating convert_skill_rating(const string &level)
 {
     if (level == "Beginner")
@@ -32,11 +33,12 @@ skill_rating convert_skill_rating(const string &level)
 void trim_trailing_whitespace(string &str)
 {
     str.erase(find_if_not(str.rbegin(), str.rend(), [](int ch)
-                               { return isspace(ch); })
+                          { return isspace(ch); })
                   .base(),
               str.end());
 }
 
+// reads all the students from the csv and populates a students vector
 void read_students_results(const string &file_name, vector<Student> &students)
 {
     ifstream file(file_name);
@@ -69,6 +71,7 @@ void read_students_results(const string &file_name, vector<Student> &students)
         student.debugging = convert_skill_rating(level_debug);
         student.design = convert_skill_rating(level_design);
 
+        // populates the do_not_work_with and prefer_to_work_with by seperated by ;
         stringstream ss_donot(do_not_work_with);
         string name;
         while (getline(ss_donot, name, ';'))

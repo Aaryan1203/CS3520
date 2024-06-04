@@ -5,10 +5,10 @@
 #include <map>
 #include <string>
 #include <vector>
-#include <set>
 
 using namespace std;
 
+//
 void create_teams(vector<Student> &students, int team_size,
                   map<int, vector<Student>> &teams, string preference)
 {
@@ -72,6 +72,7 @@ void create_teams(vector<Student> &students, int team_size,
             vector<Student> current_team;
             Student current_student;
 
+            // try to get a student with preferred students otherwise get a random student
             if (!students_with_preferred_students.empty())
             {
                 current_student = students_with_preferred_students.back();
@@ -87,6 +88,8 @@ void create_teams(vector<Student> &students, int team_size,
                 current_student = students_copy.back();
                 students_copy.pop_back();
             }
+
+            // add student to current team
             current_team.push_back(current_student);
             add_to_team_not_work_with(team_not_work_with, current_student);
             vector<string> attempted_students;
@@ -97,6 +100,7 @@ void create_teams(vector<Student> &students, int team_size,
                 string next_student_string = current_student.prefer_to_work_with.back();
                 current_student.prefer_to_work_with.pop_back();
                 Student next_student = find_student_by_username(students, next_student_string);
+                // ensure the student exists, is allowed to work with the team, and is not in a team already
                 if (!next_student.username.empty() && allowed_to_work_with(team_not_work_with, next_student, current_team) &&
                     find(students_copy.begin(), students_copy.end(), next_student) != students_copy.end())
                 {
@@ -107,6 +111,7 @@ void create_teams(vector<Student> &students, int team_size,
                     {
                         students_copy.erase(it);
                     }
+                    remove_from_preferred_students(students_with_preferred_students, next_student);
                 }
                 else
                 {
@@ -114,6 +119,7 @@ void create_teams(vector<Student> &students, int team_size,
                 }
             }
 
+            // repopulate the current students preferred to work with with all of the failed students
             for (const auto &student : attempted_students)
             {
                 current_student.prefer_to_work_with.push_back(student);
@@ -130,11 +136,14 @@ void create_teams(vector<Student> &students, int team_size,
                     {
                         current_team.push_back(favoring_student);
                         add_to_team_not_work_with(team_not_work_with, favoring_student);
+
+                        // remove the student from students_copy
                         auto it = find(students_copy.begin(), students_copy.end(), favoring_student);
                         if (it != students_copy.end())
                         {
                             students_copy.erase(it);
                         }
+                        remove_from_preferred_students(students_with_preferred_students, favoring_student);
                     }
                 }
             }
@@ -147,6 +156,7 @@ void create_teams(vector<Student> &students, int team_size,
                     current_team.push_back(*it);
                     add_to_team_not_work_with(team_not_work_with, *it);
                     it = students_copy.erase(it);
+                    remove_from_preferred_students(students_with_preferred_students, *it);
                 }
                 else
                 {
@@ -154,11 +164,23 @@ void create_teams(vector<Student> &students, int team_size,
                 }
             }
 
+            // add the team to the list of teams and increment the teams counter
             teams[team_number++] = current_team;
         }
     }
 }
 
+// removes a student from the preferred students vector
+void remove_from_preferred_students(vector<Student> &students_with_preferred_students, Student &student)
+{
+    auto it = find(students_with_preferred_students.begin(), students_with_preferred_students.end(), student);
+    if (it != students_with_preferred_students.end())
+    {
+        students_with_preferred_students.erase(it);
+    }
+}
+
+// ensures a student is eligible to join the team and if so will add them
 void add_students_to_team(const vector<int> &skill_levels,
                           vector<Student> &current_team,
                           vector<string> &team_not_work_with,
@@ -185,6 +207,7 @@ void add_students_to_team(const vector<int> &skill_levels,
     }
 }
 
+// returns a student object given a username
 Student find_student_by_username(const vector<Student> &students,
                                  const string &username)
 {
@@ -198,6 +221,7 @@ Student find_student_by_username(const vector<Student> &students,
     return Student();
 }
 
+// find a list of students what favor a given user
 vector<Student> students_that_favor_user(vector<Student> &students, string &student)
 {
     vector<Student> students_that_favor_user;
@@ -211,6 +235,7 @@ vector<Student> students_that_favor_user(vector<Student> &students, string &stud
     return students_that_favor_user;
 }
 
+// add a students 'do_not_work_with' students to the team not work with vector
 void add_to_team_not_work_with(vector<string> &team_not_work_with,
                                Student &student)
 {
@@ -220,6 +245,7 @@ void add_to_team_not_work_with(vector<string> &team_not_work_with,
     }
 }
 
+// checks if a student is allowed to work with the team
 bool allowed_to_work_with(const vector<string> &team_not_work_with,
                           const Student &student, const vector<Student> &team)
 {
@@ -240,11 +266,11 @@ bool allowed_to_work_with(const vector<string> &team_not_work_with,
         }
     }
 
-    // Return false if either condition is met
     return !(student_in_team_not_work_with ||
              team_member_in_student_not_work_with);
 }
 
+// calculates the total score for a team
 int calculate_total_score(const vector<Student> &team, string skill)
 {
     int sum = 0;
@@ -296,6 +322,7 @@ void print_teams(map<int, vector<Student>> &teams)
     }
 }
 
+// creates a csv file with information about every team
 void create_teams_csv(map<int, vector<Student>> &teams)
 {
     // calling the file teams.csv everytime

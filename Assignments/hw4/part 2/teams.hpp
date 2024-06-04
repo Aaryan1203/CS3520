@@ -100,4 +100,6 @@ void create_teams_csv(map<int, vector<Student>> &teams);
 
 vector<Student> students_that_favor_user(vector<Student> &students, string &student);
 
+void remove_from_preferred_students(vector<Student> &students_with_preferred_students, Student &student);
+
 #endif
