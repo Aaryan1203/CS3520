@@ -229,6 +229,7 @@ int main()
     }
     catch (const runtime_error &e)
     {
+        cout << "The following error is expected: " << endl;
         cout << "Error: " << e.what() << endl;
     }
 
