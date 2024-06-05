@@ -1,0 +1,71 @@
+After feedback from my partner, I split some responsibilities into 
+more specialized classes. For example, the Notification responsibilities 
+are now part of the NotificationSystem, and the Participation 
+responsibilities are now handled by ActivityTracker and PerformanceAnalyzer. 
+This modular approach helps to keep each class focused on a single responsibility, 
+making the system more maintainable and easier to understand. I also introduced
+new management classes like MembershipManager and EventManager to handle specific 
+administrative tasks which are described below
+
+1. Class: Member
+    Responsibilities:
+        Store and manage personal information
+        Update member details
+        Retrieve member information
+    Collaborators:
+        MembershipManager
+        ActivityTracker
+
+2. Class: MembershipManager
+    Responsibilities:
+        Register new members
+        Validate membership types
+        Handle membership renewals
+    Collaborators:
+        Member
+        NotificationSystem
+
+3. Class: ActivityTracker
+    Responsibilities:
+        Log member attendance
+        Record performance metrics
+        Maintain activity history
+    Collaborators:
+        Member
+        PerformanceAnalyzer
+
+4. Class: PerformanceAnalyzer
+    Responsibilities:
+        Analyze performance data
+        Generate performance reports
+        Provide feedback for improvement
+    Collaborators:
+        ActivityTracker
+        Coach
+
+5. Class: Coach
+    Responsibilities:
+        Manage team members
+        Plan training sessions
+        Review performance reports
+    Collaborators:
+        PerformanceAnalyzer
+        Member
+
+6. Class: NotificationSystem
+    Responsibilities:
+        Send updates to members
+        Notify members of events and activities
+        Remind members about renewals and deadlines
+    Collaborators:
+        MembershipManager
+        EventManager
+        
+7. Class: EventManager
+    Responsibilities:
+        Organize sports events
+        Schedule activities
+        Manage event logistics
+    Collaborators:
+        NotificationSystem
+        ActivityTracker

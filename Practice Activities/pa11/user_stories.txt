@@ -1,0 +1,20 @@
+
+The system will store detailed information about members, including their names, 
+membership types, email addresses, physical addresses, and interests. 
+Additionally, it will track their participation and performance in the different sports. 
+The goal is to create a user-friendly platform for both the athletics department and students.
+
+
+These are some user stories that we will keep in mind when designing our system:
+
+As an athletics department staff member, I want to register new members by entering 
+their personal information and membership type so that they can participate in intramural sports.
+
+As a member, I want to update my personal information and interests, 
+so that I receive relevant updates about sports and events.
+
+As a coach, I want to track the performance of my team members in various sports activities, 
+so I can analyze their progress and plan training sessions accordingly.
+
+As an administrator, I want to generate reports on member participation and performance, 
+so I can evaluate the effectiveness of the intramural sports program.

@@ -1,0 +1,53 @@
+1. Class: Member
+    Responsibilities:
+        Store and manage member information (name, email, address, membership type, interests).
+        Update member details.
+        Retrieve member details for reports and notifications.
+    Collaborators:
+        Participation
+        Event
+
+2. Class: Participation
+    Responsibilities:
+        Track member participation in sports events.
+        Record participation details (date, time, event).
+        Retrieve participation history for reporting.
+    Collaborators:
+        Member
+        Event
+        
+3. Class: Performance
+    Responsibilities:
+        Record performance metrics for members in various sports.
+        Generate performance reports.
+        Update performance records based on event results.
+    Collaborators:
+        Member
+        Participation
+
+4. Class: Event
+    Responsibilities:
+        Schedule and manage intramural sports events.
+        Register teams and individual participants for events.
+        Record event results and update participation and performance records.
+    Collaborators:
+        Member
+        Participation
+        Performance
+
+5. Class: Notification
+    Responsibilities:
+        Send notifications to members about upcoming events and schedule changes.
+        Manage communication preferences for members.
+    Collaborators:
+        Member
+        Event
+
+6. Class: Team
+    Responsibilities:
+        Manage team information (team name, members, captain).
+        Register teams for events.
+        Update team details and event participation.
+    Collaborators:
+        Member
+        Event
