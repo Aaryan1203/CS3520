@@ -11,7 +11,7 @@
     Responsibilities:
         Track member participation in sports events.
         Record participation details (date, time, event).
-        Retrieve participation history for reporting.
+        Retrieve particpation history for reporting.
     Collaborators:
         Member
         Event
