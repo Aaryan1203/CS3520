@@ -1,0 +1,63 @@
+-------------------------------------
+|             Employee              |
+-------------------------------------
+| - name: string                    |
+| - email: string                   |
+| - role: string                    |
+| - groupId: string                 |
+-------------------------------------
+| + Employee()                      |
+| + Employee(n: string, e: string,  |
+|            r: string)             |
+| + getName(): string               |
+| + getEmail(): string              |
+| + getRole(): string               |
+| + getGroup(): string              |
+| + setName(n: string): void        |
+| + setEmail(e: string): void       |
+| + setRole(r: string): void        |
+| + setGroup(g: string): void       |
+| + operator<<(out: ostream&,       |
+|              employee: Employee): |
+|              ostream&             |
+| + operator>>(in: istream&,        |
+|              employee: Employee): |
+|              istream&             |
+-------------------------------------
+                |
+                |
+                |
+                <>  (This is a filled diamond shape)
+-------------------------------------
+|               Group               |
+-------------------------------------
+| - name: string                    |
+| - area_of_responsibility: string  |
+| - ID: string                      |
+| - employees: vector<Employee>     |
+-------------------------------------
+| + Group()                         |
+| + Group(n: string,                |
+|         aor: string,              |
+|         id: string,               |
+|         e: vector<Employee>)      |
+| + getName(): string               |
+| + getAreaOfResponsibility(): string|
+| + getID(): string                 |
+| + getEmployees(): vector<Employee>|
+| + setName(n: string): void        |
+| + setAreaOfResponsibility(aor:    |
+|   string): void                   |
+| + setID(id: string): void         |
+| + setEmployees(e: vector<Employee>|
+|   ): void                         |
+| + operator-(X: int): Group        |
+| + operator+(other_group: Group):  |
+|   Group                           |
+| + operator<<(out: ostream&,       |
+|              group: Group):       |
+|              ostream&             |
+| + operator>>(in: istream&,        |
+|              group: Group):       |
+|              istream&             |
+-------------------------------------
