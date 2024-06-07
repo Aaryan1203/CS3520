@@ -2,9 +2,10 @@
 #define CELL_HPP
 
 #include <vector>
-#include <memory>
-#include <ncurses.h>
+#include <iostream>
 #include "critter.hpp"
+#include "grid.hpp"
+
 using namespace std;
 
 class Cell
@@ -12,6 +13,7 @@ class Cell
 private:
     Critter *critter;
     int x, y;
+    vector<Cell> getNeighbors(const vector<pair<int, int>> &directions, Grid &grid) const;
 
 public:
     Cell() : critter(nullptr), x(0), y(0) {}
@@ -31,43 +33,54 @@ public:
     int getX() const { return x; }
     int getY() const { return y; }
     void drawCell() const;
-    void undrawCell() const;
+    vector<Cell> getEightNeighboring(Grid &grid) const;
+    vector<Cell> getSixteenNeighboring(Grid &grid) const;
 };
+
+vector<Cell> Cell::getNeighbors(const vector<pair<int, int>> &directions, Grid &grid) const
+{
+    vector<Cell> neighbors;
+
+    for (const auto &direction : directions)
+    {
+        int nx = x + direction.first;
+        int ny = y + direction.second;
+
+        // Check if the neighboring cell is within the grid bounds
+        if (nx >= 0 && nx < grid.getWidth() && ny >= 0 && ny < grid.getHeight())
+        {
+            neighbors.push_back(grid.getBoard()[ny][nx]);
+        }
+    }
+
+    return neighbors;
+}
+
+vector<Cell> Cell::getEightNeighboring(Grid &grid) const
+{
+    const vector<pair<int, int>> directions = {
+        {-1, -1}, {-1, 0}, {-1, 1}, {0, -1}, {0, 1}, {1, -1}, {1, 0}, {1, 1}};
+    return getNeighbors(directions, grid);
+}
+
+vector<Cell> Cell::getSixteenNeighboring(Grid &grid) const
+{
+    const vector<pair<int, int>> directions = {
+        {-2, -2}, {-2, -1}, {-2, 0}, {-2, 1}, {-2, 2}, {-1, -2}, {-1, 2}, {0, -2}, {0, 2}, {1, -2}, {1, 2}, {2, -2}, {2, -1}, {2, 0}, {2, 1}, {2, 2}};
+    return getNeighbors(directions, grid);
+}
 
 void Cell::drawCell() const
 {
-    int border_color_pair = 1;
-    int icon_color_pair = 2;
-    int cell_height = 3;
-    int cell_width = 5;
-
-    // Draw the border of the cell
-    attron(COLOR_PAIR(border_color_pair));
-    mvprintw(y * cell_height, x * cell_width, "+---+");
-    mvprintw(y * cell_height + 1, x * cell_width, "|   |");
-    mvprintw(y * cell_height + 2, x * cell_width, "+---+");
-    attroff(COLOR_PAIR(border_color_pair));
-
-    // Draw the critter icon if the cell is occupied
     if (critter != nullptr)
     {
-        attron(COLOR_PAIR(icon_color_pair));
-        mvprintw(y * cell_height + 1, x * cell_width + 2, "%c", critter->getIcon());
-        attroff(COLOR_PAIR(icon_color_pair));
+        cout << "[" << critter->getIcon() << "]";
     }
-}
-
-void Cell::undrawCell() const
-{
-    int cell_height = 3;
-    int cell_width = 5;
-
-    for (int i = 0; i < cell_height; ++i)
+    else
     {
-        mvprintw(y * cell_height + i, x * cell_width, "     ");
+        cout << "[ ]";
     }
 }
-
 
 void Cell::setCritter(Critter *new_critter)
 {
@@ -85,6 +98,5 @@ void Cell::removeCritter()
     }
     critter = nullptr;
 }
-
 
 #endif
