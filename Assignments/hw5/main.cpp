@@ -1,15 +1,19 @@
 #include <ncurses.h>
-#include "cell.hpp"
-#include "critter.hpp"
-#include "grid.hpp"
+#include "include/cell.hpp"
+#include "include/critter.hpp"
+#include "include/grid.hpp"
+#include "include/simulation.hpp"
 
 int main()
 {
-    Critter critter('C');
-    Grid grid(10, 10);
-    
-    grid.drawGrid();
+    int width = 20;
+    int height = 20;
+    int num_doodlebugs = 10;
+    int num_ants = 50;
+    int num_queens = 10;
 
-    endwin();
+    Simulation simulation(width, height, num_doodlebugs, num_ants, num_queens);
+    simulation.run();
+
     return 0;
 }
