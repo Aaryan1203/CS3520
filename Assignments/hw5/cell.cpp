@@ -54,10 +54,31 @@ void Cell::draw_cell() const
     }
 }
 
-vector<Cell *> Cell::getEightNeighboring(Grid &grid) const
+vector<Cell *> Cell::get_eight_neighboring(Grid &grid) const
 {
     const int directions[8][2] = {
         {-1, -1}, {-1, 0}, {-1, 1}, {0, -1}, {0, 1}, {1, -1}, {1, 0}, {1, 1}};
+    vector<Cell *> neighbors;
+
+    for (const auto &direction : directions)
+    {
+        int nx = x + direction[0];
+        int ny = y + direction[1];
+
+        // Check if the neighboring cell is within the grid bounds
+        if (nx >= 0 && nx < grid.get_width() && ny >= 0 && ny < grid.get_height())
+        {
+            neighbors.push_back(grid.get_cell(ny, nx));
+        }
+    }
+    return neighbors;
+}
+
+
+vector<Cell *> Cell::get_sixteen_neighboring(Grid &grid) const
+{
+    const int directions[16][2] = {
+        {-2, -2}, {-2, -1}, {-2, 0}, {-2, 1}, {-2, 2}, {-1, -2}, {-1, 2}, {0, -2}, {0, 2}, {1, -2}, {1, 2}, {2, -2}, {2, -1}, {2, 0}, {2, 1}, {2, 2}};
     vector<Cell *> neighbors;
 
     for (const auto &direction : directions)

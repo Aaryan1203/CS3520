@@ -4,6 +4,8 @@
 #include "include/cell.hpp"
 #include "include/critter.hpp"
 #include "include/grid.hpp"
+#include "include/queen.hpp"
+#include "include/male.hpp"
 
 Grid::Grid(int width, int height)
 {
@@ -66,17 +68,47 @@ void Grid::draw_grid(int time_elapsed) const
 
 void Grid::update()
 {
-    for (int x = 0; x < width; ++x)
+    for (int y = 0; y < height; ++y)
     {
-        for (int y = 0; y < height; ++y)
+        for (int x = 0; x < width; ++x)
         {
-            Critter *critter = board[x][y]->get_critter();
-            if (critter)
+            Cell *cell = get_cell(x, y);
+            Critter *critter = cell->get_critter();
+            if (critter != nullptr)
             {
                 critter->move();
+
+                // Check if the critter is a queen and if it should mate
+                Queen *queen = dynamic_cast<Queen *>(critter);
+                if (queen != nullptr && !queen->has_mated())
+                {
+                    if (is_adjacent_to_male(x, y))
+                    {
+                        queen->mate();
+                    }
+                    // If the queen can reproduce without mating (cataglyphis)
+                    if (queen->can_reproduce_without_mating())
+                    {
+                        queen->breed();
+                    }
+                }
+
                 critter->breed();
                 critter->die();
             }
         }
     }
+}
+
+bool Grid::is_adjacent_to_male(int x, int y)
+{
+    vector<Cell *> neighbors = get_cell(x, y)->get_eight_neighboring(*this);
+    for (Cell *neighbor : neighbors)
+    {
+        if (dynamic_cast<Male *>(neighbor->get_critter()) != nullptr)
+        {
+            return true;
+        }
+    }
+    return false;
 }

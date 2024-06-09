@@ -26,6 +26,7 @@ public:
     void set_cell(int x, int y, Cell *cell);
     int get_width() const;
     int get_height() const;
+    bool is_adjacent_to_male(int x, int y);
 };
 
 #endif
