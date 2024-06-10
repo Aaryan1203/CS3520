@@ -9,31 +9,48 @@ Ant::Ant(Grid *grid, int x, int y) : Critter(grid, x, y)
 
 void Ant::move()
 {
-    vector<Cell *> neighbors = grid->get_cell(x, y)->get_eight_neighboring(*grid);
+    // This part handles trying to move to a position that is out of bounds
+    const int directions[8][2] = {
+        {-1, -1}, {-1, 0}, {-1, 1}, {0, -1}, {0, 1}, {1, -1}, {1, 0}, {1, 1}};
 
-    if (neighbors.empty())
+    int original_x = x;
+    int original_y = y;
+
+    int random_index = rand() % 8;
+
+    // Calculate new position based on random direction
+    int new_x = x + directions[random_index][0];
+    int new_y = y + directions[random_index][1];
+
+    // Reflective bounce logic
+    if (new_x < 0 || new_x >= grid->get_width() || new_y < 0 || new_y >= grid->get_height())
     {
-        time_since_moved++;
-        return;
-    }
+        // Reflect off the walls
+        if (new_x < 0)
+            new_x = -new_x;
+        if (new_x >= grid->get_width())
+            new_x = 2 * grid->get_width() - new_x - 2;
+        if (new_y < 0)
+            new_y = -new_y;
+        if (new_y >= grid->get_height())
+            new_y = 2 * grid->get_height() - new_y - 2;
 
-    int random_index = rand() % neighbors.size();
-
-    if (neighbors[random_index]->is_empty())
-    {
-        // if the cell is out of bounds, ensure it stays in the same place and reset time_since_moved
-        Cell cell = *neighbors[random_index];
-        if (cell.get_x() < 0 || cell.get_x() >= grid->get_width() || cell.get_y() < 0 || cell.get_y() >= grid->get_height())
+        // If the reflected position is still out of bounds, reset time_since_moved and return
+        if (new_x < 0 || new_x >= grid->get_width() || new_y < 0 || new_y >= grid->get_height())
         {
             time_since_moved = 0;
             return;
         }
+    }
 
-        // move the ant to the new cell and update the time_since_moved
-        neighbors[random_index]->set_critter(this);
+    // Move to the new position if it's within bounds and the cell is empty
+    Cell *target_cell = grid->get_cell(new_x, new_y);
+    if (target_cell->is_empty())
+    {
+        target_cell->set_critter(this);
         grid->get_cell(x, y)->remove_critter();
-        x = neighbors[random_index]->get_x();
-        y = neighbors[random_index]->get_y();
+        x = new_x;
+        y = new_y;
         time_since_moved = 0;
     }
     else
@@ -45,7 +62,7 @@ void Ant::move()
 void Ant::breed()
 {
     // normal ants can't breed
-    // return;
+    return;
 }
 
 void Ant::die()

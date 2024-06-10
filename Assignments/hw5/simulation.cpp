@@ -89,11 +89,35 @@ void Simulation::init_grid(int num_doodlebugs, int num_ants, int num_queens)
     }
 }
 
-bool Simulation::is_simulation_over()
-{
-    if (time_elapsed >= 100)
-    {
-        return true;
+bool Simulation::is_simulation_over() {
+    // check if there are no more doodlebugs or no more ants
+    bool no_doodlebugs = true;
+    bool no_ants = true;
+
+    // iterate through the grid and check for the presence of doodlebugs and ants
+    for (int x = 0; x < grid.get_width(); ++x) {
+        for (int y = 0; y < grid.get_height(); ++y) {
+            Critter* critter = grid.get_cell(x, y)->get_critter();
+            if (critter) {
+                if (dynamic_cast<Doodlebug*>(critter)) {
+                    no_doodlebugs = false;
+                }
+                if (dynamic_cast<Ant*>(critter)) {
+                    no_ants = false;
+                }
+                if (!no_doodlebugs && !no_ants) {
+                    return false;
+                }
+            }
+        }
     }
-    return false;
+
+    // if either species is completely gone, the simulation is over
+    if (no_doodlebugs) {
+        cout << "All doodlebugs have died. Game ended in  " << (time_elapsed - 1) << " seconds." << endl;
+    }
+    if (no_ants) {
+        cout << "All ants have died. Game evded in  " << (time_elapsed - 1) << " seconds." << endl;
+    }
+    return no_doodlebugs || no_ants;
 }

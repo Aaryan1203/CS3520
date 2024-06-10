@@ -6,6 +6,7 @@
 #include "include/grid.hpp"
 #include "include/queen.hpp"
 #include "include/male.hpp"
+#include "include/doodlebug.hpp"
 
 Grid::Grid(int width, int height)
 {
@@ -68,6 +69,7 @@ void Grid::draw_grid(int time_elapsed) const
 
 void Grid::update()
 {
+    // First pass: move all doodlebugs
     for (int y = 0; y < height; ++y)
     {
         for (int x = 0; x < width; ++x)
@@ -76,23 +78,59 @@ void Grid::update()
             Critter *critter = cell->get_critter();
             if (critter != nullptr)
             {
-                critter->move();
+                Doodlebug *doodlebug = dynamic_cast<Doodlebug *>(critter);
+                if (doodlebug != nullptr)
+                {
+                    doodlebug->move();
+                }
+            }
+        }
+    }
 
+    // Second pass: move all ants and handle breeding and dying for all critters
+    for (int y = 0; y < height; ++y)
+    {
+        for (int x = 0; x < width; ++x)
+        {
+            Cell *cell = get_cell(x, y);
+            Critter *critter = cell->get_critter();
+            if (critter != nullptr)
+            {
+                // Skip doodlebugs since they were already moved
+                if (dynamic_cast<Doodlebug *>(critter) != nullptr)
+                {
+                    continue;
+                }
+
+                critter->move();
+            }
+        }
+    }
+
+    // Third pass: handle breeding and dying for all critters
+    for (int y = 0; y < height; ++y)
+    {
+        for (int x = 0; x < width; ++x)
+        {
+            Cell *cell = get_cell(x, y);
+            Critter *critter = cell->get_critter();
+            if (critter != nullptr)
+            {
                 // Check if the critter is a queen and if it should mate
                 Queen *queen = dynamic_cast<Queen *>(critter);
-                if (queen != nullptr && !queen->has_mated())
+                if (queen != nullptr)
                 {
-                    if (is_adjacent_to_male(x, y))
+                    if (!queen->has_mated() && is_adjacent_to_male(x, y))
                     {
                         queen->mate();
                     }
-                    // If the queen can reproduce without mating (cataglyphis)
                     if (queen->can_reproduce_without_mating())
                     {
                         queen->breed();
                     }
                 }
 
+                // Handle breeding and dying for all critters, including Doodlebugs
                 critter->breed();
                 critter->die();
             }

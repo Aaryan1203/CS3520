@@ -19,7 +19,7 @@ string Queen::print() const
 }
 void Queen::die()
 {
-    if (time_since_moved >= 5 || time_since_breed >= 90)
+    if (time_since_breed >= 90)
     {
         grid->get_cell(x, y)->remove_critter();
         delete this;
@@ -44,6 +44,7 @@ void Queen::breed()
     {
         // Check for empty cells in the 16-neighborhood
         vector<Cell *> neighbors = grid->get_cell(x, y)->get_sixteen_neighboring(*grid);
+        std::cout << "Queen breeding at (" << x << ", " << y << ")" << std::endl;
 
         int babies_born = 0;
         for (Cell *neighbor : neighbors)
@@ -51,6 +52,7 @@ void Queen::breed()
             if (neighbor->is_empty())
             {
                 int random_value = rand() % 10000;
+                std::cout << "Placing ant at (" << neighbor->get_x() << ", " << neighbor->get_y() << ")" << std::endl;
 
                 if (random_value < 8000) // 60-80% chance to produce a worker ant
                 {
