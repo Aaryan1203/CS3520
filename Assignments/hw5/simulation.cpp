@@ -16,7 +16,7 @@ Simulation::Simulation(int width, int height, int num_doodlebugs, int num_ants, 
 // Runs the simulation
 void Simulation::run()
 {
-    while (!is_simulation_over())
+    while (!is_simulation_over() && time_elapsed < 300)
     {
         grid.update();
         grid.draw_grid(time_elapsed);
@@ -94,6 +94,9 @@ void Simulation::init_grid(int num_doodlebugs, int num_ants, int num_queens)
 
 // Checks if the simulation is over
 bool Simulation::is_simulation_over() {
+    if (time_elapsed >= 300) {
+        cout << "Cyclic pattern emerged after 300 seconds" << endl;
+    }
     // check if there are no more doodlebugs or no more ants
     bool no_doodlebugs = true;
     bool no_ants = true;
