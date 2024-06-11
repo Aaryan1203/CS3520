@@ -58,7 +58,6 @@ void Queen::breed()
             if (neighbor->is_empty())
             {
                 int random_value = rand() % 10000;
-                std::cout << "Placing ant at (" << neighbor->get_x() << ", " << neighbor->get_y() << ")" << std::endl;
 
                 if (random_value < 8000) // 60-80% chance to produce a worker ant
                 {

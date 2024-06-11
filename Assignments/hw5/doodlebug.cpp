@@ -141,7 +141,6 @@ void Doodlebug::breed()
     {
         if (rand() % 2 == 0) // 50% chance to breed
         {
-            std::cout << "breeding" << std::endl;
             vector<Cell *> neighbors = grid->get_cell(x, y)->get_sixteen_neighboring(*grid);
 
             for (int i = 0; i < neighbors.size(); i++)
