@@ -8,8 +8,18 @@
 
 using namespace std;
 
+// Forward declaration
 class Critter;
 
+/*
+    * Cell class
+    * Represents a single cell in the grid
+    * Each cell can contain a critter
+    * Each cell has x and y coordinates
+    * Each cell can draw itself
+    * Each cell can return its eight neighboring cells
+    * Each cell can return its sixteen neighboring cells
+*/
 class Cell
 {
 private:

@@ -10,6 +10,7 @@
 
 using namespace std;
 
+// Function to print a prompt and get an integer input from the user
 int print_prompt(const string &prompt, int default_value)
 {
     cout << prompt;
@@ -32,8 +33,10 @@ int print_prompt(const string &prompt, int default_value)
 
 int main()
 {
+    // Seed the random number generator
     srand(time(0));
 
+    // Prompt the user with the defaul values
     cout << "Welcome to the Critter Simulation" << endl;
     cout << "You will be asked to enter the number of doodlebugs, ants, and queens you would like to start with, as well as the size of the grid." << endl;
     cout << "If you do not enter a value, the default value will be used." << endl;
@@ -43,6 +46,7 @@ int main()
     int width = print_prompt("Number of rows. Default 50: ", 50);
     int height = print_prompt("Number of columns. Default 50: ", 50);
 
+    // error checking
     if (num_doodlebugs < 1)
     {
         cout << "The number of doodlebugs must be at least 1." << endl;

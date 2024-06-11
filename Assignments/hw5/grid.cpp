@@ -69,54 +69,106 @@ void Grid::draw_grid(int time_elapsed) const
 
 void Grid::update()
 {
-    // First pass: move all doodlebugs
-    for (int y = 0; y < height; ++y)
+    // Mark all critters as not moved
+    for (int x = 0; x < width; ++x)
     {
-        for (int x = 0; x < width; ++x)
+        for (int y = 0; y < height; ++y)
         {
-            Cell *cell = get_cell(x, y);
-            Critter *critter = cell->get_critter();
-            if (critter != nullptr)
+            Critter *critter = board[x][y]->get_critter();
+            if (critter)
             {
-                Doodlebug *doodlebug = dynamic_cast<Doodlebug *>(critter);
-                if (doodlebug != nullptr)
-                {
-                    doodlebug->move();
-                }
+                critter->set_moved(false);
             }
         }
     }
 
-    // Second pass: move all ants and handle breeding and dying for all critters
-    for (int y = 0; y < height; ++y)
+    // Move doodlebugs
+    for (int x = 0; x < width; ++x)
     {
-        for (int x = 0; x < width; ++x)
+        for (int y = 0; y < height; ++y)
         {
-            Cell *cell = get_cell(x, y);
-            Critter *critter = cell->get_critter();
-            if (critter != nullptr)
+            Critter *critter = board[x][y]->get_critter();
+            if (critter && dynamic_cast<Doodlebug *>(critter) && !critter->has_moved())
             {
-                // Skip doodlebugs since they were already moved
-                if (dynamic_cast<Doodlebug *>(critter) != nullptr)
-                {
-                    continue;
-                }
-
                 critter->move();
             }
         }
     }
 
-    // Third pass: handle breeding and dying for all critters
-    for (int y = 0; y < height; ++y)
+    // Doodlebugs breed
+    for (int x = 0; x < width; ++x)
     {
-        for (int x = 0; x < width; ++x)
+        for (int y = 0; y < height; ++y)
+        {
+            Critter *critter = board[x][y]->get_critter();
+            if (critter && dynamic_cast<Doodlebug *>(critter))
+            {
+                critter->breed();
+            }
+        }
+    }
+
+    // Doodlebugs die
+    for (int x = 0; x < width; ++x)
+    {
+        for (int y = 0; y < height; ++y)
+        {
+            Critter *critter = board[x][y]->get_critter();
+            if (critter && dynamic_cast<Doodlebug *>(critter))
+            {
+                critter->die();
+            }
+        }
+    }
+
+    // Move ants
+    for (int x = 0; x < width; ++x)
+    {
+        for (int y = 0; y < height; ++y)
+        {
+            Critter *critter = board[x][y]->get_critter();
+            if (critter && dynamic_cast<Ant *>(critter) && !critter->has_moved())
+            {
+                critter->move();
+            }
+        }
+    }
+
+    // Ants breed
+    for (int x = 0; x < width; ++x)
+    {
+        for (int y = 0; y < height; ++y)
+        {
+            Critter *critter = board[x][y]->get_critter();
+            if (critter && dynamic_cast<Ant *>(critter))
+            {
+                critter->breed();
+            }
+        }
+    }
+
+    // Ants die
+    for (int x = 0; x < width; ++x)
+    {
+        for (int y = 0; y < height; ++y)
+        {
+            Critter *critter = board[x][y]->get_critter();
+            if (critter && dynamic_cast<Ant *>(critter))
+            {
+                critter->die();
+            }
+        }
+    }
+
+    // Handle breeding and dying for queens
+    for (int x = 0; x < width; ++x)
+    {
+        for (int y = 0; y < height; ++y)
         {
             Cell *cell = get_cell(x, y);
             Critter *critter = cell->get_critter();
             if (critter != nullptr)
             {
-                // Check if the critter is a queen and if it should mate
                 Queen *queen = dynamic_cast<Queen *>(critter);
                 if (queen != nullptr)
                 {
@@ -137,6 +189,7 @@ void Grid::update()
         }
     }
 }
+
 
 bool Grid::is_adjacent_to_male(int x, int y)
 {

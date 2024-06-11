@@ -5,6 +5,15 @@
 #include "./cell.hpp"
 #include "./ant.hpp"
 
+/*
+    * Queen class
+    * 
+    * This class represents a queen in the simulation.
+    * 
+    * The queen class is a subclass of the Ant class.
+    * They can have cataclyphis
+    * 
+*/
 class Queen : public Ant
 {
 public:

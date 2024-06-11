@@ -5,6 +5,7 @@
 #include "include/male.hpp"
 #include <random>
 
+// Constructor for the Queen ant
 Queen::Queen(Grid *grid, int x, int y) : Ant(grid, x, y)
 {
     time_since_moved = 0;
@@ -13,10 +14,13 @@ Queen::Queen(Grid *grid, int x, int y) : Ant(grid, x, y)
     can_reproduce_without_mating_flag = false;
 }
 
+// Prints a queen ant
 string Queen::print() const
 {
     return "Q";
 }
+
+// Kills the queen ant if it has not bred in 90 steps
 void Queen::die()
 {
     if (time_since_breed >= 90)
@@ -26,6 +30,7 @@ void Queen::die()
     }
 }
 
+// Moves the queen ant
 void Queen::move()
 {
     if (has_mated_flag && time_since_breed < 30)
@@ -38,13 +43,14 @@ void Queen::move()
     Ant::move();
 }
 
+// Breeds the queen ant
 void Queen::breed()
 {
+
     if ((has_mated_flag && time_since_breed >= 30) || can_reproduce_without_mating_flag)
     {
         // Check for empty cells in the 16-neighborhood
         vector<Cell *> neighbors = grid->get_cell(x, y)->get_sixteen_neighboring(*grid);
-        std::cout << "Queen breeding at (" << x << ", " << y << ")" << std::endl;
 
         int babies_born = 0;
         for (Cell *neighbor : neighbors)
@@ -86,22 +92,26 @@ void Queen::breed()
     }
 }
 
+// Sets the queen ant to be a cataglyphis
 void Queen::set_cataglyphis()
 {
     can_reproduce_without_mating_flag = true;
 }
 
+// Mates the queen ant
 void Queen::mate()
 {
     has_mated_flag = true;
     time_since_breed = 0;
 }
 
+// Checks if the queen ant has mated
 bool Queen::has_mated() const
 {
     return has_mated_flag;
 }
 
+// Checks if the queen ant can reproduce without mating
 bool Queen::can_reproduce_without_mating() const
 {
     return can_reproduce_without_mating_flag;

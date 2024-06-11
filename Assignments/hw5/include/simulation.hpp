@@ -3,6 +3,13 @@
 
 #include "./grid.hpp"
 
+/*
+    * Simulation class
+    * Represents the simulation
+    * Each simulation has a grid
+    * Each simulation has a time elapsed
+    * Each simulation can run
+*/
 class Simulation {
     public:
         Simulation(int width, int height, int num_doodlebugs, int num_ants, int num_queens);

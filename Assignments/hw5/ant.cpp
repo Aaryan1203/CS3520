@@ -2,6 +2,7 @@
 #include <iostream>
 #include "include/critter.hpp"
 
+// constructor for Ant
 Ant::Ant(Grid *grid, int x, int y) : Critter(grid, x, y)
 {
     time_since_moved = 0;
@@ -65,6 +66,7 @@ void Ant::breed()
     return;
 }
 
+// handle death of any ant
 void Ant::die()
 {
     if (time_since_moved >= 5)

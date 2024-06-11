@@ -5,6 +5,11 @@
 #include "./cell.hpp"
 #include "./ant.hpp"
 
+/*
+    Male class
+    Each male ant has a time since it moved
+    Each male can print itsekf
+*/
 class Male : public Ant
 {
 public:

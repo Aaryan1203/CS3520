@@ -8,8 +8,21 @@
 #include "./cell.hpp"
 using namespace std;
 
+// Forward declaration
 class Cell;
 
+/*
+    * Grid class
+    * Represents the grid of cells
+    * Each grid has a width and height
+    * Each grid can update itself
+    * Each grid can draw itself
+    * Each grid can return a cell
+    * Each grid can set a cell
+    * Each grid can return its width
+    * Each grid can return its height
+    * Each grid can determine if a cell
+*/
 class Grid
 {
 private:

@@ -6,12 +6,14 @@
 #include <thread>
 #include <chrono>
 
+// Constructor for the Simulation
 Simulation::Simulation(int width, int height, int num_doodlebugs, int num_ants, int num_queens)
     : grid(width, height), time_elapsed(0)
 {
     init_grid(num_doodlebugs, num_ants, num_queens);
 }
 
+// Runs the simulation
 void Simulation::run()
 {
     while (!is_simulation_over())
@@ -24,6 +26,7 @@ void Simulation::run()
     }
 }
 
+// Initializes the grid with the given number of doodlebugs, ants, and queens
 void Simulation::init_grid(int num_doodlebugs, int num_ants, int num_queens)
 {
 
@@ -89,6 +92,7 @@ void Simulation::init_grid(int num_doodlebugs, int num_ants, int num_queens)
     }
 }
 
+// Checks if the simulation is over
 bool Simulation::is_simulation_over() {
     // check if there are no more doodlebugs or no more ants
     bool no_doodlebugs = true;
