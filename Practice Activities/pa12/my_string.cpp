@@ -27,7 +27,25 @@ public:
     { // Move Constructor
     }
     ~MyString() = default; // Destructor
+                           
+    MyString &operator=(const MyString &source)
+    { // Copy assignment operator
+        if (this == &source)
+            return *this;
+        str.reset(new char[strlen(source.str.get()) + 1]);
+        strcpy(str.get(), source.str.get());
+        return *this;
+    }
+
+    MyString &operator=(MyString &&source) noexcept
+    { // Move assignment operator
+        if (this == &source)
+            return *this;
+        str = move(source.str);
+        return *this;
+    }
 };
+
 int main(void)
 {
     cout << "Start!" << endl;
@@ -48,4 +66,9 @@ Move Constructor:
     I used the default move constructor as it will automatically handle the move operation
 Changes to the destructor:
     I used the default destructor as it will automatically handle memory deallocation
+Copy Assignment Operator:
+    The copy assignment operator ensures that an existing MyString object can be assigned the value of another MyString object.
+Move Assignment Operator:
+    The move assignment operator ensures that an existing MyString object can can take over the resources of another MyString object.
+.
 */
