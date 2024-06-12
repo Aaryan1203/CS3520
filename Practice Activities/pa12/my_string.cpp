@@ -14,24 +14,16 @@ public:
     };
     MyString(char *val)
     { // Constructor with 1 arguments
-        if (val == nullptr)
-        {
-            str = unique_ptr<char[]>(new char(1));
-            str[0] = '\0';
-        }
-        else
-        {
-            str = unique_ptr<char[]>(new char(strlen(val) + 1));
-            strcpy(str.get(), val);
-            cout << "The given string is: " << str.get() << endl;
-        }
+        str = unique_ptr<char[]>(new char(strlen(val) + 1));
+        strcpy(str.get(), val);
+        cout << "The given string is: " << str.get() << endl;
     }
     MyString(const MyString &source)
     { // Copy Constructor
         str = unique_ptr<char[]>(new char(strlen(source.str.get()) + 1));
         strcpy(str.get(), source.str.get());
     }
-    MyString(MyString &&source) noexcept : str{move(source.str)}
+    MyString(MyString &&source) noexcept : str(move(source.str))
     { // Move Constructor
     }
     ~MyString() = default; // Destructor
