@@ -28,38 +28,38 @@ public:
 };
 
 template <class T>
-Calculator<T>::Calculator(T n1, int n2)
+Calculator<T>::Calculator(T n1, T n2) // changed type of n2 to T instead of int
 {
     num1 = n1;
     num2 = n2;
 }
 
 template <class T>
-Calculator<T>::add()
+T Calculator<T>::add() // missing return type
 {
     return num1 + num2;
 }
 
 template <class T>
-Calculator<T>::subtract()
+T Calculator<T>::subtract() // missing return type
 {
     return num1 - num2;
 }
 
 template <class T>
-T Calculator<T>::multiply(T n1, T n2)
+T Calculator<T>::multiply() // removed parameters are they are a part of the class
 {
-    return n1 * n2;
+    return num1 * num2; // changed from n1 and n2 to num1 and num2
 }
 
 template <class T>
 T Calculator<T>::divide()
 {
-    return num1 % num2;
+    return num1 / num2; // changed % to dicide
 }
 
 template <class T>
-T Calculator<T>::isgreater()
+bool Calculator<T>::isgreater() // return type should be bool
 {
     if (num1 > num2)
         return true;
@@ -83,8 +83,19 @@ int main()
     cout << calc2.divide() << endl;
     cout << std::boolalpha << calc2.isgreater() << endl;
 
-    Calculator<string> calc3("Hello", 1); // string operations
+    // made 1 a string
+    Calculator<string> calc3("Hello", "1"); // string operations
     cout << calc3.add() << endl;
     cout << std::boolalpha << calc3.isgreater() << endl;
     return 0;
 }
+
+/*
+Summary of changes:
+1. Changed type of n2 in the constructor to T.
+2. Ensured all function definitions have the correct return type and removed unnecessary parameters.
+3. Corrected arithmetic operations to use the correct operators.
+4. Added return statements for all functions.
+6. Ensured the isgreater() function returns a boolean type.
+7. Fixed string initialization for 1 to be "1".
+*/

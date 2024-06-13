@@ -11,14 +11,14 @@ DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))
 
 _OBJ1 = DebugT-1.o
 _OBJ2 = DebugT-2.o
-# _OBJ3 = DebugT-3.o
-# _OBJ4 = DebugT-4.o
-# _OBJ5 = DebugT-5.o
+_OBJ3 = DebugT-3.o
+_OBJ4 = DebugT-4.o
+_OBJ5 = DebugT-5.o
 
 $(ODIR)/%.o: %.cpp $(DEPS)
 	$(CC) -c -o $@ $< $(CFLAGS)
 
-all: DebugT-1 DebugT-2
+all: DebugT-1 DebugT-2 DebugT-3 DebugT-4 DebugT-5
 	
 DebugT-1: $(_OBJ1)
 	$(CC) -o $@ $^ $(CFLAGS) $(LIBS)
@@ -26,14 +26,14 @@ DebugT-1: $(_OBJ1)
 DebugT-2: $(_OBJ2)
 	$(CC) -o $@ $^ $(CFLAGS) $(LIBS)
 
-# DebugT-3: $(_OBJ3)
-# 	$(CC) -o $@ $^ $(CFLAGS) $(LIBS)
+DebugT-3: $(_OBJ3)
+	$(CC) -o $@ $^ $(CFLAGS) $(LIBS)
 
-# DebugT-4: $(_OBJ4)
-# 	$(CC) -o $@ $^ $(CFLAGS) $(LIBS)
+DebugT-4: $(_OBJ4)
+	$(CC) -o $@ $^ $(CFLAGS) $(LIBS)
 
-# DebugT-5: $(_OBJ5)
-# 	$(CC) -o $@ $^ $(CFLAGS) $(LIBS)
+DebugT-5: $(_OBJ5)
+	$(CC) -o $@ $^ $(CFLAGS) $(LIBS)
 
 .PHONY: clean
 
