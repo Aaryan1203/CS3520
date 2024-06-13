@@ -2,6 +2,7 @@
 #include <map>
 #include <vector>
 #include <iomanip>
+#include <algorithm> 
 using namespace std;
 
 // function object for sorting by the second element of pairs
