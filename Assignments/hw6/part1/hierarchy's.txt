@@ -14,7 +14,7 @@ Class hierarchy 2: Vehicle
                    Vehicle
                   /       \
                  /\       /\
-(closed diamond) \/       \/ (closed diamond)
+(closed diamond) \/       \/ (closed diamond) 
         FavoriteList   Inventory
 
 This hierarchy focuses on the aggregation relationships between Vehicle, FavoriteList, and Inventory.
