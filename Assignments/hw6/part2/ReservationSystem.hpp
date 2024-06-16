@@ -13,18 +13,26 @@ template <typename T>
 class ReservationSystem
 {
 public:
+    struct Reserver
+    {
+        string name;
+        time_t dob;
+        string id;
+
+        Reserver(const string &name, time_t dob, const string &id)
+            : name(name), dob(dob), id(id) {}
+    };
+
     struct Reservation
     {
         string name;
         T item;
-        string reserver_name;
-        time_t reserver_dob;
-        string reserver_id;
+        Reserver reserver;
         string reservation_id;
         time_t reservation_time;
 
-        Reservation(const string &name, const T &item, const string &reserver_name, time_t reserver_dob, const string &reserver_id, const string &reservation_id, time_t reservation_time)
-            : name(name), item(item), reserver_name(reserver_name), reserver_dob(reserver_dob), reserver_id(reserver_id), reservation_id(reservation_id), reservation_time(reservation_time) {}
+        Reservation(const string &name, const T &item, const Reserver &reserver, const string &reservation_id, time_t reservation_time)
+            : name(name), item(item), reserver(reserver), reservation_id(reservation_id), reservation_time(reservation_time) {}
 
         bool operator==(const Reservation &other) const
         {
@@ -32,7 +40,7 @@ public:
         }
     };
 
-    void reserve_item(const string &name, const T &item, const string &reserver_name, time_t reserver_dob, const string &reserver_id, const string &reservation_id, time_t reservation_time)
+    void reserve_item(const string &name, const T &item, const Reserver &reserver, const string &reservation_id, time_t reservation_time)
     {
         auto it = find_if(reservations.begin(), reservations.end(), [&](const Reservation &res)
                           { return res.reservation_id == reservation_id; });
@@ -43,7 +51,7 @@ public:
         }
         else
         {
-            reservations.emplace_back(name, item, reserver_name, reserver_dob, reserver_id, reservation_id, reservation_time);
+            reservations.emplace_back(name, item, reserver, reservation_id, reservation_time);
         }
     }
 
@@ -51,7 +59,7 @@ public:
     {
         for (const auto &res : new_reservations)
         {
-            reserve_item(res.name, res.item, res.reserver_name, res.reserver_dob, res.reserver_id, res.reservation_id, res.reservation_time);
+            reserve_item(res.name, res.item, res.reserver, res.reservation_id, res.reservation_time);
         }
     }
 
@@ -95,7 +103,7 @@ public:
         }
         for (const auto &res : rs.reservations)
         {
-            os << "Reservation: " << res.name << ", Reserver: " << res.reserver_name << ", ID: " << res.reservation_id << ", Time: " << std::ctime(&res.reservation_time);
+            os << "Reservation: " << res.name << ", Reserver: " << res.reserver.name << ", ID: " << res.reservation_id << ", Time: " << std::ctime(&res.reservation_time);
             os << "Item: " << res.item << endl;
             os << endl;
         }

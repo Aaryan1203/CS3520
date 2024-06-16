@@ -44,48 +44,61 @@ int main()
     time_t three_days_ago = now - (3 * 24 * 60 * 60);
     time_t fourty_years_ago = now - (40 * 365 * 24 * 60 * 60);
 
-    // Reservations with int by adding multiple reservations at once
+    // Create instances of Reserver
+    ReservationSystem<int>::Reserver reserverAlice("Alice", fourty_years_ago, "ReserverID1");
+    ReservationSystem<int>::Reserver reserverBob("Bob", fourty_years_ago, "ReserverID2");
+    ReservationSystem<double>::Reserver reserverCharlie("Charlie", fourty_years_ago, "ReserverID3");
+    ReservationSystem<double>::Reserver reserverDave("Dave", fourty_years_ago, "ReserverID4");
+    ReservationSystem<string>::Reserver reserverEve("Eve", fourty_years_ago, "ReserverID5");
+    ReservationSystem<string>::Reserver reserverFrank("Frank", fourty_years_ago, "ReserverID6");
+    ReservationSystem<Book>::Reserver reserverGrace("Grace", fourty_years_ago, "ReserverID7");
+    ReservationSystem<Book>::Reserver reserverHeidi("Heidi", fourty_years_ago, "ReserverID8");
+    ReservationSystem<ConcertTicket>::Reserver reserverIvan("Ivan", fourty_years_ago, "ReserverID9");
+    ReservationSystem<ConcertTicket>::Reserver reserverJohn("John", fourty_years_ago, "ReserverID10");
+
+    // Reservations with int and adding multiple reservations at once
     ReservationSystem<int> intReservations;
     vector<ReservationSystem<int>::Reservation> intResList = {
-        {"Int Item 1", 42, "Alice", now, "ReserverID1", "ID1", now},
-        {"Int Item 2", 7, "Bob", now, "ReserverID2", "ID2", now}};
+        {"Int Item 1", 42, reserverAlice, "ID1", now},
+        {"Int Item 2", 7, reserverBob, "ID2", now}};
     intReservations.add_reservations(intResList);
     cout << "Int Reservations:\n"
          << intReservations << endl;
 
-    // Reservations with double and updating an item
+    // Reservations with double and adding single item at a time
     ReservationSystem<double> doubleReservations;
-    doubleReservations.reserve_item("Double Item 1", 3.14, "Charlie", now, "ReserverID3", "ID3", now);
-    doubleReservations.reserve_item("Double Item 2", 2.71, "Dave", now, "ReserverID4", "ID4", now);
+    doubleReservations.reserve_item("Double Item 1", 3.14, reserverCharlie, "ID3", now);
+    doubleReservations.reserve_item("Double Item 2", 2.71, reserverDave, "ID4", now);
     cout << "Double Reservations before update:\n"
          << doubleReservations << endl;
 
-    doubleReservations.reserve_item("Double Item 2", 1.71, "Dave", now, "ReserverID4", "ID4", now);
+    // Update a reservation
+    doubleReservations.reserve_item("Double Item 2", 1.71, reserverDave, "ID4", now);
     cout << "Double Reservations after update:\n"
          << doubleReservations << endl;
 
     // Reservations with string
     ReservationSystem<string> stringReservations;
-    stringReservations.reserve_item("String Item 1", "Hello", "Eve", now, "ReserverID5", "ID5", three_days_ago);
-    stringReservations.reserve_item("String Item 2", "World", "Frank", now, "ReserverID6", "ID6", now);
+    stringReservations.reserve_item("String Item 1", "Hello", reserverEve, "ID5", three_days_ago);
+    stringReservations.reserve_item("String Item 2", "World", reserverFrank, "ID6", now);
     cout << "String Reservations:\n"
          << stringReservations << endl;
 
     // Reservations with type Book
     ReservationSystem<Book> bookReservations;
-    bookReservations.reserve_item("Book Item 1", Book{"1984", "George Orwell"}, "Grace", now, "ReserverID7", "ID7", now);
-    bookReservations.reserve_item("Book Item 2", Book{"Brave New World", "Aldous Huxley"}, "Heidi", now, "ReserverID8", "ID8", now);
+    bookReservations.reserve_item("Book Item 1", Book{"1984", "George Orwell"}, reserverGrace, "ID7", now);
+    bookReservations.reserve_item("Book Item 2", Book{"Brave New World", "Aldous Huxley"}, reserverHeidi, "ID8", now);
     cout << "Book Reservations:\n"
          << bookReservations << endl;
 
     // Reservations with type ConcertTicket
     ReservationSystem<ConcertTicket> concertReservations;
-    concertReservations.reserve_item("Concert Ticket 1", ConcertTicket{"The Beatles", "Wembley", "2024-07-01"}, "Ivan", now, "ReserverID9", "ID9", now);
-    concertReservations.reserve_item("Concert Ticket 2", ConcertTicket{"Pink Floyd", "Madison Square Garden", "2024-08-15"}, "John", now, "ReserverID10", "ID10", now);
+    concertReservations.reserve_item("Concert Ticket 1", ConcertTicket{"The Beatles", "Wembley", "2024-07-01"}, reserverIvan, "ID9", now);
+    concertReservations.reserve_item("Concert Ticket 2", ConcertTicket{"Pink Floyd", "Madison Square Garden", "2024-08-15"}, reserverJohn, "ID10", now);
     cout << "Concert Reservations:\n"
          << concertReservations << endl;
 
-    // getting reservaiton duration and number of reservations
+    // Getting reservation duration and number of reservations
     cout << "\nDuration of reservation with ID5 (in days): " << stringReservations.get_reservation_duration("ID5") << endl;
     cout << "Total number of reservations for books: " << bookReservations.get_number_of_reservations() << endl;
 
