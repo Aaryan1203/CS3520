@@ -42,6 +42,7 @@ int main()
 {
     time_t now = time(nullptr);
     time_t three_days_ago = now - (3 * 24 * 60 * 60);
+    time_t fourty_years_ago = now - (40 * 365 * 24 * 60 * 60);
 
     // Reservations with int by adding multiple reservations at once
     ReservationSystem<int> intReservations;
@@ -56,7 +57,11 @@ int main()
     ReservationSystem<double> doubleReservations;
     doubleReservations.reserve_item("Double Item 1", 3.14, "Charlie", now, "ReserverID3", "ID3", now);
     doubleReservations.reserve_item("Double Item 2", 2.71, "Dave", now, "ReserverID4", "ID4", now);
-    cout << "Double Reservations:\n"
+    cout << "Double Reservations before update:\n"
+         << doubleReservations << endl;
+
+    doubleReservations.reserve_item("Double Item 2", 1.71, "Dave", now, "ReserverID4", "ID4", now);
+    cout << "Double Reservations after update:\n"
          << doubleReservations << endl;
 
     // Reservations with string
