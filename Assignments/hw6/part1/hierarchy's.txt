@@ -1,33 +1,29 @@
-Class hierarchy 1: Dealership
+Class Hierarchy 1: Dealership
 
-                Dealership
-   (open arrow) /\     /\ (open arrow)
-                /       \
-    Online Dealership   Physical Dealership
+                             Dealership
+           (filled arrow) /\           /\ (filled arrow)
+                          /               \
+                OnlineDealership         PhysicalDealership
 
 This hierarchy shows the inheritance relationship between Dealership, OnlineDealership, and PhysicalDealership.
 
+Class Hierarchy 2: Vehicle
 
-
-Class hierarchy 2: Vehicle
-
-                   Vehicle
-                  /       \
-                 /\       /\
-(closed diamond) \/       \/ (closed diamond) 
-        FavoriteList   Inventory
+                          Vehicle
+        (open arrow) /\          /\ (open arrow)
+                     /             \
+                FavoriteList        Inventory
 
 This hierarchy focuses on the aggregation relationships between Vehicle, FavoriteList, and Inventory.
 
 
 
-Class hierarchy 3: Order
+Class Hierarchy 3: Order
 
-                    Order
-                  /       \
-                 /\       /\
-(closed diamond) \/       \/ (closed diamond)
-            Customer     Delivery
+                            Order
+       (open diamond) /\           /\ (open diamond)
+                      \/           \/
+                     /               \
+                 Customer            Delivery
 
-This hierarchy illustrates the aggregation relationships between Order, Customer, and Delivery.
-
+This hierarchy illustrates the composition relationships between Order, Customer, and Delivery.
