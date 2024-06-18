@@ -4,7 +4,7 @@ CFLAGS= -I$(IDIR) -g -std=c++11 -O0
 
 ODIR=.
 
-LIBS=-lncurses
+LIBS=-lncurses -pthread
 
 _DEPS = 
 DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))
