@@ -87,6 +87,13 @@ void create_teams(vector<Student> &students, int team_size,
                 {
                     students_copy.erase(it);
                 }
+                else
+                {
+                    for (const auto &student : students_copy)
+                    {
+                        cout << student.username << endl;
+                    }
+                }
             }
             else
             {
@@ -160,8 +167,8 @@ void create_teams(vector<Student> &students, int team_size,
                 {
                     current_team.push_back(*it);
                     add_to_team_not_work_with(team_not_work_with, *it);
-                    it = students_copy.erase(it);
                     remove_from_preferred_students(students_with_preferred_students, *it);
+                    it = students_copy.erase(it);
                 }
                 else
                 {
@@ -190,7 +197,8 @@ bool allowed_to_work_with(const vector<string> &team_not_work_with,
     string student_username_lower = to_lower(student.username);
     bool student_in_team_not_work_with =
         find_if(team_not_work_with.begin(), team_not_work_with.end(),
-                [&student_username_lower](const string &name) {
+                [&student_username_lower](const string &name)
+                {
                     return to_lower(name) == student_username_lower;
                 }) != team_not_work_with.end();
 
@@ -199,11 +207,13 @@ bool allowed_to_work_with(const vector<string> &team_not_work_with,
     {
         string team_member_username_lower = to_lower(team_member.username);
         if (find_if(student.do_not_work_with.begin(), student.do_not_work_with.end(),
-                    [&team_member_username_lower](const string &name) {
+                    [&team_member_username_lower](const string &name)
+                    {
                         return to_lower(name) == team_member_username_lower;
                     }) != student.do_not_work_with.end() ||
             find_if(team_member.do_not_work_with.begin(), team_member.do_not_work_with.end(),
-                    [&student_username_lower](const string &name) {
+                    [&student_username_lower](const string &name)
+                    {
                         return to_lower(name) == student_username_lower;
                     }) != team_member.do_not_work_with.end())
         {
@@ -237,7 +247,8 @@ vector<Student> students_that_favor_user(vector<Student> &students, const string
     for (const auto &student : students)
     {
         if (find_if(student.prefer_to_work_with.begin(), student.prefer_to_work_with.end(),
-                    [&username_lower](const string &name) {
+                    [&username_lower](const string &name)
+                    {
                         return to_lower(name) == username_lower;
                     }) != student.prefer_to_work_with.end())
         {
@@ -283,7 +294,6 @@ void add_students_to_team(const vector<int> &skill_levels,
         }
     }
 }
-
 
 // add a students 'do_not_work_with' students to the team not work with vector
 void add_to_team_not_work_with(vector<string> &team_not_work_with,
