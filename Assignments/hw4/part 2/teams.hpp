@@ -106,7 +106,7 @@ void create_teams_csv(map<int, vector<Student>> &teams);
  *
  * @return: vector<Student>
  */
-vector<Student> students_that_favor_user(vector<Student> &students, string &student);
+vector<Student> students_that_favor_user(vector<Student> &students, const string &username);
 
 /*
  * @brief This function removes the specified student from the preferred students list
@@ -117,5 +117,14 @@ vector<Student> students_that_favor_user(vector<Student> &students, string &stud
  * @return: void
  */
 void remove_from_preferred_students(vector<Student> &students_with_preferred_students, Student &student);
+
+/*
+ * @brief This function converts a string to lowercase
+ *
+ * @param str: The string to convert to lowercase
+ *
+ * @return: string
+ */
+string to_lower(const string &str);
 
 #endif

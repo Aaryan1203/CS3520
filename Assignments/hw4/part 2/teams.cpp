@@ -6,6 +6,7 @@
 #include <string>
 #include <vector>
 #include <algorithm>
+#include <cctype>
 
 using namespace std;
 
@@ -174,6 +175,78 @@ void create_teams(vector<Student> &students, int team_size,
     }
 }
 
+string to_lower(const string &str)
+{
+    string lower_str = str;
+    transform(lower_str.begin(), lower_str.end(), lower_str.begin(), ::tolower);
+    return lower_str;
+}
+
+// checks if a student is allowed to work with the team
+bool allowed_to_work_with(const vector<string> &team_not_work_with,
+                          const Student &student, const vector<Student> &team)
+{
+    // Check if the student is in the team_not_work_with list
+    string student_username_lower = to_lower(student.username);
+    bool student_in_team_not_work_with =
+        find_if(team_not_work_with.begin(), team_not_work_with.end(),
+                [&student_username_lower](const string &name) {
+                    return to_lower(name) == student_username_lower;
+                }) != team_not_work_with.end();
+
+    // Check if any student in the team is in the student's do_not_work_with list
+    for (const auto &team_member : team)
+    {
+        string team_member_username_lower = to_lower(team_member.username);
+        if (find_if(student.do_not_work_with.begin(), student.do_not_work_with.end(),
+                    [&team_member_username_lower](const string &name) {
+                        return to_lower(name) == team_member_username_lower;
+                    }) != student.do_not_work_with.end() ||
+            find_if(team_member.do_not_work_with.begin(), team_member.do_not_work_with.end(),
+                    [&student_username_lower](const string &name) {
+                        return to_lower(name) == student_username_lower;
+                    }) != team_member.do_not_work_with.end())
+        {
+            return false;
+        }
+    }
+
+    return !student_in_team_not_work_with;
+}
+
+// returns a student object given a username
+Student find_student_by_username(const vector<Student> &students,
+                                 const string &username)
+{
+    string username_lower = to_lower(username);
+    for (const auto &student : students)
+    {
+        if (to_lower(student.username) == username_lower)
+        {
+            return student;
+        }
+    }
+    return Student();
+}
+
+// find a list of students that favor a given user
+vector<Student> students_that_favor_user(vector<Student> &students, const string &username)
+{
+    string username_lower = to_lower(username);
+    vector<Student> students_that_favor_user;
+    for (const auto &student : students)
+    {
+        if (find_if(student.prefer_to_work_with.begin(), student.prefer_to_work_with.end(),
+                    [&username_lower](const string &name) {
+                        return to_lower(name) == username_lower;
+                    }) != student.prefer_to_work_with.end())
+        {
+            students_that_favor_user.push_back(student);
+        }
+    }
+    return students_that_favor_user;
+}
+
 // removes a student from the preferred students vector
 void remove_from_preferred_students(vector<Student> &students_with_preferred_students, Student &student)
 {
@@ -211,33 +284,6 @@ void add_students_to_team(const vector<int> &skill_levels,
     }
 }
 
-// returns a student object given a username
-Student find_student_by_username(const vector<Student> &students,
-                                 const string &username)
-{
-    for (const auto &student : students)
-    {
-        if (student.username.compare(username) == 0)
-        {
-            return student;
-        }
-    }
-    return Student();
-}
-
-// find a list of students what favor a given user
-vector<Student> students_that_favor_user(vector<Student> &students, string &student)
-{
-    vector<Student> students_that_favor_user;
-    for (const auto &student : students)
-    {
-        if ((find(student.prefer_to_work_with.begin(), student.prefer_to_work_with.end(), student.username)) != student.prefer_to_work_with.end())
-        {
-            students_that_favor_user.push_back(student);
-        }
-    }
-    return students_that_favor_user;
-}
 
 // add a students 'do_not_work_with' students to the team not work with vector
 void add_to_team_not_work_with(vector<string> &team_not_work_with,
@@ -247,31 +293,6 @@ void add_to_team_not_work_with(vector<string> &team_not_work_with,
     {
         team_not_work_with.push_back(partner);
     }
-}
-
-// checks if a student is allowed to work with the team
-bool allowed_to_work_with(const vector<string> &team_not_work_with,
-                          const Student &student, const vector<Student> &team)
-{
-    // Check if the student is in the team_not_work_with list
-    bool student_in_team_not_work_with =
-        find(team_not_work_with.begin(), team_not_work_with.end(),
-             student.username) != team_not_work_with.end();
-
-    // Check if any student in the team is in the student's do_not_work_with list
-    bool team_member_in_student_not_work_with = false;
-    for (const auto &team_member : team)
-    {
-        if (find(student.do_not_work_with.begin(), student.do_not_work_with.end(),
-                 team_member.username) != student.do_not_work_with.end())
-        {
-            team_member_in_student_not_work_with = true;
-            break;
-        }
-    }
-
-    return !(student_in_team_not_work_with ||
-             team_member_in_student_not_work_with);
 }
 
 // calculates the total score for a team
