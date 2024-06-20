@@ -87,13 +87,6 @@ void create_teams(vector<Student> &students, int team_size,
                 {
                     students_copy.erase(it);
                 }
-                else
-                {
-                    for (const auto &student : students_copy)
-                    {
-                        cout << student.username << endl;
-                    }
-                }
             }
             else
             {
