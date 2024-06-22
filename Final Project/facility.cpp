@@ -1,8 +1,18 @@
 #include "include/facility.hpp"
+#include "include/event.hpp"
 #include <fstream>
 #include <iostream>
 
 using namespace std;
+
+struct EventNameComparer {
+    EventNameComparer(const std::string& name) : name(name) {}
+    bool operator()(const std::unique_ptr<Event>& e) const {
+        return e->get_name() == name;
+    }
+private:
+    std::string name;
+};
 
 void Facility::add_reservation(Event &event)
 {
@@ -12,11 +22,10 @@ void Facility::add_reservation(Event &event)
 
 void Facility::remove_reservation(Event &event)
 {
-    auto it = remove_if(reservations.begin(), reservations.end(), [&](Event &e)
-                        { return e.get_name() == event.get_name(); });
+    auto it = find_if(reservations.begin(), reservations.end(), EventNameComparer(event.get_name()));
     if (it != reservations.end())
     {
-        reservations.erase(it, reservations.end());
+        reservations.erase(it);
         cout << "Removed reservation for event: " << event.get_name() << endl;
     }
     else
@@ -25,10 +34,15 @@ void Facility::remove_reservation(Event &event)
     }
 }
 
-const User& get_user_by_username(const string &username, const Facility &facility) {
-    for (const auto &reservation : facility.get_reservations()) {
-        for (const auto &attendee : reservation.get_attendees()) {
-            if (attendee.get_username() == username) {
+
+const User &get_user_by_username(const string &username, const Facility &facility)
+{
+    for (const auto &reservation : facility.get_reservations())
+    {
+        for (const auto &attendee : reservation.get_attendees())
+        {
+            if (attendee.get_username() == username)
+            {
                 return attendee;
             }
         }
@@ -54,8 +68,7 @@ vector<Event> &Facility::get_pending_reservations()
 
 void Facility::approve_reservation(Event &event)
 {
-    auto it = find(pending_reservations.begin(), pending_reservations.end(), [&](Event &e)
-                   { return e.get_name() == event.get_name(); });
+    auto it = find_if(pending_reservations.begin(), pending_reservations.end(), EventNameComparer(event.get_name()));
     if (it != pending_reservations.end())
     {
         pending_reservations.erase(it, pending_reservations.end());

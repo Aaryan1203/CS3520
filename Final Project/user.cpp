@@ -8,6 +8,18 @@
 
 using namespace std;
 
+struct EventNameComparer
+{
+    EventNameComparer(const string &name) : name(name) {}
+    bool operator()(const Event &e) const
+    {
+        return e.get_name() == name;
+    }
+
+private:
+    string name;
+};
+
 User::User(const string &username, const string &password, int balance, const string &city)
     : username(username), password(password), balance(balance), city(city)
 {
@@ -159,7 +171,7 @@ Event User::create_event(Facility &facility)
     cin >> open_to_non_residents;
 
     // Create the Event object
-    Event new_event(event_name, event_date, start_time, end_time, is_public, num_guests, organizer, layout, price_of_event, ticket_price, organizer_type, open_to_residents, open_to_non_residents, facility);
+    Event new_event(event_name, event_date, start_time, end_time, is_public, num_guests, organizer, layout, price_of_event, ticket_price, organizer_type, open_to_residents, open_to_non_residents, &facility);
 
     return new_event;
 }
@@ -211,10 +223,9 @@ void user_menu(User &user, Facility &facility)
             getline(cin, event_name);
             vector<Event> pending_reservations = retrieve_events_from_file("pending_requests.txt", facility);
             vector<Event> reservations = retrieve_events_from_file("reservations.txt", facility);
-            auto it_pending = find_if(pending_reservations.begin(), pending_reservations.end(), [&](const Event &e)
-                                      { return e.get_name() == event_name; });
-            auto it_reservations = find_if(reservations.begin(), reservations.end(), [&](const Event &e)
-                                           { return e.get_name() == event_name; });
+
+            vector<Event>::iterator it_pending = find_if(pending_reservations.begin(), pending_reservations.end(), EventNameComparer(event_name));
+            vector<Event>::iterator it_reservations = find_if(reservations.begin(), reservations.end(), EventNameComparer(event_name));
 
             if (it_pending != pending_reservations.end())
             {
