@@ -18,11 +18,6 @@ public:
           bool is_public, int num_guests, User &organizer, LayoutType layout,
           int price_of_event, int ticket_price, OrganizerType type,
           bool open_to_residents, bool open_to_non_residents);
-    // Event();
-    // Event(const Event &) = default;
-    // Event &operator=(const Event &) = delete;
-    // Event(Event &&) noexcept;
-    // Event &operator=(Event &&) noexcept;
 
     string get_name() const;
     time_t get_date() const;

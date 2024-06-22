@@ -20,55 +20,6 @@ Event::Event(const string name, time_t date, time_t start_time, time_t end_time,
       price_of_event(price_of_event), ticket_price(ticket_price), type(type),
       open_to_residents(open_to_residents), open_to_non_residents(open_to_non_residents) {}
 
-// Event::Event()
-//     : name(""), date(0), start_time(0), end_time(0), is_public(false), num_guests(0), organizer(nullptr),
-//       layout(LayoutType::MEETING_STYLE), price_of_event(0), ticket_price(0), type(OrganizerType::RESIDENT),
-//       open_to_residents(false), open_to_non_residents(false), facility(*(new Facility)) {}
-
-// Event::Event(Event &&other) noexcept
-//     : name(std::move(other.name)),
-//       date(other.date),
-//       start_time(other.start_time),
-//       end_time(other.end_time),
-//       is_public(other.is_public),
-//       num_guests(other.num_guests),
-//       organizer(other.organizer),
-//       layout(other.layout),
-//       price_of_event(other.price_of_event),
-//       ticket_price(other.ticket_price),
-//       attendees(std::move(other.attendees)),
-//       waitlist(std::move(other.waitlist)),
-//       type(other.type),
-//       open_to_residents(other.open_to_residents),
-//       open_to_non_residents(other.open_to_non_residents),
-//       facility(other.facility)
-// {
-// }
-
-// Event &Event::operator=(Event &&other) noexcept
-// {
-//     if (this != &other)
-//     {
-//         name = std::move(other.name);
-//         date = other.date;
-//         start_time = other.start_time;
-//         end_time = other.end_time;
-//         is_public = other.is_public;
-//         num_guests = other.num_guests;
-//         organizer = other.organizer;
-//         layout = other.layout;
-//         price_of_event = other.price_of_event;
-//         ticket_price = other.ticket_price;
-//         attendees = std::move(other.attendees);
-//         waitlist = std::move(other.waitlist);
-//         type = other.type;
-//         open_to_residents = other.open_to_residents;
-//         open_to_non_residents = other.open_to_non_residents;
-//         facility = other.facility;
-//     }
-//     return *this;
-// }
-
 string Event::get_name() const { return name; }
 time_t Event::get_date() const { return date; }
 time_t Event::get_start_time() const { return start_time; }
