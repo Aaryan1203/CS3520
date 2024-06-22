@@ -10,6 +10,7 @@ class Event;
 class Facility
 {
 public:
+    Facility(string name);
     void add_reservation(Event &event);
     void remove_reservation(Event &event);
     const vector<Event> &get_reservations() const;
@@ -22,6 +23,7 @@ public:
 private:
     vector<Event> reservations;
     vector<Event> pending_reservations;
+    string name;
 };
 
 #endif

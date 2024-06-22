@@ -171,7 +171,7 @@ Event User::create_event(Facility &facility)
     cin >> open_to_non_residents;
 
     // Create the Event object
-    Event new_event(event_name, event_date, start_time, end_time, is_public, num_guests, organizer, layout, price_of_event, ticket_price, organizer_type, open_to_residents, open_to_non_residents, &facility);
+    Event new_event(event_name, event_date, start_time, end_time, is_public, num_guests, *organizer, layout, price_of_event, ticket_price, organizer_type, open_to_residents, open_to_non_residents);
 
     return new_event;
 }

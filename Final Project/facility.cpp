@@ -5,14 +5,20 @@
 
 using namespace std;
 
-struct EventNameComparer {
-    EventNameComparer(const std::string& name) : name(name) {}
-    bool operator()(const std::unique_ptr<Event>& e) const {
-        return e->get_name() == name;
+struct EventNameComparer
+{
+    EventNameComparer(const string &name) : name(name) {}
+    bool operator()(const Event &e) const
+    {
+        return e.get_name() == name;
     }
+
 private:
-    std::string name;
+    string name;
 };
+
+Facility::Facility(string name)
+    : name(name) {}
 
 void Facility::add_reservation(Event &event)
 {
@@ -34,8 +40,7 @@ void Facility::remove_reservation(Event &event)
     }
 }
 
-
-const User &get_user_by_username(const string &username, const Facility &facility)
+const User &get_user_by_username(string username, Facility &facility)
 {
     for (const auto &reservation : facility.get_reservations())
     {

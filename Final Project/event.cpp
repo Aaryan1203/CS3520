@@ -12,62 +12,62 @@
 using namespace std;
 
 Event::Event(const string name, time_t date, time_t start_time, time_t end_time,
-             bool is_public, int num_guests, User *organizer, LayoutType layout,
+             bool is_public, int num_guests, User &organizer, LayoutType layout,
              int price_of_event, int ticket_price, OrganizerType type,
-             bool open_to_residents, bool open_to_non_residents, Facility *facility)
+             bool open_to_residents, bool open_to_non_residents)
     : name(name), date(date), start_time(start_time), end_time(end_time),
-      is_public(is_public), num_guests(num_guests), organizer(organizer), layout(layout),
+      is_public(is_public), num_guests(num_guests), organizer(&organizer), layout(layout),
       price_of_event(price_of_event), ticket_price(ticket_price), type(type),
-      open_to_residents(open_to_residents), open_to_non_residents(open_to_non_residents), facility(*facility) {}
+      open_to_residents(open_to_residents), open_to_non_residents(open_to_non_residents) {}
 
-Event::Event()
-    : name(""), date(0), start_time(0), end_time(0), is_public(false), num_guests(0), organizer(nullptr),
-      layout(LayoutType::MEETING_STYLE), price_of_event(0), ticket_price(0), type(OrganizerType::RESIDENT),
-      open_to_residents(false), open_to_non_residents(false), facility(*(new Facility)) {}
+// Event::Event()
+//     : name(""), date(0), start_time(0), end_time(0), is_public(false), num_guests(0), organizer(nullptr),
+//       layout(LayoutType::MEETING_STYLE), price_of_event(0), ticket_price(0), type(OrganizerType::RESIDENT),
+//       open_to_residents(false), open_to_non_residents(false), facility(*(new Facility)) {}
 
-Event::Event(Event &&other) noexcept
-    : name(std::move(other.name)),
-      date(other.date),
-      start_time(other.start_time),
-      end_time(other.end_time),
-      is_public(other.is_public),
-      num_guests(other.num_guests),
-      organizer(other.organizer),
-      layout(other.layout),
-      price_of_event(other.price_of_event),
-      ticket_price(other.ticket_price),
-      attendees(std::move(other.attendees)),
-      waitlist(std::move(other.waitlist)),
-      type(other.type),
-      open_to_residents(other.open_to_residents),
-      open_to_non_residents(other.open_to_non_residents),
-      facility(other.facility)
-{
-}
+// Event::Event(Event &&other) noexcept
+//     : name(std::move(other.name)),
+//       date(other.date),
+//       start_time(other.start_time),
+//       end_time(other.end_time),
+//       is_public(other.is_public),
+//       num_guests(other.num_guests),
+//       organizer(other.organizer),
+//       layout(other.layout),
+//       price_of_event(other.price_of_event),
+//       ticket_price(other.ticket_price),
+//       attendees(std::move(other.attendees)),
+//       waitlist(std::move(other.waitlist)),
+//       type(other.type),
+//       open_to_residents(other.open_to_residents),
+//       open_to_non_residents(other.open_to_non_residents),
+//       facility(other.facility)
+// {
+// }
 
-Event &Event::operator=(Event &&other) noexcept
-{
-    if (this != &other)
-    {
-        name = std::move(other.name);
-        date = other.date;
-        start_time = other.start_time;
-        end_time = other.end_time;
-        is_public = other.is_public;
-        num_guests = other.num_guests;
-        organizer = other.organizer;
-        layout = other.layout;
-        price_of_event = other.price_of_event;
-        ticket_price = other.ticket_price;
-        attendees = std::move(other.attendees);
-        waitlist = std::move(other.waitlist);
-        type = other.type;
-        open_to_residents = other.open_to_residents;
-        open_to_non_residents = other.open_to_non_residents;
-        facility = other.facility;
-    }
-    return *this;
-}
+// Event &Event::operator=(Event &&other) noexcept
+// {
+//     if (this != &other)
+//     {
+//         name = std::move(other.name);
+//         date = other.date;
+//         start_time = other.start_time;
+//         end_time = other.end_time;
+//         is_public = other.is_public;
+//         num_guests = other.num_guests;
+//         organizer = other.organizer;
+//         layout = other.layout;
+//         price_of_event = other.price_of_event;
+//         ticket_price = other.ticket_price;
+//         attendees = std::move(other.attendees);
+//         waitlist = std::move(other.waitlist);
+//         type = other.type;
+//         open_to_residents = other.open_to_residents;
+//         open_to_non_residents = other.open_to_non_residents;
+//         facility = other.facility;
+//     }
+//     return *this;
+// }
 
 string Event::get_name() const { return name; }
 time_t Event::get_date() const { return date; }
@@ -124,7 +124,7 @@ void Event::refund_users()
     cout << "All attendees have been refunded." << endl;
 }
 
-void add_event_to_file(const vector<Event> &events, const string &filename)
+void add_event_to_file(const vector<Event> events, const string filename)
 {
     ofstream outfile(filename, ios::app);
 
@@ -161,7 +161,7 @@ void add_event_to_file(const vector<Event> &events, const string &filename)
     outfile.close();
 }
 
-vector<Event> retrieve_events_from_file(const string &filename, Facility &facility)
+vector<Event> retrieve_events_from_file(string filename, Facility &facility)
 {
     ifstream infile(filename);
     vector<Event> events;
@@ -195,7 +195,7 @@ vector<Event> retrieve_events_from_file(const string &filename, Facility &facili
 
             getline(infile, line);
             string organizer_username = line.substr(11);
-            User *organizer = &get_user_by_username(organizer_username, facility);
+            User organizer = get_user_by_username(organizer_username, facility);
 
             getline(infile, line);
             LayoutType layout = static_cast<LayoutType>(stoi(line.substr(8)));
@@ -219,7 +219,7 @@ vector<Event> retrieve_events_from_file(const string &filename, Facility &facili
             getline(infile, line);
 
             // Create the event
-            Event event(event_name, event_date, start_time, end_time, is_public, num_guests, organizer, layout, price_of_event, ticket_price, organizer_type, open_to_residents, open_to_non_residents, &facility);
+            Event event(event_name, event_date, start_time, end_time, is_public, num_guests, organizer, layout, price_of_event, ticket_price, organizer_type, open_to_residents, open_to_non_residents);
             events.push_back(event);
         }
     }

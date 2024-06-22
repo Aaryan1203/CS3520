@@ -4,6 +4,7 @@
 #include <vector>
 #include "include/user.hpp"
 #include "include/facility_manager.hpp"
+#include "include/facility.hpp"
 
 using namespace std;
 
@@ -11,7 +12,7 @@ int main()
 {
     vector<User> users;               // this would loaded from a file
     vector<FacilityManager> managers; // this would be loaded from a file
-    Facility facility;
+    Facility facility = Facility("test");  
 
     while (true)
     {
@@ -58,14 +59,14 @@ int main()
                 }
 
                 User user(username, password, 0, "Unknown");
-                if (validate_user_credentials(username, password, user))
-                {
+                // if (validate_user_credentials(username, password, user))
+                // {
                     user_menu(user, facility);
-                }
-                else
-                {
+                // }
+                // else
+                // {
                     cout << "Login credentials are incorrect. Please try again. \n";
-                }
+                // }
                 break;
             }
             cout << "user" << endl;

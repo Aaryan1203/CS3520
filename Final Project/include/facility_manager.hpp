@@ -4,7 +4,6 @@
 #include <string>
 #include <memory>
 #include "event.hpp"
-#include "facility.hpp"
 
 using namespace std;
 

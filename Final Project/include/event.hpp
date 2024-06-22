@@ -15,14 +15,14 @@ class Event
 {
 public:
     Event(const string name, time_t date, time_t start_time, time_t end_time,
-          bool is_public, int num_guests, User *organizer, LayoutType layout,
+          bool is_public, int num_guests, User &organizer, LayoutType layout,
           int price_of_event, int ticket_price, OrganizerType type,
-          bool open_to_residents, bool open_to_non_residents, Facility *facility);
-    Event();
-    Event(const Event &) = default;
-    Event &operator=(const Event &) = delete;
-    Event(Event &&) noexcept;
-    Event &operator=(Event &&) noexcept;
+          bool open_to_residents, bool open_to_non_residents);
+    // Event();
+    // Event(const Event &) = default;
+    // Event &operator=(const Event &) = delete;
+    // Event(Event &&) noexcept;
+    // Event &operator=(Event &&) noexcept;
 
     string get_name() const;
     time_t get_date() const;
@@ -61,10 +61,9 @@ private:
     OrganizerType type;
     bool open_to_residents;
     bool open_to_non_residents;
-    Facility &facility;
 };
 
-void add_event_to_file(vector<Event> &events, const string &filename);
-vector<Event> retrieve_events_from_file(const string &filename, Facility &facility);
-Event get_event_by_name(string name, vector<Event> &events);
+void add_event_to_file(vector<Event> events, const string filename);
+vector<Event> retrieve_events_from_file(string filename, Facility &facility);
+Event get_event_by_name(string name, vector<Event> events);
 #endif

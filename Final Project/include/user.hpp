@@ -32,8 +32,8 @@ private:
     vector<Event> events;
 };
 
-bool validate_user_credentials(const string &username, const string &password, User &user);
+// bool validate_user_credentials(const string &username, const string &password, User &user);
 void user_menu(User &user, Facility &facility);
-User &get_user_by_username(const string &username, Facility &facility);
+const User &get_user_by_username(string username, Facility &facility);
 
 #endif
