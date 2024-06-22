@@ -1,24 +1,27 @@
-#ifndef FACILITY_H
-#define FACILITY_H
+#ifndef FACILITY_HPP
+#define FACILITY_HPP
 
 #include <vector>
-#include "event.hpp"
-#include "facility_manager.hpp"
+#include <string>
+#include <memory>
+#include "user.hpp"
 
-class FacilityManager;
-
+class Event;
 class Facility
 {
 public:
-    Facility(vector<Event> reservations, FacilityManager manager);
     void add_reservation(Event &event);
     void remove_reservation(Event &event);
-    void save_reservations_to_file(const string &filename) const;
-    void load_reservations_from_file(const string &filename);
+    const vector<Event> &get_reservations() const;
+
+    void add_pending_reservation(Event &event);
+    vector<Event> &get_pending_reservations();
+    void approve_reservation(Event &event);
+    bool exceeds_max_reservation_time() const;
 
 private:
     vector<Event> reservations;
-    FacilityManager manager;
+    vector<Event> pending_reservations;
 };
 
 #endif

@@ -3,28 +3,37 @@
 
 #include <string>
 #include <vector>
-#include "event.hpp"
 #include "enums.hpp"
+
+class Facility;
+class Event;
 
 using namespace std;
 
-class User {
+class User
+{
 public:
     User(const string &username, const string &password, int balance, const string &city);
 
-    void make_reservation(Event &event);
-    void cancel_reservation(Event &event);
-    void view_reservations() const;
-    void buy_ticket(Event &event);
-    void make_event(const string &name, time_t date, time_t start_time, time_t end_time, int num_guests, LayoutType layout, int ticket_price, OrganizerType type, bool open_to_residents, bool open_to_non_residents);
-    void cancel_event(Event &event);
     string get_username() const;
+    int get_balance() const;
+    void set_balance(int balance);
+    void cancel_reservation(Event &event);
+    void view_events();
+    void view_my_reservations();
+    Event create_event(Facility &facility);
+    void view_my_information();
 private:
     string username;
     string password;
     int balance;
     string city;
-    vector<Event> organized_events;
+    vector<Event> reservations;
+    vector<Event> events;
 };
+
+bool validate_user_credentials(const string &username, const string &password, User &user);
+void user_menu(User &user, Facility &facility);
+User &get_user_by_username(const string &username, Facility &facility);
 
 #endif
