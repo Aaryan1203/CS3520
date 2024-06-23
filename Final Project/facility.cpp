@@ -20,18 +20,23 @@ private:
 Facility::Facility(string name)
     : name(name) {}
 
-void Facility::add_reservation(Event &event)
+void Facility::add_user(User &user)
 {
-    reservations.push_back(event);
+    all_users.push_back(user);
+}
+
+void Facility::add_approved_reservation(Event &event)
+{
+    approved_reservations.push_back(event);
     cout << "Added reservation for event: " << event.get_name() << endl;
 }
 
 void Facility::remove_reservation(Event &event)
 {
-    auto it = find_if(reservations.begin(), reservations.end(), EventNameComparer(event.get_name()));
-    if (it != reservations.end())
+    auto it = find_if(approved_reservations.begin(), approved_reservations.end(), EventNameComparer(event.get_name()));
+    if (it != approved_reservations.end())
     {
-        reservations.erase(it);
+        approved_reservations.erase(it);
         cout << "Removed reservation for event: " << event.get_name() << endl;
     }
     else
@@ -42,22 +47,24 @@ void Facility::remove_reservation(Event &event)
 
 const User &get_user_by_username(string username, Facility &facility)
 {
-    for (const auto &reservation : facility.get_reservations())
+    for (const auto &user : facility.get_all_users())
     {
-        for (const auto &attendee : reservation.get_attendees())
+        if (user.get_username() == username)
         {
-            if (attendee.get_username() == username)
-            {
-                return attendee;
-            }
+            return user;
         }
     }
     throw runtime_error("User not found");
 }
 
-const vector<Event> &Facility::get_reservations() const
+vector<User> &Facility::get_all_users()
 {
-    return reservations;
+    return all_users;
+}
+
+const vector<Event> &Facility::get_approved_reservations() const
+{
+    return approved_reservations;
 }
 
 void Facility::add_pending_reservation(Event &event)
@@ -83,7 +90,7 @@ void Facility::approve_reservation(Event &event)
     {
         cout << "Pending reservation not found for event: " << event.get_name() << endl;
     }
-    add_reservation(event);
+    add_approved_reservation(event);
 }
 
 bool Facility::exceeds_max_reservation_time() const
@@ -92,7 +99,7 @@ bool Facility::exceeds_max_reservation_time() const
     int city_time = 0;
     int resident_time = 0;
     int non_resident_time = 0;
-    for (const auto &event : reservations)
+    for (const auto &event : approved_reservations)
     {
         if (event.get_type() == OrganizerType::ORGANIZATION)
         {

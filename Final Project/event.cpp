@@ -8,20 +8,23 @@
 #include <vector>
 #include <fstream>
 #include <utility>
+#include <stdexcept>
+#include <ctime>
+#include <string>
+#include <iomanip>
 
 using namespace std;
 
-Event::Event(const string name, time_t date, time_t start_time, time_t end_time,
+Event::Event(const string name, time_t start_time, time_t end_time,
              bool is_public, int num_guests, User &organizer, LayoutType layout,
              int price_of_event, int ticket_price, OrganizerType type,
-             bool open_to_residents, bool open_to_non_residents)
-    : name(name), date(date), start_time(start_time), end_time(end_time),
+             bool open_to_residents, bool open_to_non_residents, bool approved, vector<User> attendees)
+    : name(name), start_time(start_time), end_time(end_time),
       is_public(is_public), num_guests(num_guests), organizer(&organizer), layout(layout),
       price_of_event(price_of_event), ticket_price(ticket_price), type(type),
-      open_to_residents(open_to_residents), open_to_non_residents(open_to_non_residents) {}
+      open_to_residents(open_to_residents), open_to_non_residents(open_to_non_residents), approved(approved), attendees(attendees) {}
 
 string Event::get_name() const { return name; }
-time_t Event::get_date() const { return date; }
 time_t Event::get_start_time() const { return start_time; }
 time_t Event::get_end_time() const { return end_time; }
 bool Event::is_public_event() const { return is_public; }
@@ -35,14 +38,18 @@ bool Event::is_open_to_residents() const { return open_to_residents; }
 bool Event::is_open_to_non_residents() const { return open_to_non_residents; }
 vector<User> Event::get_attendees() const { return attendees; }
 void Event::set_ticket_price(int price) { ticket_price = price; }
+bool Event::is_approved() const { return approved; }
+void Event::set_approved(bool approved) { this->approved = approved; }
 ostream &operator<<(ostream &os, const Event &event)
 {
+    tm *start_tm = localtime(&event.start_time);
+    tm *end_tm = localtime(&event.end_time);
+
     os << "Event Name: " << event.name << endl;
-    os << "Date: " << event.date << endl;
-    os << "Start Time: " << event.start_time << endl;
-    os << "End Time: " << event.end_time << endl;
+    os << "Start Time: " << put_time(start_tm, "%Y-%m-%d %H:%M") << endl;
+    os << "End Time: " << put_time(end_tm, "%Y-%m-%d %H:%M") << endl;
     os << "Number of Guests: " << event.num_guests << endl;
-    os << "Organizer: " << event.organizer->get_username() << endl;
+    os << "Organizer: " << event.organizer << endl;
     os << "Price of Event: " << event.price_of_event << endl;
     os << "Ticket Price: " << event.ticket_price << endl;
     os << "Open to Residents: " << event.open_to_residents << endl;
@@ -52,7 +59,7 @@ ostream &operator<<(ostream &os, const Event &event)
 
 bool Event::operator==(const Event &other) const
 {
-    return name == other.name && date == other.date && start_time == other.start_time &&
+    return name == other.name && start_time == other.start_time &&
            end_time == other.end_time && num_guests == other.num_guests && organizer == other.organizer &&
            layout == other.layout && price_of_event == other.price_of_event && ticket_price == other.ticket_price &&
            type == other.type && open_to_residents == other.open_to_residents && open_to_non_residents == other.open_to_non_residents;
@@ -86,12 +93,19 @@ void add_event_to_file(const vector<Event> events, const string filename)
     }
     for (const auto &event : events)
     {
+        // Convert start and end times to a readable format
+        time_t start_time = event.get_start_time();
+        time_t end_time = event.get_end_time();
+
+        // Convert start and end times to a readable format
+        tm *start_tm = localtime(&start_time);
+        tm *end_tm = localtime(&end_time);
+
         // Write event details to the file
         outfile << "Event Name: " << event.get_name() << endl;
-        outfile << "Date: " << event.get_date() << endl;
-        outfile << "Start Time: " << event.get_start_time() << endl;
-        outfile << "End Time: " << event.get_end_time() << endl;
-        outfile << "Is public: " << event.is_public_event() << endl;
+        outfile << "Start Time: " << put_time(start_tm, "%Y-%m-%d %H:%M") << endl;
+        outfile << "End Time: " << put_time(end_tm, "%Y-%m-%d %H:%M") << endl;
+        outfile << "Is public: " << (event.is_public_event() ? "yes" : "no") << endl;
         outfile << "Number of Guests: " << event.get_num_guests() << endl;
         if (event.get_organizer())
         {
@@ -101,12 +115,26 @@ void add_event_to_file(const vector<Event> events, const string filename)
         {
             outfile << "Organizer: " << "None" << endl;
         }
-        outfile << "Layout: " << static_cast<int>(event.get_layout()) << endl;
+        outfile << "Layout: " << layoutTypeToString(event.get_layout()) << endl;
         outfile << "Price of Event: " << event.get_price_of_event() << endl;
         outfile << "Ticket Price: " << event.get_ticket_price() << endl;
-        outfile << "Organizer Type: " << static_cast<int>(event.get_type()) << endl;
-        outfile << "Open to Residents: " << event.is_open_to_residents() << endl;
-        outfile << "Open to Non-Residents: " << event.is_open_to_non_residents() << endl;
+        outfile << "Organizer Type: " << organizerTypeToString(event.get_type()) << endl;
+        outfile << "Open to Residents: " << (event.is_open_to_residents() ? "yes" : "no") << endl;
+        outfile << "Open to Non-Residents: " << (event.is_open_to_non_residents() ? "yes" : "no") << endl;
+        outfile << "Approved: " << (event.is_approved() ? "yes" : "no") << endl;
+        outfile << "Attendees: ";
+        const vector<User> &attendees = event.get_attendees();
+        for (size_t i = 0; i < attendees.size(); ++i)
+        {
+            const User &user = attendees[i];
+            outfile << user.get_username() << "," << user.get_balance() << "," << user.get_city();
+            if (i < attendees.size() - 1)
+            {
+                outfile << ";";
+            }
+        }
+        outfile << endl;
+
         outfile << "----------------------------------------" << endl;
     }
     outfile.close();
@@ -127,51 +155,83 @@ vector<Event> retrieve_events_from_file(string filename, Facility &facility)
     {
         if (line.find("Event Name: ") == 0)
         {
-            string event_name = line.substr(12);
+            try
+            {
+                string event_name = line.substr(12);
 
-            getline(infile, line);
-            time_t event_date = stoi(line.substr(6));
+                getline(infile, line);
+                time_t start_time = parse_datetime(line.substr(12));
 
-            getline(infile, line);
-            time_t start_time = stoi(line.substr(12));
+                getline(infile, line);
+                time_t end_time = parse_datetime(line.substr(10));
 
-            getline(infile, line);
-            time_t end_time = stoi(line.substr(10));
+                getline(infile, line);
+                bool is_public = parse_bool(line.substr(11));
 
-            getline(infile, line);
-            bool is_public = stoi(line.substr(11));
+                getline(infile, line);
+                int num_guests = stoi(line.substr(18));
 
-            getline(infile, line);
-            int num_guests = stoi(line.substr(16));
+                getline(infile, line);
+                string organizer_username = line.substr(11);
+                User organizer = get_user_by_username(organizer_username, facility);
+                cout << "Organizer: " << organizer << endl;
+                
+                getline(infile, line);
+                LayoutType layout = parse_layout(line.substr(8));
 
-            getline(infile, line);
-            string organizer_username = line.substr(11);
-            User organizer = get_user_by_username(organizer_username, facility);
+                getline(infile, line);
+                int price_of_event = stoi(line.substr(16));
 
-            getline(infile, line);
-            LayoutType layout = static_cast<LayoutType>(stoi(line.substr(8)));
+                getline(infile, line);
+                int ticket_price = stoi(line.substr(14));
 
-            getline(infile, line);
-            int price_of_event = stoi(line.substr(16));
+                getline(infile, line);
+                OrganizerType organizer_type = parse_organizer_type(line.substr(16));
 
-            getline(infile, line);
-            int ticket_price = stoi(line.substr(14));
+                getline(infile, line);
+                bool open_to_residents = parse_bool(line.substr(19));
 
-            getline(infile, line);
-            OrganizerType organizer_type = static_cast<OrganizerType>(stoi(line.substr(16)));
+                getline(infile, line);
+                bool open_to_non_residents = parse_bool(line.substr(24));
 
-            getline(infile, line);
-            bool open_to_residents = stoi(line.substr(19));
+                getline(infile, line);
+                bool approved = parse_bool(line.substr(10));
 
-            getline(infile, line);
-            bool open_to_non_residents = stoi(line.substr(24));
+                // Read attendees
+                vector<User> attendees;
+                getline(infile, line);
+                if (line.find("Attendees: ") == 0)
+                {
+                    string attendees_str = line.substr(11);
+                    stringstream ss(attendees_str);
+                    string attendee_info;
+                    while (getline(ss, attendee_info, ';'))
+                    {
+                        stringstream user_ss(attendee_info);
+                        string username, balance_str, city;
+                        getline(user_ss, username, ',');
+                        getline(user_ss, balance_str, ',');
+                        getline(user_ss, city, ',');
+                        double balance = stod(balance_str);
+                        User attendee(username, balance, city);
+                        attendees.push_back(attendee);
+                    }
+                }
+                // Skip the separator line
+                getline(infile, line);
 
-            // Skip the separator line
-            getline(infile, line);
-
-            // Create the event
-            Event event(event_name, event_date, start_time, end_time, is_public, num_guests, organizer, layout, price_of_event, ticket_price, organizer_type, open_to_residents, open_to_non_residents);
-            events.push_back(event);
+                // Create the event
+                Event event(event_name, start_time, end_time, is_public, num_guests, organizer, layout, price_of_event, ticket_price, organizer_type, open_to_residents, open_to_non_residents, approved, attendees);
+                events.push_back(event);
+            }
+            catch (const out_of_range &e)
+            {
+                cerr << "Error parsing file: " << e.what() << endl;
+            }
+            catch (const invalid_argument &e)
+            {
+                cerr << "Invalid data found: " << e.what() << endl;
+            }
         }
     }
 
@@ -188,4 +248,43 @@ Event get_event_by_name(string name, vector<Event> &events)
             return event;
         }
     }
+}
+
+time_t parse_datetime(const string &datetime_str)
+{
+    tm timeinfo = {};
+    stringstream ss(datetime_str);
+    ss >> get_time(&timeinfo, "%Y-%m-%d %H:%M");
+    return mktime(&timeinfo);
+}
+
+bool parse_bool(const string &bool_str)
+{
+    return bool_str == "yes";
+}
+
+LayoutType parse_layout(const string &layout_str)
+{
+    if (layout_str == "Meeting Style")
+        return LayoutType::MEETING_STYLE;
+    if (layout_str == "Lecture Style")
+        return LayoutType::LECTURE_STYLE;
+    if (layout_str == "Wedding Style")
+        return LayoutType::WEDDING_STYLE;
+    if (layout_str == "Dance Room Style")
+        return LayoutType::DANCE_ROOM_STYLE;
+    throw invalid_argument("Invalid layout type");
+}
+
+OrganizerType parse_organizer_type(const string &organizer_type_str)
+{
+    if (organizer_type_str == "City")
+        return OrganizerType::CITY;
+    if (organizer_type_str == "Organization")
+        return OrganizerType::ORGANIZATION;
+    if (organizer_type_str == "Resident")
+        return OrganizerType::RESIDENT;
+    if (organizer_type_str == "Non Resident")
+        return OrganizerType::NON_RESIDENT;
+    throw invalid_argument("Invalid organizer type");
 }

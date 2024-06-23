@@ -1,7 +1,6 @@
 #include <iostream>
 #include <limits>
 #include <string>
-#include <vector>
 #include "include/user.hpp"
 #include "include/facility_manager.hpp"
 #include "include/facility.hpp"
@@ -10,9 +9,24 @@ using namespace std;
 
 int main()
 {
-    vector<User> users;               // this would loaded from a file
-    vector<FacilityManager> managers; // this would be loaded from a file
-    Facility facility = Facility("test");  
+    Facility facility("test");
+    vector<User> users = read_users_from_file("users.txt");
+    vector<Event> pending_reservations = retrieve_events_from_file("pending_requests.txt", facility);
+    vector<Event> approved_reservations = retrieve_events_from_file("approved_reservations.txt", facility);
+    for (auto &user : users)
+    {
+        facility.add_user(user);
+    }
+
+    for (auto &event : pending_reservations)
+    {
+        facility.add_pending_reservation(event);
+    }
+
+    for (auto &event : approved_reservations)
+    {
+        facility.add_approved_reservation(event);
+    }
 
     while (true)
     {
@@ -35,41 +49,30 @@ int main()
         switch (choice)
         {
         case 1:
+        {
+            string username;
+            cout << "Please enter your username: ";
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            getline(cin, username);
+            if (cin.fail() || username.empty())
             {
-                string username, password;
-                cout << "Please enter your username: ";
+                cout << "Invalid input. Please try again. \n";
+                cin.clear();
                 cin.ignore(numeric_limits<streamsize>::max(), '\n');
-                getline(cin, username);
-                if (cin.fail() || username.empty())
-                {
-                    cout << "Invalid input. Please try again. \n";
-                    cin.clear();
-                    cin.ignore(numeric_limits<streamsize>::max(), '\n');
-                    continue;
-                }
-
-                cout << "Please enter your password: ";
-                getline(cin, password);
-                if (cin.fail() || password.empty())
-                {
-                    cout << "Invalid input. Please try again. \n";
-                    cin.clear();
-                    cin.ignore(numeric_limits<streamsize>::max(), '\n');
-                    continue;
-                }
-
-                User user(username, password, 0, "Unknown");
-                // if (validate_user_credentials(username, password, user))
-                // {
-                    user_menu(user, facility);
-                // }
-                // else
-                // {
-                    cout << "Login credentials are incorrect. Please try again. \n";
-                // }
-                break;
+                continue;
             }
-            cout << "user" << endl;
+
+            User user("", 0, "");
+            if (validate_user_credentials(username, user, facility))
+            {
+                user_menu(user, facility);
+            }
+            else
+            {
+                cout << "Login failed. Please try again. \n";
+            }
+            break;
+        }
         case 2:
         {
             string username, password;
@@ -97,7 +100,7 @@ int main()
             FacilityManager manager(username, password);
             if (validate_facility_manager_credentials(username, password, manager))
             {
-                facility_manager_menu(manager);
+                facility_manager_menu(manager, facility);
             }
             else
             {

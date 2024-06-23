@@ -12,20 +12,13 @@ class Facility;
 class FacilityManager {
 public:
     FacilityManager(const string &username, const string &password);
-    // ~FacilityManager();
-    // FacilityManager(const FacilityManager& other);
-    // FacilityManager(FacilityManager&& other) noexcept;
-    // FacilityManager& operator=(const FacilityManager& other);
-    // FacilityManager& operator=(FacilityManager&& other) noexcept;
 
     string get_username() const;
     shared_ptr<Facility> get_facility() const;
 
-    void view_reservation_requests(const string &file_name) const;
+    void view_reservations(const string &file_name) const;
     void view_budget() const;
     void refund_event(Event &event);
-    void view_events() const;
-    void view_pending_reservations() const;
     void approve_reservation(const string &event_name);
 
     void set_facility(shared_ptr<Facility> fac);
@@ -43,6 +36,6 @@ private:
 };
 
 bool validate_facility_manager_credentials(const string &username, const string &password, FacilityManager &manager);
-void facility_manager_menu(FacilityManager &manager);
+void facility_manager_menu(FacilityManager &manager, Facility &facility);
 
 #endif

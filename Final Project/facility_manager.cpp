@@ -11,37 +11,6 @@ FacilityManager::FacilityManager(const string &username, const string &password)
 {
 }
 
-// destructor
-// FacilityManager::~FacilityManager() = default;
-
-// copy constructor
-// FacilityManager::FacilityManager(const FacilityManager& other)
-//     : username(other.username), password(other.password), facility(other.facility), budget(other.budget) {}
-
-// // move constructor
-// FacilityManager::FacilityManager(FacilityManager&& other) noexcept
-//     : username(move(other.username)), password(move(other.password)), facility(move(other.facility)), budget(other.budget) {}
-
-// // copy assignment
-// FacilityManager& FacilityManager::operator=(const FacilityManager& other) {
-//     if (this == &other) return *this;
-//     username = other.username;
-//     password = other.password;
-//     facility = other.facility;
-//     budget = other.budget;
-//     return *this;
-// }
-
-// // move assignment
-// FacilityManager& FacilityManager::operator=(FacilityManager&& other) noexcept {
-//     if (this == &other) return *this;
-//     username = move(other.username);
-//     password = move(other.password);
-//     facility = move(other.facility);
-//     budget = other.budget;
-//     return *this;
-// }
-
 string FacilityManager::get_username() const
 {
     return username;
@@ -52,7 +21,7 @@ shared_ptr<Facility> FacilityManager::get_facility() const
     return facility;
 }
 
-void FacilityManager::view_reservation_requests(const string &file_name) const
+void FacilityManager::view_reservations(const string &file_name) const
 {
     ifstream file(file_name);
     if (!file.is_open())
@@ -81,11 +50,11 @@ void FacilityManager::refund_event(Event &event)
     double refund_amount = event.get_price_of_event();
 
     // Calculate penalty if cancellation is within 7 days but not within 24 hours
-    if (event.get_date() - current_time <= 7 * 24 * 3600 && event.get_date() - current_time > 24 * 3600)
+    if (event.get_start_time() - current_time <= 7 * 24 * 3600 && event.get_start_time() - current_time > 24 * 3600)
     {
         refund_amount *= 0.99; // 1% penalty
     }
-    else if (event.get_date() - current_time <= 24 * 3600)
+    else if (event.get_start_time() - current_time <= 24 * 3600)
     {
         refund_amount = 0; // No refund within 24 hours
     }
@@ -103,38 +72,6 @@ void FacilityManager::refund_event(Event &event)
     }
 
     cout << "Refunded event and updated budget. New budget: $" << budget << endl;
-}
-
-void FacilityManager::view_events() const
-{
-    if (!facility)
-    {
-        cout << "Facility not assigned to manager." << endl;
-        return;
-    }
-
-    const vector<Event> &reservations = facility->get_reservations();
-    cout << "Events: " << endl;
-    for (const Event &event : reservations)
-    {
-        cout << event << endl;
-    }
-}
-
-void FacilityManager::view_pending_reservations() const
-{
-    if (!facility)
-    {
-        cout << "Facility not assigned to manager." << endl;
-        return;
-    }
-
-    const vector<Event> &pending_reservations = facility->get_pending_reservations();
-    cout << "Pending Reservations: " << endl;
-    for (const Event &event : pending_reservations)
-    {
-        cout << event << endl;
-    }
 }
 
 bool FacilityManager::is_valid_event(const Event &event) const
@@ -252,10 +189,9 @@ void FacilityManager::set_facility(shared_ptr<Facility> fac)
 
 bool FacilityManager::is_overlapping(const Event &new_event) const
 {
-    for (const Event &event : facility->get_reservations())
+    for (const Event &event : facility->get_approved_reservations())
     {
-        if (new_event.get_date() == event.get_date() &&
-            ((new_event.get_start_time() < event.get_end_time() && new_event.get_start_time() >= event.get_start_time()) ||
+        if (((new_event.get_start_time() < event.get_end_time() && new_event.get_start_time() >= event.get_start_time()) ||
              (new_event.get_end_time() > event.get_start_time() && new_event.get_end_time() <= event.get_end_time())))
         {
             return true;
@@ -295,18 +231,17 @@ bool validate_facility_manager_credentials(const string &username, const string 
     return false;
 }
 
-void facility_manager_menu(FacilityManager &manager)
+void facility_manager_menu(FacilityManager &manager, Facility &facility)
 {
     while (true)
     {
         cout << "Welcome Manager " << manager.get_username() << "!\n";
         cout << "1. View Reservation Requests\n";
-        cout << "2. View Budget\n";
-        cout << "3. Refund Event\n";
-        cout << "4. View Events\n";
-        cout << "5. View Pending Reservations\n";
-        cout << "6. Approve Reservation\n";
-        cout << "7. Logout\n";
+        cout << "2. View Approved reservations\n";
+        cout << "3. View Budget\n";
+        cout << "4. Refund Event\n";
+        cout << "5. Approve Reservation\n";
+        cout << "6. Logout\n";
 
         int choice;
         cin >> choice;
@@ -322,25 +257,24 @@ void facility_manager_menu(FacilityManager &manager)
         {
         case 1:
         {
-            string filename;
-            cout << "Enter the reservation requests file name: ";
-            cin.ignore();
-            getline(cin, filename);
-            manager.view_reservation_requests(filename);
+            manager.view_reservations("pending_requests.txt");
             break;
         }
         case 2:
-            manager.view_budget();
+        {
+            manager.view_reservations("approved_reservations.txt");
             break;
+        }
         case 3:
         {
             string event_name;
+
             cout << "Enter the event name to refund: ";
             cin.ignore();
             getline(cin, event_name);
 
             const Event *event_ptr = nullptr;
-            const vector<Event> &reservations = manager.get_facility()->get_reservations();
+            const vector<Event> &reservations = manager.get_facility()->get_approved_reservations();
             for (const Event &e : reservations)
             {
                 if (e.get_name() == event_name)
@@ -363,12 +297,9 @@ void facility_manager_menu(FacilityManager &manager)
             break;
         }
         case 4:
-            manager.view_events();
+            manager.view_budget();
             break;
         case 5:
-            manager.view_pending_reservations();
-            break;
-        case 6:
         {
             string event_name;
             cout << "Enter the event name to approve: ";
@@ -377,7 +308,7 @@ void facility_manager_menu(FacilityManager &manager)
             manager.approve_reservation(event_name);
             break;
         }
-        case 7:
+        case 6:
             return;
         default:
             cout << "Invalid choice. Try again.\n";

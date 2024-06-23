@@ -1,0 +1,15 @@
+Event Name: Test Event
+Start Time: 2020-10-10 13:30
+End Time: 2020-10-10 13:30
+Is public: yes
+Number of Guests: 15
+Organizer: Aaryan
+Layout: Lecture Style
+Price of Event: 10
+Ticket Price: 15
+Organizer Type: Organization
+Open to Residents: yes
+Open to Non-Residents: yes
+Approved: no
+Attendees: Aaryan,100,Edison
+----------------------------------------
