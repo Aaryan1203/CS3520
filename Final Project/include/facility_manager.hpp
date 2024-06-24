@@ -9,7 +9,8 @@ using namespace std;
 
 class Facility;
 
-class FacilityManager {
+class FacilityManager
+{
 public:
     FacilityManager(const string &username, const string &password);
 

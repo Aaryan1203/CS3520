@@ -12,6 +12,7 @@
 #include <ctime>
 #include <string>
 #include <iomanip>
+#include <time.h>
 
 using namespace std;
 
@@ -40,20 +41,37 @@ vector<User> Event::get_attendees() const { return attendees; }
 void Event::set_ticket_price(int price) { ticket_price = price; }
 bool Event::is_approved() const { return approved; }
 void Event::set_approved(bool approved) { this->approved = approved; }
+
 ostream &operator<<(ostream &os, const Event &event)
 {
     tm *start_tm = localtime(&event.start_time);
     tm *end_tm = localtime(&event.end_time);
 
-    os << "Event Name: " << event.name << endl;
-    os << "Start Time: " << put_time(start_tm, "%Y-%m-%d %H:%M") << endl;
-    os << "End Time: " << put_time(end_tm, "%Y-%m-%d %H:%M") << endl;
-    os << "Number of Guests: " << event.num_guests << endl;
-    os << "Organizer: " << event.organizer << endl;
-    os << "Price of Event: " << event.price_of_event << endl;
-    os << "Ticket Price: " << event.ticket_price << endl;
-    os << "Open to Residents: " << event.open_to_residents << endl;
-    os << "Open to Non-Residents: " << event.open_to_non_residents << endl;
+    os << "+-----------------------------------------+\n";
+    os << "| Event Details                          |\n";
+    os << "+----------------------+------------------+\n";
+    os << "| Event Name:          | " << event.name << "\n";
+    os << "+----------------------+------------------+\n";
+    if (event.organizer)
+    {
+        os << "| Organizer:           | " << event.organizer->get_username() << "\n";
+    }
+    else
+    {
+        os << "| Organizer:           | None\n";
+    }
+    os << "+----------------------+------------------+\n";
+    os << "| Start Time:          | " << put_time(start_tm, "%Y-%m-%d %H:%M") << "\n";
+    os << "+----------------------+------------------+\n";
+    os << "| End Time:            | " << put_time(end_tm, "%Y-%m-%d %H:%M") << "\n";
+    os << "+----------------------+------------------+\n";
+    os << "| Ticket Price:        | $" << event.ticket_price << "\n";
+    os << "+----------------------+------------------+\n";
+    os << "| Room Setup:          | " << layoutTypeToString(event.layout) << "\n";
+    os << "+----------------------+------------------+\n";
+    os << "| Availability:        | " << event.get_attendees().size() << "/" << event.get_num_guests() << " people coming" << "\n";
+    os << "+----------------------+------------------+\n";
+
     return os;
 }
 
@@ -70,6 +88,15 @@ void Event::add_attendee(User &user)
     attendees.push_back(user);
 }
 
+void Event::remove_attendee(User &user)
+{
+    auto it = find(attendees.begin(), attendees.end(), user);
+    if (it != attendees.end())
+    {
+        attendees.erase(it);
+    }
+}
+
 void Event::refund_users()
 {
     for (auto &attendee : attendees)
@@ -82,10 +109,22 @@ void Event::refund_users()
     cout << "All attendees have been refunded." << endl;
 }
 
-void add_event_to_file(const vector<Event> events, const string filename)
+bool is_overlapping(const Event &new_event, const vector<Event> &events)
 {
-    ofstream outfile(filename, ios::app);
+    for (const auto &event : events)
+    {
+        if ((new_event.get_start_time() < event.get_end_time() && new_event.get_end_time() > event.get_start_time()) ||
+            (new_event.get_start_time() == event.get_start_time() && new_event.get_end_time() == event.get_end_time()))
+        {
+            return true;
+        }
+    }
+    return false;
+}
 
+void add_events_to_file(vector<Event> events, string filename)
+{
+    ofstream outfile(filename);
     if (!outfile)
     {
         cerr << "Error opening file: " << filename << endl;
@@ -96,15 +135,19 @@ void add_event_to_file(const vector<Event> events, const string filename)
         // Convert start and end times to a readable format
         time_t start_time = event.get_start_time();
         time_t end_time = event.get_end_time();
+        tm start_tm_struct;
+        localtime_r(&start_time, &start_tm_struct);
+        tm end_tm_struct;
+        localtime_r(&end_time, &end_tm_struct);
 
-        // Convert start and end times to a readable format
-        tm *start_tm = localtime(&start_time);
-        tm *end_tm = localtime(&end_time);
+        // Add one hour to the start and end times
+        start_tm_struct.tm_hour += 1;
+        end_tm_struct.tm_hour += 1;
 
         // Write event details to the file
         outfile << "Event Name: " << event.get_name() << endl;
-        outfile << "Start Time: " << put_time(start_tm, "%Y-%m-%d %H:%M") << endl;
-        outfile << "End Time: " << put_time(end_tm, "%Y-%m-%d %H:%M") << endl;
+        outfile << "Start Time: " << put_time(&start_tm_struct, "%Y-%m-%d %H:%M") << endl;
+        outfile << "End Time: " << put_time(&end_tm_struct, "%Y-%m-%d %H:%M") << endl;
         outfile << "Is public: " << (event.is_public_event() ? "yes" : "no") << endl;
         outfile << "Number of Guests: " << event.get_num_guests() << endl;
         if (event.get_organizer())
@@ -134,7 +177,6 @@ void add_event_to_file(const vector<Event> events, const string filename)
             }
         }
         outfile << endl;
-
         outfile << "----------------------------------------" << endl;
     }
     outfile.close();
@@ -173,9 +215,13 @@ vector<Event> retrieve_events_from_file(string filename, Facility &facility)
 
                 getline(infile, line);
                 string organizer_username = line.substr(11);
-                User organizer = get_user_by_username(organizer_username, facility);
-                cout << "Organizer: " << organizer << endl;
-                
+                User *organizer = get_user_by_username(organizer_username, facility);
+                if (!organizer)
+                {
+                    cerr << "Error: User not found for organizer: " << organizer_username << endl;
+                    continue;
+                }
+
                 getline(infile, line);
                 LayoutType layout = parse_layout(line.substr(8));
 
@@ -207,21 +253,31 @@ vector<Event> retrieve_events_from_file(string filename, Facility &facility)
                     string attendee_info;
                     while (getline(ss, attendee_info, ';'))
                     {
-                        stringstream user_ss(attendee_info);
-                        string username, balance_str, city;
-                        getline(user_ss, username, ',');
-                        getline(user_ss, balance_str, ',');
-                        getline(user_ss, city, ',');
-                        double balance = stod(balance_str);
-                        User attendee(username, balance, city);
-                        attendees.push_back(attendee);
+                        if (!attendee_info.empty())
+                        {
+                            stringstream attendee_stream(attendee_info);
+                            string username;
+                            getline(attendee_stream, username, ',');
+                            try
+                            {
+                                User *attendee = get_user_by_username(username, facility);
+                                if (attendee)
+                                {
+                                    attendees.push_back(*attendee);
+                                }
+                            }
+                            catch (const runtime_error &e)
+                            {
+                                cerr << "Error: " << e.what() << endl;
+                            }
+                        }
                     }
                 }
                 // Skip the separator line
                 getline(infile, line);
 
                 // Create the event
-                Event event(event_name, start_time, end_time, is_public, num_guests, organizer, layout, price_of_event, ticket_price, organizer_type, open_to_residents, open_to_non_residents, approved, attendees);
+                Event event(event_name, start_time, end_time, is_public, num_guests, *organizer, layout, price_of_event, ticket_price, organizer_type, open_to_residents, open_to_non_residents, approved, attendees);
                 events.push_back(event);
             }
             catch (const out_of_range &e)

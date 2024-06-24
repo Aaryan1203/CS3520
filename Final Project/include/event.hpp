@@ -34,6 +34,7 @@ public:
     bool is_approved() const;
     void set_approved(bool approved);
     void add_attendee(User &user);
+    void remove_attendee(User &user);
     void refund_users();
     vector<User> get_attendees() const;
     void set_ticket_price(int price);
@@ -58,11 +59,14 @@ private:
     bool approved;
 };
 
-void add_event_to_file(const vector<Event> events, const string filename);
+void add_events_to_file(vector<Event> events, string filename);
 vector<Event> retrieve_events_from_file(string filename, Facility &facility);
 time_t parse_datetime(const string& datetime_str);
 bool parse_bool(const string& bool_str);
+Event get_event_by_name(string name, vector<Event> events);
 LayoutType parse_layout(const string& layout_str);
 OrganizerType parse_organizer_type(const string& organizer_type_str);
+bool is_overlapping(const Event &new_event, const vector<Event> &events);
+
 
 #endif

@@ -9,25 +9,56 @@ using namespace std;
 
 int main()
 {
-    Facility facility("test");
+    Facility facility("facility");
+
+    // Load users from file and add them to the facility
     vector<User> users = read_users_from_file("users.txt");
-    vector<Event> pending_reservations = retrieve_events_from_file("pending_requests.txt", facility);
-    vector<Event> approved_reservations = retrieve_events_from_file("approved_reservations.txt", facility);
     for (auto &user : users)
     {
         facility.add_user(user);
     }
 
+    // Load pending reservations from file and add them to the facility
+    vector<Event> pending_reservations = retrieve_events_from_file("pending_reservations.txt", facility);
     for (auto &event : pending_reservations)
     {
         facility.add_pending_reservation(event);
     }
 
+    // Load approved reservations from file and add them to the facility
+    vector<Event> approved_reservations = retrieve_events_from_file("approved_reservations.txt", facility);
     for (auto &event : approved_reservations)
     {
         facility.add_approved_reservation(event);
     }
 
+    // Associate events with users
+    for (auto &user : facility.get_all_users())
+    {
+        for (auto &event : facility.get_approved_reservations())
+        {
+            for (const auto &attendee : event.get_attendees())
+            {
+                if (attendee.get_username() == user.get_username())
+                {
+                    user.add_event(event); // Add to user's reservations
+                }
+            }
+            if (event.get_organizer()->get_username() == user.get_username())
+            {
+                user.add_reservation(event); // Add to organizer's reservations
+            }
+        }
+        for (auto &event : facility.get_pending_reservations())
+        {
+            if (event.get_organizer()->get_username() == user.get_username())
+            {
+                user.add_event(event); // Add to organizer's reservations
+            }
+        }
+    }
+
+    // Start the main menu loop
     while (true)
     {
         cout << "Welcome to the Community Center Management System! Please login to continue.\n";
@@ -114,10 +145,8 @@ int main()
             return 0;
         }
         default:
-        {
             cout << "Invalid choice. Try again.\n";
             break;
-        }
         }
     }
 

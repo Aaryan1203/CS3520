@@ -189,7 +189,7 @@ void FacilityManager::set_facility(shared_ptr<Facility> fac)
 
 bool FacilityManager::is_overlapping(const Event &new_event) const
 {
-    for (const Event &event : facility->get_approved_reservations())
+    for (Event &event : facility->get_approved_reservations())
     {
         if (((new_event.get_start_time() < event.get_end_time() && new_event.get_start_time() >= event.get_start_time()) ||
              (new_event.get_end_time() > event.get_start_time() && new_event.get_end_time() <= event.get_end_time())))
@@ -257,7 +257,7 @@ void facility_manager_menu(FacilityManager &manager, Facility &facility)
         {
         case 1:
         {
-            manager.view_reservations("pending_requests.txt");
+            manager.view_reservations("pending_reservations.txt");
             break;
         }
         case 2:
@@ -274,7 +274,7 @@ void facility_manager_menu(FacilityManager &manager, Facility &facility)
             getline(cin, event_name);
 
             const Event *event_ptr = nullptr;
-            const vector<Event> &reservations = manager.get_facility()->get_approved_reservations();
+            vector<Event> &reservations = manager.get_facility()->get_approved_reservations();
             for (const Event &e : reservations)
             {
                 if (e.get_name() == event_name)
