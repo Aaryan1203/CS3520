@@ -1,15 +1,13 @@
-#include <string>
+#include "include/facility_manager.hpp"
+#include "include/facility.hpp"
 #include <fstream>
 #include <iostream>
 #include <algorithm>
-#include <vector>
-#include "include/facility_manager.hpp"
-#include "include/facility.hpp"
 
 using namespace std;
 
 FacilityManager::FacilityManager(const string &username, const string &password)
-    : username(username), password(password), budget(0.0)
+    : username(username), password(password)
 {
 }
 
@@ -46,17 +44,14 @@ void FacilityManager::view_reservations(const string &file_name) const
 
 bool FacilityManager::is_valid_event(const Event &event) const
 {
-    // Facility operating hours
-    const time_t opening_time = 8 * 3600;  // 8 AM in seconds
-    const time_t closing_time = 23 * 3600; // 11 PM in seconds
+    const time_t opening_time = 8 * 3600;
+    const time_t closing_time = 23 * 3600;
 
-    // Check operating hours
     if (event.get_start_time() < opening_time || event.get_end_time() > closing_time)
     {
         return false;
     }
 
-    // Check guest limit
     if (event.get_num_guests() > 40)
     {
         return false;
@@ -108,7 +103,7 @@ bool validate_facility_manager_credentials(const string &username, const string 
 void view_events_for_next_week(Facility &facility)
 {
     time_t current_time = time(nullptr);
-    time_t next_week = current_time + 7 * 24 * 3600; // 7 days in seconds
+    time_t next_week = current_time + 7 * 24 * 3600;
 
     cout << "Events for the next week: " << endl;
     int event_count = 0;
@@ -147,7 +142,7 @@ void facility_manager_menu(FacilityManager &manager, Facility &facility)
     {
         cout << "Welcome Manager " << manager.get_username() << "!\n";
         cout << "1. View Reservation Requests\n";
-        cout << "2. View Approved reservations\n";
+        cout << "2. View Approved Reservations\n";
         cout << "3. Refund Event\n";
         cout << "4. View Budget\n";
         cout << "5. Approve Reservation\n";
@@ -211,7 +206,7 @@ void facility_manager_menu(FacilityManager &manager, Facility &facility)
             break;
         }
         case 4:
-            facility.get_budget();
+            cout << facility.get_budget() << endl;
             break;
         case 5:
         {

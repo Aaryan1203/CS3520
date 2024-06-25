@@ -1,7 +1,7 @@
 #include "include/facility.hpp"
 #include "include/event.hpp"
-#include <fstream>
 #include <iostream>
+#include <algorithm>
 
 using namespace std;
 
@@ -59,7 +59,6 @@ void Facility::remove_approved_reservation(const Event &event)
     if (it != approved_reservations.end())
     {
         approved_reservations.erase(it);
-        // Update the approved_reservations.txt file
         add_events_to_file(approved_reservations, "approved_reservations.txt");
     }
     else
@@ -139,9 +138,6 @@ bool Facility::exceeds_max_reservation_time() const
         localtime_r(&start_time, &start_tm_struct);
         tm end_tm_struct;
         localtime_r(&end_time, &end_tm_struct);
-
-        start_tm_struct.tm_hour;
-        end_tm_struct.tm_hour;
 
         if (event.get_type() == OrganizerType::ORGANIZATION)
         {

@@ -8,7 +8,6 @@ class Facility;
 class Event;
 
 using namespace std;
-
 class User
 {
 public:
@@ -39,6 +38,7 @@ private:
     vector<Event> reservations;
     vector<Event> events;
 };
+
 vector<User> read_users_from_file(string filename);
 void user_menu(User &user, Facility &facility);
 User *get_user_by_username(string username, Facility &facility);
@@ -50,4 +50,4 @@ bool load_user_from_file(const string &username, User &user);
 void save_user_to_file(const User &user);
 void cancel_reservation(User &user, Facility &facility);
 
-#endif
+#endif // USER_H

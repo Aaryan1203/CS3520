@@ -1,13 +1,26 @@
 #include "include/user.hpp"
 #include "include/event.hpp"
 #include "include/facility.hpp"
+#include "include/global.hpp"
 #include <algorithm>
 #include <fstream>
 #include <iostream>
-#include <limits>
 #include <sstream>
+#include <limits>
 
 using namespace std;
+
+struct EventNameComparer
+{
+    EventNameComparer(const string &name) : name(name) {}
+    bool operator()(const Event &e) const
+    {
+        return e.get_name() == name;
+    }
+
+private:
+    string name;
+};
 
 struct UserNameComparer
 {
@@ -17,15 +30,6 @@ struct UserNameComparer
 
 private:
     string username;
-};
-
-struct EventNameComparer
-{
-    EventNameComparer(const string &name) : name(name) {}
-    bool operator()(const Event &e) const { return e.get_name() == name; }
-
-private:
-    string name;
 };
 
 User::User(const string &username, int balance, const string &city)
@@ -121,7 +125,7 @@ vector<User> read_users_from_file(string filename)
 
         double balance = stod(balance_str);
         User user(username, balance, city);
-        users.push_back(user); // Assuming Facility has an add_user method
+        users.push_back(user);
     }
 
     infile.close();
@@ -195,7 +199,6 @@ bool is_user_in_waitlist(const User &user, const Event &event)
     return false;
 }
 
-// this is all users
 void User::view_upcoming_events(User &user, Facility &facility) const
 {
     const vector<Event> &approved_reservations = facility.get_approved_reservations();
@@ -239,7 +242,7 @@ void User::view_upcoming_events(User &user, Facility &facility) const
             cout << "|                      | event.                       |\n";
         }
         cout << "+----------------------+------------------------------+\n";
-        cout << endl; // Add a blank line between events for better readability
+        cout << endl;
     }
 }
 
@@ -353,9 +356,7 @@ bool prompt_for_bool(const string &prompt)
     string value;
     while (true)
     {
-        cout
-            << prompt
-            << " (1 for Yes, 0 for No) (or type 'b' to go back to the main menu): ";
+        cout << prompt << " (1 for Yes, 0 for No) (or type 'b' to go back to the main menu): ";
         cin >> value;
         if (value == "b")
         {
@@ -531,7 +532,6 @@ void User::buy_ticket(Facility &facility)
 {
     try
     {
-        // print the upcoming events
         view_upcoming_events(*this, facility);
 
         cout << "Enter the name of the event you would like to buy a ticket for "
@@ -587,7 +587,6 @@ void User::buy_ticket(Facility &facility)
                 events.push_back(*it);
             }
 
-            // clear users.txt file
             ofstream outfile("users.txt");
             outfile.close();
 
@@ -754,13 +753,13 @@ void cancel_reservation(User &user, Facility &facility)
 
     vector<Event> pending_reservations = retrieve_events_from_file("pending_reservations.txt", facility);
     vector<Event> approved_reservations = retrieve_events_from_file("approved_reservations.txt", facility);
-
     vector<Event>::iterator it_pending = find_if(pending_reservations.begin(), pending_reservations.end(), EventNameComparer(event_name));
     vector<Event>::iterator it_approved = find_if(approved_reservations.begin(), approved_reservations.end(), EventNameComparer(event_name));
 
     if (it_pending != pending_reservations.end() || it_approved != approved_reservations.end())
     {
-        cout << "Are you sure you want to cancel this reservation? (1 for Yes, 0 for No): ";
+        cout << "Are you sure you want to cancel this reservation? (1 for "
+                "Yes, 0 for No): ";
         int confirm;
         cin >> confirm;
         if (confirm == 1)
@@ -932,7 +931,7 @@ bool load_user_from_file(const string &username, User &user)
         if (file_username == username)
         {
             ss >> balance;
-            ss.ignore(); // ignore the comma
+            ss.ignore();
             getline(ss, city);
 
             user = User(file_username, balance, city);
@@ -957,8 +956,7 @@ void save_user_to_file(const User &user)
     outfile.close();
 }
 
-bool validate_user_credentials(const string &username, User &user,
-                               Facility &facility)
+bool validate_user_credentials(const string &username, User &user, Facility &facility)
 {
     if (load_user_from_file(username, user))
     {

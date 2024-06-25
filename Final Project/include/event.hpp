@@ -3,12 +3,9 @@
 
 #include <string>
 #include <vector>
-#include <utility>
 #include "enums.hpp"
+#include "user.hpp"
 
-using namespace std;
-
-class User;
 class Facility;
 
 class Event
@@ -65,11 +62,5 @@ private:
 
 void add_events_to_file(vector<Event> events, string filename);
 vector<Event> retrieve_events_from_file(string filename, Facility &facility);
-time_t parse_datetime(const string &datetime_str);
-bool parse_bool(const string &bool_str);
-Event *get_event_by_name(string name, Facility &facility);
-LayoutType parse_layout(const string &layout_str);
-OrganizerType parse_organizer_type(const string &organizer_type_str);
-bool is_overlapping(const Event &new_event, const vector<Event> &events);
 
-#endif
+#endif // EVENT_H

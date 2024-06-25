@@ -1,18 +1,11 @@
 #include "include/event.hpp"
-#include "include/user.hpp"
+#include "include/global.hpp"
 #include "include/facility.hpp"
 #include <iostream>
-#include <sstream>
-#include <stdexcept>
-#include <algorithm>
-#include <vector>
 #include <fstream>
-#include <utility>
-#include <stdexcept>
-#include <ctime>
-#include <string>
 #include <iomanip>
-#include <time.h>
+#include <sstream>
+#include <algorithm>
 
 using namespace std;
 
@@ -81,14 +74,14 @@ ostream &operator<<(ostream &os, const Event &event)
     os << "+----------------------+------------------+\n";
     os << "| Availability:        | " << event.get_attendees().size() << "/" << event.get_num_guests() << " people coming" << "\n";
     os << "+----------------------+------------------+\n";
-    os << "| Is Public:          | " << (event.is_public ? "Yes" : "No") << "\n";
-    os << "+----------------------+------------------+\n";
     os << "| Attendees:          | ";
     for (const auto &attendee : event.attendees)
     {
         os << attendee.get_username() << ", ";
     }
     os << "\n";
+    os << "+----------------------+------------------+\n";
+    os << "| Is Public:          | " << (event.is_public ? "Yes" : "No") << "\n";
     os << "+----------------------+------------------+\n";
 
     return os;
@@ -151,19 +144,6 @@ void Event::refund_users(Facility &facility)
     cout << "All attendees have been refunded." << endl;
 }
 
-bool is_overlapping(const Event &new_event, const vector<Event> &events)
-{
-    for (const auto &event : events)
-    {
-        if ((new_event.get_start_time() < event.get_end_time() && new_event.get_end_time() > event.get_start_time()) ||
-            (new_event.get_start_time() == event.get_start_time() && new_event.get_end_time() == event.get_end_time()))
-        {
-            return true;
-        }
-    }
-    return false;
-}
-
 void add_events_to_file(vector<Event> events, string filename)
 {
     ofstream outfile(filename);
@@ -174,7 +154,6 @@ void add_events_to_file(vector<Event> events, string filename)
     }
     for (const auto &event : events)
     {
-        // Convert start and end times to a readable format
         time_t start_time = event.get_start_time();
         time_t end_time = event.get_end_time();
         tm start_tm_struct;
@@ -182,11 +161,9 @@ void add_events_to_file(vector<Event> events, string filename)
         tm end_tm_struct;
         localtime_r(&end_time, &end_tm_struct);
 
-        // Add one hour to the start and end times
         start_tm_struct.tm_hour += 1;
         end_tm_struct.tm_hour += 1;
 
-        // Write event details to the file
         outfile << "Event Name: " << event.get_name() << endl;
         outfile << "Start Time: " << put_time(&start_tm_struct, "%Y-%m-%d %H:%M") << endl;
         outfile << "End Time: " << put_time(&end_tm_struct, "%Y-%m-%d %H:%M") << endl;
@@ -298,7 +275,6 @@ vector<Event> retrieve_events_from_file(string filename, Facility &facility)
                 getline(infile, line);
                 bool approved = parse_bool(line.substr(10));
 
-                // Read attendees
                 vector<User> attendees;
                 getline(infile, line);
                 if (line.find("Attendees: ") == 0)
@@ -329,7 +305,6 @@ vector<Event> retrieve_events_from_file(string filename, Facility &facility)
                     }
                 }
 
-                // Read waitlist
                 vector<User> waitlist;
                 getline(infile, line);
                 if (line.find("Waitlist: ") == 0)
@@ -360,10 +335,8 @@ vector<Event> retrieve_events_from_file(string filename, Facility &facility)
                     }
                 }
 
-                // Skip the separator line
                 getline(infile, line);
 
-                // Create the event
                 Event event(event_name, start_time, end_time, is_public, num_guests, *organizer, layout, price_of_event, ticket_price, organizer_type, open_to_residents, open_to_non_residents, approved, attendees);
                 events.push_back(event);
             }
@@ -380,55 +353,4 @@ vector<Event> retrieve_events_from_file(string filename, Facility &facility)
 
     infile.close();
     return events;
-}
-
-Event *get_event_by_name(string name, Facility &facility)
-{
-    for (auto &event : facility.get_pending_reservations())
-    {
-        if (event.get_name() == name)
-        {
-            return &event;
-        }
-    }
-    cout << "Event not found: " << name << endl;
-}
-
-time_t parse_datetime(const string &datetime_str)
-{
-    tm timeinfo = {};
-    stringstream ss(datetime_str);
-    ss >> get_time(&timeinfo, "%Y-%m-%d %H:%M");
-    return mktime(&timeinfo);
-}
-
-bool parse_bool(const string &bool_str)
-{
-    return bool_str == "yes";
-}
-
-LayoutType parse_layout(const string &layout_str)
-{
-    if (layout_str == "Meeting Style")
-        return LayoutType::MEETING_STYLE;
-    if (layout_str == "Lecture Style")
-        return LayoutType::LECTURE_STYLE;
-    if (layout_str == "Wedding Style")
-        return LayoutType::WEDDING_STYLE;
-    if (layout_str == "Dance Room Style")
-        return LayoutType::DANCE_ROOM_STYLE;
-    throw invalid_argument("Invalid layout type");
-}
-
-OrganizerType parse_organizer_type(const string &organizer_type_str)
-{
-    if (organizer_type_str == "City")
-        return OrganizerType::CITY;
-    if (organizer_type_str == "Organization")
-        return OrganizerType::ORGANIZATION;
-    if (organizer_type_str == "Resident")
-        return OrganizerType::RESIDENT;
-    if (organizer_type_str == "Non Resident")
-        return OrganizerType::NON_RESIDENT;
-    throw invalid_argument("Invalid organizer type");
 }

@@ -5,10 +5,10 @@ CFLAGS = -I$(IDIR) -g -O0 -std=c++11
 ODIR = .
 LIBS = -lncurses
 
-_DEPS = user.hpp event.hpp facility.hpp facility_manager.hpp enums.hpp
+_DEPS = user.hpp event.hpp facility.hpp facility_manager.hpp enums.hpp globals.hpp
 DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))
 
-_OBJ = main.o user.o event.o facility.o facility_manager.o
+_OBJ = main.o user.o event.o facility.o facility_manager.o globals.o
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
 $(ODIR)/%.o: %.cpp $(DEPS)

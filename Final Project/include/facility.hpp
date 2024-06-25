@@ -3,11 +3,11 @@
 
 #include <vector>
 #include <string>
-#include <memory>
 #include "user.hpp"
 
 class Event;
 class User;
+
 class Facility
 {
 public:
@@ -16,7 +16,6 @@ public:
     void remove_approved_reservation(const Event &event);
     void remove_reservation(Event &event);
     vector<Event> &get_approved_reservations();
-
     void add_pending_reservation(Event &event);
     void remove_pending_reservation(const Event &event);
     vector<Event> &get_pending_reservations();
@@ -28,6 +27,7 @@ public:
     void update_pending_reservation(const Event &event);
     void set_budget(int budget);
     int get_budget() const;
+
 private:
     vector<Event> approved_reservations;
     vector<Event> pending_reservations;
@@ -36,4 +36,4 @@ private:
     int budget;
 };
 
-#endif
+#endif // FACILITY_HPP

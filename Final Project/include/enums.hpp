@@ -21,24 +21,38 @@ enum LayoutType
     DANCE_ROOM_STYLE = 3
 };
 
-inline string layoutTypeToString(LayoutType layout) {
-    switch (layout) {
-        case MEETING_STYLE: return "Meeting Style";
-        case LECTURE_STYLE: return "Lecture Style";
-        case WEDDING_STYLE: return "Wedding Style";
-        case DANCE_ROOM_STYLE: return "Dance Room Style";
-        default: return "Unknown Layout";
+inline string layoutTypeToString(LayoutType layout)
+{
+    switch (layout)
+    {
+    case MEETING_STYLE:
+        return "Meeting Style";
+    case LECTURE_STYLE:
+        return "Lecture Style";
+    case WEDDING_STYLE:
+        return "Wedding Style";
+    case DANCE_ROOM_STYLE:
+        return "Dance Room Style";
+    default:
+        return "Unknown Layout";
     }
 }
 
-inline string organizerTypeToString(OrganizerType organizerType) {
-    switch (organizerType) {
-        case CITY: return "City";
-        case ORGANIZATION: return "Organization";
-        case RESIDENT: return "Resident";
-        case NON_RESIDENT: return "Non-Resident";
-        default: return "Unknown Organizer Type";
+inline string organizerTypeToString(OrganizerType organizerType)
+{
+    switch (organizerType)
+    {
+    case CITY:
+        return "City";
+    case ORGANIZATION:
+        return "Organization";
+    case RESIDENT:
+        return "Resident";
+    case NON_RESIDENT:
+        return "Non-Resident";
+    default:
+        return "Unknown Organizer Type";
     }
 }
 
-#endif
+#endif // ENUMS_H

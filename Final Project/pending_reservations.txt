@@ -1,0 +1,32 @@
+Event Name: Aaryans Birthday
+Start Time: 2024-06-25 12:00
+End Time: 2024-06-25 14:00
+Is public: yes
+Number of Guests: 2
+Organizer: aaryan
+Layout: Wedding Style
+Price of Event: 30
+Ticket Price: 15
+Organizer Type: Resident
+Open to Residents: yes
+Open to Non-Residents: no
+Approved: no
+Attendees: aaryan,970,nj
+Waitlist: 
+----------------------------------------
+Event Name: Laiths Birthday
+Start Time: 2024-06-28 10:00
+End Time: 2024-06-28 14:00
+Is public: yes
+Number of Guests: 10
+Organizer: aaryan
+Layout: Meeting Style
+Price of Event: 30
+Ticket Price: 10
+Organizer Type: City
+Open to Residents: yes
+Open to Non-Residents: yes
+Approved: no
+Attendees: aaryan,970,nj
+Waitlist: 
+----------------------------------------
