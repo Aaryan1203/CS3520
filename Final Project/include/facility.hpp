@@ -20,7 +20,6 @@ public:
     void add_pending_reservation(Event &event);
     void remove_pending_reservation(const Event &event);
     vector<Event> &get_pending_reservations();
-    void approve_reservation(Event &event);
     bool exceeds_max_reservation_time() const;
     void add_user(User &user);
     vector<User> &get_all_users();

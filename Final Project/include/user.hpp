@@ -48,5 +48,6 @@ bool is_user_in_event(const User &user, const Event &event);
 bool is_user_in_waitlist(const User &user, const Event &event);
 bool load_user_from_file(const string &username, User &user);
 void save_user_to_file(const User &user);
+void cancel_reservation(User &user, Facility &facility);
 
 #endif

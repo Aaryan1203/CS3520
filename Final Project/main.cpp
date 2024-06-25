@@ -131,6 +131,7 @@ int main()
             FacilityManager manager(username, password);
             if (validate_facility_manager_credentials(username, password, manager))
             {
+                cout << "test" << endl;
                 facility_manager_menu(manager, facility);
             }
             else

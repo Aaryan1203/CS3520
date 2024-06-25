@@ -77,7 +77,16 @@ ostream &operator<<(ostream &os, const Event &event)
     os << "+----------------------+------------------+\n";
     os << "| Room Setup:          | " << layoutTypeToString(event.layout) << "\n";
     os << "+----------------------+------------------+\n";
+    os << "| Organizer Type:      | " << organizerTypeToString(event.type) << "\n";
+    os << "+----------------------+------------------+\n";
     os << "| Availability:        | " << event.get_attendees().size() << "/" << event.get_num_guests() << " people coming" << "\n";
+    os << "+----------------------+------------------+\n";
+    os << "| Attendees:          | ";
+    for (const auto &attendee : event.attendees)
+    {
+        os << attendee.get_username() << ", ";
+    }
+    os << "\n";
     os << "+----------------------+------------------+\n";
 
     return os;
@@ -107,6 +116,15 @@ void Event::remove_attendee(User &user)
     if (it != attendees.end())
     {
         attendees.erase(it);
+    }
+}
+
+void Event::remove_from_waitlist(User &user)
+{
+    auto it = find(waitlist.begin(), waitlist.end(), user);
+    if (it != waitlist.end())
+    {
+        waitlist.erase(it);
     }
 }
 
@@ -362,15 +380,16 @@ vector<Event> retrieve_events_from_file(string filename, Facility &facility)
     return events;
 }
 
-Event get_event_by_name(string name, vector<Event> &events)
+Event *get_event_by_name(string name, Facility &facility)
 {
-    for (const auto &event : events)
+    for (auto &event : facility.get_pending_reservations())
     {
         if (event.get_name() == name)
         {
-            return event;
+            return &event;
         }
     }
+    cout << "Event not found: " << name << endl;
 }
 
 time_t parse_datetime(const string &datetime_str)
