@@ -1,10 +1,10 @@
 #include "include/user.hpp"
-#include "include/facility.hpp"
 #include "include/event.hpp"
-#include <iostream>
-#include <fstream>
-#include <limits>
+#include "include/facility.hpp"
 #include <algorithm>
+#include <fstream>
+#include <iostream>
+#include <limits>
 #include <sstream>
 
 using namespace std;
@@ -13,10 +13,7 @@ struct UserNameComparer
 {
     UserNameComparer(const string &username) : username(username) {}
 
-    bool operator()(const User &u) const
-    {
-        return u.get_username() == username;
-    }
+    bool operator()(const User &u) const { return u.get_username() == username; }
 
 private:
     string username;
@@ -25,29 +22,18 @@ private:
 struct EventNameComparer
 {
     EventNameComparer(const string &name) : name(name) {}
-    bool operator()(const Event &e) const
-    {
-        return e.get_name() == name;
-    }
+    bool operator()(const Event &e) const { return e.get_name() == name; }
 
 private:
     string name;
 };
 
 User::User(const string &username, int balance, const string &city)
-    : username(username), balance(balance), city(city)
-{
-}
+    : username(username), balance(balance), city(city) {}
 
-void User::add_reservation(Event &event)
-{
-    reservations.push_back(event);
-}
+void User::add_reservation(Event &event) { reservations.push_back(event); }
 
-void User::add_event(Event &event)
-{
-    events.push_back(event);
-}
+void User::add_event(Event &event) { events.push_back(event); }
 
 ostream &operator<<(ostream &os, const User &other)
 {
@@ -62,25 +48,13 @@ bool User::operator==(const User &other) const
     return username == other.username;
 }
 
-string User::get_username() const
-{
-    return username;
-}
+string User::get_username() const { return username; }
 
-int User::get_balance() const
-{
-    return balance;
-}
+int User::get_balance() const { return balance; }
 
-string User::get_city() const
-{
-    return city;
-}
+string User::get_city() const { return city; }
 
-void User::set_balance(int balance)
-{
-    this->balance = balance;
-}
+void User::set_balance(int balance) { this->balance = balance; }
 
 void User::view_my_information()
 {
@@ -89,13 +63,28 @@ void User::view_my_information()
     cout << "City: " << city << endl;
 }
 
-void User::cancel_reservation(Event &event)
+void User::cancel_approved_reservation(Event &event, Facility &facility)
 {
-    auto it = find(reservations.begin(), reservations.end(), event);
-    if (it != reservations.end())
+    auto it = find(facility.get_approved_reservations().begin(), facility.get_approved_reservations().end(), event);
+    if (it != facility.get_approved_reservations().end())
     {
-        event.refund_users();
-        reservations.erase(it);
+        facility.remove_approved_reservation(*it);
+        cout << "Reservation cancelled for " << event.get_name() << endl;
+        return;
+    }
+    else
+    {
+        cout << "Reservation not found for " << event.get_name() << endl;
+        return;
+    }
+}
+
+void User::cancel_pending_reservation(Event &event, Facility &facility)
+{
+    auto it = find(facility.get_pending_reservations().begin(), facility.get_pending_reservations().end(), event);
+    if (it != facility.get_pending_reservations().end())
+    {
+        facility.remove_pending_reservation(*it);
         cout << "Reservation cancelled for " << event.get_name() << endl;
         return;
     }
@@ -141,19 +130,13 @@ vector<User> read_users_from_file(string filename)
 
 void User::view_my_events(Facility &facility)
 {
-    const vector<Event> &approved_reservations = facility.get_approved_reservations();
-    const vector<Event> &pending_reservations = facility.get_pending_reservations();
+    const vector<Event> &approved_reservations =
+        facility.get_approved_reservations();
+    const vector<Event> &pending_reservations =
+        facility.get_pending_reservations();
 
     bool has_event = false;
     for (const auto &event : approved_reservations)
-    {
-        if (is_user_in_event(*this, event))
-        {
-            cout << event << endl;
-            has_event = true;
-        }
-    }
-    for (const auto &event : pending_reservations)
     {
         if (is_user_in_event(*this, event))
         {
@@ -173,11 +156,13 @@ bool can_user_sign_up(const User &user, const Event &event)
     {
         return false;
     }
-    if (event.is_open_to_residents() && user.get_city() == event.get_organizer()->get_city())
+    if (event.is_open_to_residents() &&
+        user.get_city() == event.get_organizer()->get_city())
     {
         return true;
     }
-    if (event.is_open_to_non_residents() && user.get_city() != event.get_organizer()->get_city())
+    if (event.is_open_to_non_residents() &&
+        user.get_city() != event.get_organizer()->get_city())
     {
         return true;
     }
@@ -199,6 +184,17 @@ bool is_user_in_event(const User &user, const Event &event)
     }
 }
 
+bool is_user_in_waitlist(const User &user, const Event &event)
+{
+    for (const auto &attendee : event.get_waitlist())
+    {
+        if (attendee.get_username() == user.get_username())
+        {
+            return true;
+        }
+    }
+}
+
 // this is all users
 void User::view_upcoming_events(User &user, Facility &facility) const
 {
@@ -210,13 +206,19 @@ void User::view_upcoming_events(User &user, Facility &facility) const
     {
         cout << event << endl;
         cout << "+----------------------+------------------------------+\n";
-        if (event.get_num_guests() >= 40)
+        if (is_user_in_waitlist(user, event))
+        {
+            cout << "| Status:              | You are in the waitlist.     |\n";
+        }
+        else if (event.get_num_guests() <= event.get_attendees().size())
         {
             cout << "| Status:              | This event is full. You will |\n";
             cout << "|                      | be added to the waitlist if  |\n";
             cout << "|                      | you buy a ticket.            |\n";
         }
-        else if (event.get_organizer() && event.get_organizer()->get_username() == user.get_username())
+
+        else if (event.get_organizer() &&
+                 event.get_organizer()->get_username() == user.get_username())
         {
             cout << "| Status:              | You are the organizer of this|\n";
             cout << "|                      | event.                       |\n";
@@ -249,7 +251,8 @@ void User::view_my_reservations(Facility &facility)
     bool hasPending = false;
     for (const auto &event : facility.get_pending_reservations())
     {
-        if (event.get_organizer() && event.get_organizer()->get_username() == username)
+        if (event.get_organizer() &&
+            event.get_organizer()->get_username() == username)
         {
             cout << event << endl;
             hasPending = true;
@@ -267,7 +270,8 @@ void User::view_my_reservations(Facility &facility)
     bool hasApproved = false;
     for (const auto &event : facility.get_approved_reservations())
     {
-        if (event.get_organizer() && event.get_organizer()->get_username() == username)
+        if (event.get_organizer() &&
+            event.get_organizer()->get_username() == username)
         {
             cout << event << endl;
             hasApproved = true;
@@ -296,7 +300,8 @@ time_t prompt_for_datetime(const string &prompt)
         ss >> get_time(&timeinfo, "%Y-%m-%d %H:%M");
         if (ss.fail())
         {
-            cout << "Invalid date and time. Please enter in YYYY-MM-DD HH:MM format.\n";
+            cout << "Invalid date and time. Please enter in YYYY-MM-DD HH:MM "
+                    "format.\n";
         }
         else
         {
@@ -348,7 +353,9 @@ bool prompt_for_bool(const string &prompt)
     string value;
     while (true)
     {
-        cout << prompt << " (1 for Yes, 0 for No) (or type 'b' to go back to the main menu): ";
+        cout
+            << prompt
+            << " (1 for Yes, 0 for No) (or type 'b' to go back to the main menu): ";
         cin >> value;
         if (value == "b")
         {
@@ -411,7 +418,8 @@ OrganizerType prompt_for_organizer_type()
             throw runtime_error("back to menu");
         }
         stringstream ss(input);
-        if (ss >> organizer_type_int && organizer_type_int >= 0 && organizer_type_int <= 3)
+        if (ss >> organizer_type_int && organizer_type_int >= 0 &&
+            organizer_type_int <= 3)
         {
             break;
         }
@@ -452,7 +460,8 @@ Event User::create_event(Facility &facility)
         time_t end_time;
         while (true)
         {
-            start_time = prompt_for_datetime("Enter the start time (YYYY-MM-DD HH:MM): ");
+            start_time =
+                prompt_for_datetime("Enter the start time (YYYY-MM-DD HH:MM): ");
             end_time = prompt_for_datetime("Enter the end time (YYYY-MM-DD HH:MM): ");
             if (start_time >= end_time)
             {
@@ -472,7 +481,8 @@ Event User::create_event(Facility &facility)
             num_guests = prompt_for_int("Enter the number of guests: ");
             if (num_guests > 40)
             {
-                cout << "Cannot create event with more than 40 people. Please re-enter.\n";
+                cout << "Cannot create event with more than 40 people. Please "
+                        "re-enter.\n";
             }
             else
             {
@@ -485,20 +495,28 @@ Event User::create_event(Facility &facility)
         int hours_of_event = (end_time - start_time) / 3600;
         int price_of_event = get_price_of_event(organizer_type, hours_of_event);
         bool open_to_residents = prompt_for_bool("Is the event open to residents?");
-        bool open_to_non_residents = prompt_for_bool("Is the event open to non-residents?");
+        bool open_to_non_residents =
+            prompt_for_bool("Is the event open to non-residents?");
         User *organizer = this;
 
-        Event new_event(event_name, start_time, end_time, is_public, num_guests, *organizer, layout, price_of_event, ticket_price, organizer_type, open_to_residents, open_to_non_residents, false);
-        if (is_overlapping(new_event, facility.get_pending_reservations()) || is_overlapping(new_event, facility.get_approved_reservations()))
+        Event new_event(event_name, start_time, end_time, is_public, num_guests,
+                        *organizer, layout, price_of_event, ticket_price,
+                        organizer_type, open_to_residents, open_to_non_residents,
+                        false);
+        if (is_overlapping(new_event, facility.get_pending_reservations()) ||
+            is_overlapping(new_event, facility.get_approved_reservations()))
         {
-            cout << "Unable to create event. The new event overlaps with an existing event.\n";
+            cout << "Unable to create event. The new event overlaps with an existing "
+                    "event.\n";
             throw runtime_error("overlapping event");
         }
         else
         {
             new_event.add_attendee(*this);
             this->add_reservation(new_event);
-            cout << "Event has been created. You will have to wait for the facility manager to approve the event until it is confirmed" << endl;
+            cout << "Event has been created. You will have to wait for the facility "
+                    "manager to approve the event until it is confirmed"
+                 << endl;
             return new_event;
         }
     }
@@ -516,7 +534,8 @@ void User::buy_ticket(Facility &facility)
         // print the upcoming events
         view_upcoming_events(*this, facility);
 
-        cout << "Enter the name of the event you would like to buy a ticket for (or type 'b' to go back to the main menu): ";
+        cout << "Enter the name of the event you would like to buy a ticket for "
+                "(or type 'b' to go back to the main menu): ";
         string event_name;
         cin.ignore();
         getline(cin, event_name);
@@ -526,7 +545,8 @@ void User::buy_ticket(Facility &facility)
             throw runtime_error("back to menu");
         }
 
-        vector<Event> available_events = retrieve_events_from_file("approved_reservations.txt", facility);
+        vector<Event> available_events =
+            retrieve_events_from_file("approved_reservations.txt", facility);
 
         if (available_events.empty())
         {
@@ -534,15 +554,12 @@ void User::buy_ticket(Facility &facility)
             return;
         }
 
-        auto it = find_if(available_events.begin(), available_events.end(), EventNameComparer(event_name));
+        auto it = find_if(available_events.begin(), available_events.end(),
+                          EventNameComparer(event_name));
         if (it != available_events.end())
         {
             Event &event = *it;
-            if (event.get_num_guests() >= 40)
-            {
-                cout << "No more tickets available for " << event_name << endl;
-                return;
-            }
+
             if (balance < event.get_ticket_price())
             {
                 cout << "Insufficient balance to buy ticket.\n";
@@ -553,11 +570,22 @@ void User::buy_ticket(Facility &facility)
                 cout << "You are already signed up for this event.\n";
                 return;
             }
-            event.add_attendee(*this);
-            facility.update_approved_reservation(event);
-            add_events_to_file(facility.get_approved_reservations(), "approved_reservations.txt");
-            this->balance -= event.get_ticket_price();
-            events.push_back(*it);
+            if (event.get_attendees().size() >= event.get_num_guests())
+            {
+                cout << "This event is full, you will be added to the waitlist for: " << event_name << endl;
+                event.add_to_waitlist(*this);
+                facility.update_approved_reservation(event);
+                add_events_to_file(facility.get_approved_reservations(), "approved_reservations.txt");
+            }
+            else
+            {
+                event.add_attendee(*this);
+                facility.update_approved_reservation(event);
+                add_events_to_file(facility.get_approved_reservations(),
+                                   "approved_reservations.txt");
+                this->balance -= event.get_ticket_price();
+                events.push_back(*it);
+            }
 
             // clear users.txt file
             ofstream outfile("users.txt");
@@ -608,7 +636,8 @@ void User::refund_ticket(Facility &facility)
         return;
     }
 
-    cout << "Enter the name of the event you would like to refund a ticket for (or type 'b' to go back to the main menu): ";
+    cout << "Enter the name of the event you would like to refund a ticket for "
+            "(or type 'b' to go back to the main menu): ";
     string event_name;
     cin.ignore();
     getline(cin, event_name);
@@ -625,21 +654,13 @@ void User::refund_ticket(Facility &facility)
             break;
         }
     }
-    bool is_user_in_pending_event = false;
-    for (const auto &event : pending_reservations)
-    {
-        if (event.get_name() == event_name)
-        {
-            is_user_in_pending_event = is_user_in_event(*this, event);
-            break;
-        }
-    }
-    if (!is_user_in_approved_event && !is_user_in_pending_event)
+    if (!is_user_in_approved_event)
     {
         cout << "You are not signed up for this event.\n";
         return;
     }
-    cout << "Are you sure you want to refund the ticket for this event? (1 for Yes, 0 for No): ";
+    cout << "Are you sure you want to refund the ticket for this event? (1 for "
+            "Yes, 0 for No): ";
     int confirm;
     cin >> confirm;
     if (confirm != 1)
@@ -648,49 +669,41 @@ void User::refund_ticket(Facility &facility)
     }
     else
     {
-        if (is_user_in_approved_event)
+        auto it =
+            find_if(approved_reservations.begin(), approved_reservations.end(),
+                    EventNameComparer(event_name));
+        if (it != approved_reservations.end())
         {
-            auto it = find_if(approved_reservations.begin(), approved_reservations.end(), EventNameComparer(event_name));
-            if (it != approved_reservations.end())
+            Event &event = *it;
+            event.remove_attendee(*this);
+            this->balance += event.get_ticket_price();
+            events.erase(remove(events.begin(), events.end(), event), events.end());
+            facility.update_user(*this);
+            cout << "Ticket refunded for " << event_name << endl;
+
+            if (!event.get_waitlist().empty())
             {
-                Event &event = *it;
-                event.remove_attendee(*this);
+                for (auto it = event.get_waitlist().begin(); it != event.get_waitlist().end(); ++it)
+                {
+                    if (it->get_username() == event.get_waitlist().front().get_username())
+                    {
+                        it->set_balance(it->get_balance() - event.get_ticket_price());
+                        event.add_attendee(*it);
+                        event.get_waitlist().erase(it);
+                    }
+                }
                 facility.update_approved_reservation(event);
                 add_events_to_file(facility.get_approved_reservations(), "approved_reservations.txt");
-                this->balance += event.get_ticket_price();
-                events.erase(remove(events.begin(), events.end(), event), events.end());
-                facility.update_user(*this);
-                // clear users.txt file
-                ofstream outfile("users.txt");
-                outfile.close();
-                for (const auto user : facility.get_all_users())
-                {
-                    save_user_to_file(user);
-                }
-                cout << "Ticket refunded for " << event_name << endl;
             }
-        }
-        else if (is_user_in_pending_event)
-        {
-            auto it = find_if(pending_reservations.begin(), pending_reservations.end(), EventNameComparer(event_name));
-            if (it != pending_reservations.end())
+            ofstream outfile("users.txt");
+            outfile.close();
+            for (const auto user : facility.get_all_users())
             {
-                Event &event = *it;
-                event.remove_attendee(*this);
-                facility.update_pending_reservation(event);
-                add_events_to_file(facility.get_pending_reservations(), "pending_reservations.txt");
-                this->balance += event.get_ticket_price();
-                events.erase(remove(events.begin(), events.end(), event), events.end());
-                facility.update_user(*this);
-                // clear users.txt file
-                ofstream outfile("users.txt");
-                outfile.close();
-                for (const auto user : facility.get_all_users())
-                {
-                    save_user_to_file(user);
-                }
-                cout << "Ticket refunded for " << event_name << endl;
+                save_user_to_file(user);
             }
+            facility.update_approved_reservation(event);
+            add_events_to_file(facility.get_approved_reservations(),
+                               "approved_reservations.txt");
         }
     }
 }
@@ -736,10 +749,13 @@ void user_menu(User &user, Facility &facility)
             case 4:
             {
                 Event new_event = user.create_event(facility);
-                vector<Event> pending_events = retrieve_events_from_file("pending_reservations.txt", facility);
-                vector<Event> approved_events = retrieve_events_from_file("approved_reservations.txt", facility);
+                vector<Event> pending_events =
+                    retrieve_events_from_file("pending_reservations.txt", facility);
+                vector<Event> approved_events =
+                    retrieve_events_from_file("approved_reservations.txt", facility);
 
-                if (is_overlapping(new_event, pending_events) || is_overlapping(new_event, approved_events))
+                if (is_overlapping(new_event, pending_events) ||
+                    is_overlapping(new_event, approved_events))
                 {
                     cout << "Error: The new event overlaps with an existing event.\n";
                     break;
@@ -748,6 +764,17 @@ void user_menu(User &user, Facility &facility)
                 pending_events.push_back(new_event);
                 add_events_to_file(pending_events, "pending_reservations.txt");
                 facility.add_pending_reservation(new_event);
+                cout << "Price to create the event is: "
+                     << new_event.get_price_of_event() << endl;
+                user.set_balance(user.get_balance() - new_event.get_price_of_event());
+                facility.update_user(user);
+                // rewrite users.txt file
+                ofstream outfile("users.txt");
+                outfile.close();
+                for (const auto user : facility.get_all_users())
+                {
+                    save_user_to_file(user);
+                }
                 break;
             }
             case 5:
@@ -756,18 +783,18 @@ void user_menu(User &user, Facility &facility)
                 bool hasPending = false;
                 for (const auto &event : facility.get_pending_reservations())
                 {
-                    if (event.get_organizer() && event.get_organizer()->get_username() == user.get_username())
+                    if (event.get_organizer() &&
+                        event.get_organizer()->get_username() == user.get_username())
                     {
-                        cout << event << endl;
                         hasPending = true;
                     }
                 }
                 bool hasApproved = false;
                 for (const auto &event : facility.get_approved_reservations())
                 {
-                    if (event.get_organizer() && event.get_organizer()->get_username() == user.get_username())
+                    if (event.get_organizer() &&
+                        event.get_organizer()->get_username() == user.get_username())
                     {
-                        cout << event << endl;
                         hasApproved = true;
                     }
                 }
@@ -776,7 +803,8 @@ void user_menu(User &user, Facility &facility)
                     cout << "No reservations to cancel.\n";
                     break;
                 }
-                cout << "Enter the name of the event you would like to cancel (or type 'b' to go back to the main menu): ";
+                cout << "Enter the name of the event you would like to cancel (or type "
+                        "'b' to go back to the main menu): ";
                 string event_name;
                 cin.ignore();
                 getline(cin, event_name);
@@ -786,34 +814,59 @@ void user_menu(User &user, Facility &facility)
                     throw runtime_error("back to menu");
                 }
 
-                vector<Event> pending_reservations = retrieve_events_from_file("pending_reservations.txt", facility);
-                vector<Event> approved_reservations = retrieve_events_from_file("approved_reservations.txt", facility);
+                vector<Event> pending_reservations =
+                    retrieve_events_from_file("pending_reservations.txt", facility);
+                vector<Event> approved_reservations =
+                    retrieve_events_from_file("approved_reservations.txt", facility);
 
-                vector<Event>::iterator it_pending = find_if(pending_reservations.begin(), pending_reservations.end(), EventNameComparer(event_name));
-                vector<Event>::iterator it_approved = find_if(approved_reservations.begin(), approved_reservations.end(), EventNameComparer(event_name));
+                vector<Event>::iterator it_pending =
+                    find_if(pending_reservations.begin(), pending_reservations.end(),
+                            EventNameComparer(event_name));
+                vector<Event>::iterator it_approved =
+                    find_if(approved_reservations.begin(), approved_reservations.end(),
+                            EventNameComparer(event_name));
 
-                if (it_pending != pending_reservations.end() || it_approved != approved_reservations.end())
+                if (it_pending != pending_reservations.end() ||
+                    it_approved != approved_reservations.end())
                 {
-                    cout << "Are you sure you want to cancel this reservation? (1 for Yes, 0 for No): ";
+                    cout << "Are you sure you want to cancel this reservation? (1 for "
+                            "Yes, 0 for No): ";
                     int confirm;
                     cin >> confirm;
                     if (confirm == 1)
                     {
                         if (it_pending != pending_reservations.end())
                         {
-                            user.cancel_reservation(*it_pending);
+                            user.set_balance(user.get_balance() + it_pending->get_price_of_event());
+                            facility.update_user(user);
+                            cout << "You will be refunded: " << it_pending->get_price_of_event() << endl;
+                            cout << "Your new balance: " << user.get_balance() << endl;
+                            user.cancel_pending_reservation(*it_pending, facility);
+                            it_pending->remove_attendee(user);
+                            it_pending->refund_users(facility);
                             pending_reservations.erase(it_pending);
-                            add_events_to_file(pending_reservations, "pending_reservations.txt");
-                            facility.remove_pending_reservation(*it_pending);
-                            cout << "Pending reservation cancelled.\n";
+                            add_events_to_file(pending_reservations,
+                                               "pending_reservations.txt");
                         }
                         else if (it_approved != approved_reservations.end())
                         {
-                            user.cancel_reservation(*it_approved);
+                            if (it_approved->get_start_time() - time(nullptr) < 86400)
+                            {
+                                it_approved->remove_attendee(user);
+                                cout << "You will not recieve a refund for cancelling this "
+                                        "reservation due to it being within 24 hours.\n";
+                                break;
+                            }
+                            user.set_balance(user.get_balance() + it_approved->get_price_of_event());
+                            facility.update_user(user);
+                            cout << "You will be refunded: " << it_approved->get_price_of_event() << endl;
+                            cout << "Your new balance: " << user.get_balance() << endl;
+                            it_approved->remove_attendee(user);
+                            it_approved->refund_users(facility);
+                            user.cancel_approved_reservation(*it_approved, facility);
                             approved_reservations.erase(it_approved);
-                            add_events_to_file(approved_reservations, "approved_reservations.txt");
-                            facility.remove_approved_reservation(*it_approved);
-                            cout << "Approved reservation cancelled.\n";
+                            add_events_to_file(approved_reservations,
+                                               "approved_reservations.txt");
                         }
                     }
                     else
@@ -891,11 +944,13 @@ void save_user_to_file(const User &user)
         return;
     }
 
-    outfile << user.get_username() << "," << user.get_balance() << "," << user.get_city() << "\n";
+    outfile << user.get_username() << "," << user.get_balance() << ","
+            << user.get_city() << "\n";
     outfile.close();
 }
 
-bool validate_user_credentials(const string &username, User &user, Facility &facility)
+bool validate_user_credentials(const string &username, User &user,
+                               Facility &facility)
 {
     if (load_user_from_file(username, user))
     {

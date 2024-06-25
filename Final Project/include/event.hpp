@@ -17,7 +17,8 @@ public:
     Event(const string name, time_t start_time, time_t end_time,
           bool is_public, int num_guests, User &organizer, LayoutType layout,
           int price_of_event, int ticket_price, OrganizerType type,
-          bool open_to_residents, bool open_to_non_residents, bool approved, vector<User> attendees = vector<User>());
+          bool open_to_residents, bool open_to_non_residents, bool approved, vector<User> attendees = vector<User>(), 
+          vector<User> waitlist = vector<User>());
 
     string get_name() const;
     time_t get_start_time() const;
@@ -35,8 +36,10 @@ public:
     void set_approved(bool approved);
     void add_attendee(User &user);
     void remove_attendee(User &user);
-    void refund_users();
+    void refund_users(Facility &facility);
     vector<User> get_attendees() const;
+    vector<User> get_waitlist() const;
+    void add_to_waitlist(User &user);
     void set_ticket_price(int price);
     bool operator==(const Event &other) const;
     friend ostream &operator<<(ostream &os, const Event &other);
@@ -61,12 +64,11 @@ private:
 
 void add_events_to_file(vector<Event> events, string filename);
 vector<Event> retrieve_events_from_file(string filename, Facility &facility);
-time_t parse_datetime(const string& datetime_str);
-bool parse_bool(const string& bool_str);
+time_t parse_datetime(const string &datetime_str);
+bool parse_bool(const string &bool_str);
 Event get_event_by_name(string name, vector<Event> events);
-LayoutType parse_layout(const string& layout_str);
-OrganizerType parse_organizer_type(const string& organizer_type_str);
+LayoutType parse_layout(const string &layout_str);
+OrganizerType parse_organizer_type(const string &organizer_type_str);
 bool is_overlapping(const Event &new_event, const vector<Event> &events);
-
 
 #endif

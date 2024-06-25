@@ -48,48 +48,7 @@ void Facility::remove_approved_reservation(const Event &event) {
     if (it != approved_reservations.end()) {
         approved_reservations.erase(it);
         // Update the approved_reservations.txt file
-        ofstream outfile("approved_reservations.txt");
-        if (!outfile) {
-            cerr << "Error opening file: approved_reservations.txt" << endl;
-            return;
-        }
-        for (const auto &e : approved_reservations) {
-            // Convert start and end times to a readable format
-            time_t start_time = e.get_start_time();
-            time_t end_time = e.get_end_time();
-            tm *start_tm = localtime(&start_time);
-            tm *end_tm = localtime(&end_time);
-            // Write event details to the file
-            outfile << "Event Name: " << e.get_name() << endl;
-            outfile << "Start Time: " << put_time(start_tm, "%Y-%m-%d %H:%M") << endl;
-            outfile << "End Time: " << put_time(end_tm, "%Y-%m-%d %H:%M") << endl;
-            outfile << "Is public: " << (e.is_public_event() ? "yes" : "no") << endl;
-            outfile << "Number of Guests: " << e.get_num_guests() << endl;
-            if (e.get_organizer()) {
-                outfile << "Organizer: " << e.get_organizer()->get_username() << endl;
-            } else {
-                outfile << "Organizer: None" << endl;
-            }
-            outfile << "Layout: " << layoutTypeToString(e.get_layout()) << endl;
-            outfile << "Price of Event: " << e.get_price_of_event() << endl;
-            outfile << "Ticket Price: " << e.get_ticket_price() << endl;
-            outfile << "Organizer Type: " << organizerTypeToString(e.get_type()) << endl;
-            outfile << "Open to Residents: " << (e.is_open_to_residents() ? "yes" : "no") << endl;
-            outfile << "Open to Non-Residents: " << (e.is_open_to_non_residents() ? "yes" : "no") << endl;
-            outfile << "Approved: " << (e.is_approved() ? "yes" : "no") << endl;
-            outfile << "Attendees: ";
-            const vector<User> &attendees = e.get_attendees();
-            for (size_t i = 0; i < attendees.size(); ++i) {
-                const User &user = attendees[i];
-                outfile << user.get_username() << "," << user.get_balance() << "," << user.get_city();
-                if (i < attendees.size() - 1) {
-                    outfile << ";";
-                }
-            }
-            outfile << endl;
-            outfile << "----------------------------------------" << endl;
-        }
-        outfile.close();
+        add_events_to_file(approved_reservations, "approved_reservations.txt");
     } else {
         cout << "Approved reservation not found: " << event.get_name() << endl;
     }
@@ -138,49 +97,7 @@ void Facility::remove_pending_reservation(const Event &event) {
     auto it = find_if(pending_reservations.begin(), pending_reservations.end(), EventNameComparer(event.get_name()));
     if (it != pending_reservations.end()) {
         pending_reservations.erase(it);
-        // Update the pending_reservations.txt file
-        ofstream outfile("pending_reservations.txt");
-        if (!outfile) {
-            cerr << "Error opening file: pending_reservations.txt" << endl;
-            return;
-        }
-        for (const auto &e : pending_reservations) {
-            // Convert start and end times to a readable format
-            time_t start_time = e.get_start_time();
-            time_t end_time = e.get_end_time();
-            tm *start_tm = localtime(&start_time);
-            tm *end_tm = localtime(&end_time);
-            // Write event details to the file
-            outfile << "Event Name: " << e.get_name() << endl;
-            outfile << "Start Time: " << put_time(start_tm, "%Y-%m-%d %H:%M") << endl;
-            outfile << "End Time: " << put_time(end_tm, "%Y-%m-%d %H:%M") << endl;
-            outfile << "Is public: " << (e.is_public_event() ? "yes" : "no") << endl;
-            outfile << "Number of Guests: " << e.get_num_guests() << endl;
-            if (e.get_organizer()) {
-                outfile << "Organizer: " << e.get_organizer()->get_username() << endl;
-            } else {
-                outfile << "Organizer: None" << endl;
-            }
-            outfile << "Layout: " << layoutTypeToString(e.get_layout()) << endl;
-            outfile << "Price of Event: " << e.get_price_of_event() << endl;
-            outfile << "Ticket Price: " << e.get_ticket_price() << endl;
-            outfile << "Organizer Type: " << organizerTypeToString(e.get_type()) << endl;
-            outfile << "Open to Residents: " << (e.is_open_to_residents() ? "yes" : "no") << endl;
-            outfile << "Open to Non-Residents: " << (e.is_open_to_non_residents() ? "yes" : "no") << endl;
-            outfile << "Approved: " << (e.is_approved() ? "yes" : "no") << endl;
-            outfile << "Attendees: ";
-            const vector<User> &attendees = e.get_attendees();
-            for (size_t i = 0; i < attendees.size(); ++i) {
-                const User &user = attendees[i];
-                outfile << user.get_username() << "," << user.get_balance() << "," << user.get_city();
-                if (i < attendees.size() - 1) {
-                    outfile << ";";
-                }
-            }
-            outfile << endl;
-            outfile << "----------------------------------------" << endl;
-        }
-        outfile.close();
+        add_events_to_file(pending_reservations, "pending_reservations.txt");
     } else {
         cout << "Pending reservation not found: " << event.get_name() << endl;
     }

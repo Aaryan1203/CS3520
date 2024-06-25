@@ -19,11 +19,11 @@ using namespace std;
 Event::Event(const string name, time_t start_time, time_t end_time,
              bool is_public, int num_guests, User &organizer, LayoutType layout,
              int price_of_event, int ticket_price, OrganizerType type,
-             bool open_to_residents, bool open_to_non_residents, bool approved, vector<User> attendees)
+             bool open_to_residents, bool open_to_non_residents, bool approved, vector<User> attendees, vector<User> waitlist)
     : name(name), start_time(start_time), end_time(end_time),
       is_public(is_public), num_guests(num_guests), organizer(&organizer), layout(layout),
       price_of_event(price_of_event), ticket_price(ticket_price), type(type),
-      open_to_residents(open_to_residents), open_to_non_residents(open_to_non_residents), approved(approved), attendees(attendees) {}
+      open_to_residents(open_to_residents), open_to_non_residents(open_to_non_residents), approved(approved), attendees(attendees), waitlist(waitlist) {}
 
 string Event::get_name() const { return name; }
 time_t Event::get_start_time() const { return start_time; }
@@ -38,14 +38,22 @@ OrganizerType Event::get_type() const { return type; }
 bool Event::is_open_to_residents() const { return open_to_residents; }
 bool Event::is_open_to_non_residents() const { return open_to_non_residents; }
 vector<User> Event::get_attendees() const { return attendees; }
+vector<User> Event::get_waitlist() const { return waitlist; }
 void Event::set_ticket_price(int price) { ticket_price = price; }
 bool Event::is_approved() const { return approved; }
 void Event::set_approved(bool approved) { this->approved = approved; }
 
 ostream &operator<<(ostream &os, const Event &event)
 {
-    tm *start_tm = localtime(&event.start_time);
-    tm *end_tm = localtime(&event.end_time);
+    time_t start_time = event.get_start_time();
+    time_t end_time = event.get_end_time();
+    tm start_tm_struct;
+    localtime_r(&start_time, &start_tm_struct);
+    tm end_tm_struct;
+    localtime_r(&end_time, &end_tm_struct);
+
+    start_tm_struct.tm_hour -= 1;
+    end_tm_struct.tm_hour -= 1;
 
     os << "+-----------------------------------------+\n";
     os << "| Event Details                          |\n";
@@ -61,9 +69,9 @@ ostream &operator<<(ostream &os, const Event &event)
         os << "| Organizer:           | None\n";
     }
     os << "+----------------------+------------------+\n";
-    os << "| Start Time:          | " << put_time(start_tm, "%Y-%m-%d %H:%M") << "\n";
+    os << "| Start Time:          | " << put_time(&start_tm_struct, "%Y-%m-%d %H:%M") << "\n";
     os << "+----------------------+------------------+\n";
-    os << "| End Time:            | " << put_time(end_tm, "%Y-%m-%d %H:%M") << "\n";
+    os << "| End Time:            | " << put_time(&end_tm_struct, "%Y-%m-%d %H:%M") << "\n";
     os << "+----------------------+------------------+\n";
     os << "| Ticket Price:        | $" << event.ticket_price << "\n";
     os << "+----------------------+------------------+\n";
@@ -88,6 +96,11 @@ void Event::add_attendee(User &user)
     attendees.push_back(user);
 }
 
+void Event::add_to_waitlist(User &user)
+{
+    waitlist.push_back(user);
+}
+
 void Event::remove_attendee(User &user)
 {
     auto it = find(attendees.begin(), attendees.end(), user);
@@ -97,15 +110,24 @@ void Event::remove_attendee(User &user)
     }
 }
 
-void Event::refund_users()
+void Event::refund_users(Facility &facility)
 {
     for (auto &attendee : attendees)
     {
         int cost = ticket_price;
         attendee.set_balance(attendee.get_balance() + cost);
+        facility.update_user(attendee);
         cout << "Refunded " << attendee.get_username() << " " << cost << " credits." << endl;
     }
-    attendees.clear();
+
+    ofstream outfile("users.txt");
+    outfile.close();
+
+    for (auto &attendee : facility.get_all_users())
+    {
+        save_user_to_file(attendee);
+    }
+
     cout << "All attendees have been refunded." << endl;
 }
 
@@ -177,6 +199,19 @@ void add_events_to_file(vector<Event> events, string filename)
             }
         }
         outfile << endl;
+        outfile << "Waitlist: ";
+        const vector<User> &waitlist = event.get_waitlist();
+        for (size_t i = 0; i < waitlist.size(); ++i)
+        {
+            const User &user = waitlist[i];
+            outfile << user.get_username() << "," << user.get_balance() << "," << user.get_city();
+            if (i < waitlist.size() - 1)
+            {
+                outfile << ";";
+            }
+        }
+        outfile << endl;
+
         outfile << "----------------------------------------" << endl;
     }
     outfile.close();
@@ -273,6 +308,38 @@ vector<Event> retrieve_events_from_file(string filename, Facility &facility)
                         }
                     }
                 }
+
+                // Read waitlist
+                vector<User> waitlist;
+                getline(infile, line);
+                if (line.find("Waitlist: ") == 0)
+                {
+                    string waitlist_str = line.substr(10);
+                    stringstream ss(waitlist_str);
+                    string waitlist_info;
+                    while (getline(ss, waitlist_info, ';'))
+                    {
+                        if (!waitlist_info.empty())
+                        {
+                            stringstream attendee_stream(waitlist_info);
+                            string username;
+                            getline(attendee_stream, username, ',');
+                            try
+                            {
+                                User *attendee = get_user_by_username(username, facility);
+                                if (attendee)
+                                {
+                                    waitlist.push_back(*attendee);
+                                }
+                            }
+                            catch (const runtime_error &e)
+                            {
+                                cerr << "Error: " << e.what() << endl;
+                            }
+                        }
+                    }
+                }
+
                 // Skip the separator line
                 getline(infile, line);
 

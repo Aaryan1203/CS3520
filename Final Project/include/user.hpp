@@ -18,7 +18,8 @@ public:
     int get_balance() const;
     string get_city() const;
     void set_balance(int balance);
-    void cancel_reservation(Event &event);
+    void cancel_approved_reservation(Event &event, Facility &facility);
+    void cancel_pending_reservation(Event &event, Facility &facility);
     void view_my_events(Facility &facility);
     void view_upcoming_events(User &user, Facility &facility) const;
     void view_my_reservations(Facility &facility);
@@ -44,6 +45,7 @@ User *get_user_by_username(string username, Facility &facility);
 bool validate_user_credentials(const string &username, User &user, Facility &facility);
 bool can_user_sign_up(const User &user, const Event &event);
 bool is_user_in_event(const User &user, const Event &event);
+bool is_user_in_waitlist(const User &user, const Event &event);
 bool load_user_from_file(const string &username, User &user);
 void save_user_to_file(const User &user);
 

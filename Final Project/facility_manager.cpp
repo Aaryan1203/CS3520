@@ -60,7 +60,7 @@ void FacilityManager::refund_event(Event &event)
     }
 
     budget -= refund_amount;
-    event.refund_users();
+    // event.refund_users(facility);
 
     // Remove the event from the facility's reservations
     facility->remove_reservation(event);
@@ -68,7 +68,7 @@ void FacilityManager::refund_event(Event &event)
     // Update users' reservations
     for (User &attendee : event.get_attendees())
     {
-        attendee.cancel_reservation(event);
+        // attendee.cancel_reservation(event, facility);
     }
 
     cout << "Refunded event and updated budget. New budget: $" << budget << endl;
