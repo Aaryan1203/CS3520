@@ -9,6 +9,7 @@
 
 using namespace std;
 
+// Event class implementation
 Event::Event(const string name, time_t start_time, time_t end_time,
              bool is_public, int num_guests, User &organizer, LayoutType layout,
              int price_of_event, int ticket_price, OrganizerType type,
@@ -18,6 +19,7 @@ Event::Event(const string name, time_t start_time, time_t end_time,
       price_of_event(price_of_event), ticket_price(ticket_price), type(type),
       open_to_residents(open_to_residents), open_to_non_residents(open_to_non_residents), approved(approved), attendees(attendees), waitlist(waitlist) {}
 
+// getters and setters
 string Event::get_name() const { return name; }
 time_t Event::get_start_time() const { return start_time; }
 time_t Event::get_end_time() const { return end_time; }
@@ -36,6 +38,7 @@ void Event::set_ticket_price(int price) { ticket_price = price; }
 bool Event::is_approved() const { return approved; }
 void Event::set_approved(bool approved) { this->approved = approved; }
 
+// overloaded output operator
 ostream &operator<<(ostream &os, const Event &event)
 {
     time_t start_time = event.get_start_time();
@@ -87,6 +90,7 @@ ostream &operator<<(ostream &os, const Event &event)
     return os;
 }
 
+// overloaded equality operator
 bool Event::operator==(const Event &other) const
 {
     return name == other.name && start_time == other.start_time &&

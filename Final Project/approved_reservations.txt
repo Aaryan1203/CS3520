@@ -1,0 +1,11 @@
+FacilityManager  Facility            Event
+      |              |                 |
+      | approve_reservation()          |
+      |--------------->|               |
+      |                | find_event()  |
+      |                |--------------->|
+      |                |               |
+      |                | set_approved()|
+      |                |<--------------|
+      | reservation_approved           |
+      |<---------------|               |

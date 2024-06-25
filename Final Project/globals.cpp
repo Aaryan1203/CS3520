@@ -5,9 +5,11 @@
 #include <ctime>
 #include <stdexcept>
 #include <fstream>
+#include <iomanip>
 
 using namespace std;
 
+// Parses a string into a time_t object
 time_t parse_datetime(const string &datetime_str)
 {
     tm timeinfo = {};
@@ -20,11 +22,13 @@ time_t parse_datetime(const string &datetime_str)
     return mktime(&timeinfo);
 }
 
+// Parses a string into a boolean
 bool parse_bool(const string &bool_str)
 {
     return bool_str == "yes";
 }
 
+// Parses a string into a LayoutType
 LayoutType parse_layout(const string &layout_str)
 {
     if (layout_str == "Meeting Style")
@@ -38,6 +42,7 @@ LayoutType parse_layout(const string &layout_str)
     throw invalid_argument("Invalid layout type");
 }
 
+// Parses a string into an OrganizerType
 OrganizerType parse_organizer_type(const string &organizer_type_str)
 {
     if (organizer_type_str == "City")
@@ -51,6 +56,7 @@ OrganizerType parse_organizer_type(const string &organizer_type_str)
     throw invalid_argument("Invalid organizer type");
 }
 
+// Checks if a new event overlaps with any existing events
 bool is_overlapping(const Event &new_event, const vector<Event> &events)
 {
     for (const auto &event : events)

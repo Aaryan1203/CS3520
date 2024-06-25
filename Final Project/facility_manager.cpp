@@ -6,6 +6,7 @@
 
 using namespace std;
 
+// FacilityManager class implementation
 FacilityManager::FacilityManager(const string &username, const string &password)
     : username(username), password(password)
 {
@@ -16,6 +17,7 @@ string FacilityManager::get_username() const
     return username;
 }
 
+// EventComparator struct implementation
 struct EventComparator
 {
     bool operator()(const Event &a, const Event &b) const
@@ -24,6 +26,7 @@ struct EventComparator
     }
 };
 
+// View reservations for the facility manager
 void FacilityManager::view_reservations(const string &file_name) const
 {
     ifstream file(file_name);
@@ -42,6 +45,7 @@ void FacilityManager::view_reservations(const string &file_name) const
     file.close();
 }
 
+// Check if the event is valid
 bool FacilityManager::is_valid_event(const Event &event) const
 {
     const time_t opening_time = 8 * 3600;
@@ -60,6 +64,7 @@ bool FacilityManager::is_valid_event(const Event &event) const
     return true;
 }
 
+// Check if the layout is valid
 bool FacilityManager::is_valid_layout(const Event &event) const
 {
     if (event.get_type() == OrganizerType::CITY || event.get_type() == OrganizerType::ORGANIZATION)
@@ -69,6 +74,7 @@ bool FacilityManager::is_valid_layout(const Event &event) const
     return true;
 }
 
+// Validate facility manager credentials
 bool validate_facility_manager_credentials(const string &username, const string &password, FacilityManager &manager)
 {
     ifstream file("manager_credentials.txt");
@@ -100,6 +106,7 @@ bool validate_facility_manager_credentials(const string &username, const string 
     return false;
 }
 
+// View events for the next week
 void view_events_for_next_week(Facility &facility)
 {
     time_t current_time = time(nullptr);
@@ -121,6 +128,7 @@ void view_events_for_next_week(Facility &facility)
     }
 }
 
+// Approves the reservations
 void approve_reservation(Event &event, Facility &facility)
 {
     if (facility.exceeds_max_reservation_time())
@@ -128,6 +136,7 @@ void approve_reservation(Event &event, Facility &facility)
         cout << "Cannot approve reservation due to exceeded weekly hours." << endl;
         return;
     }
+    // Remove the event from pending reservations and add it to approved reservations
     facility.remove_pending_reservation(event);
     facility.add_approved_reservation(event);
     add_events_to_file(facility.get_approved_reservations(), "approved_reservations.txt");
@@ -136,6 +145,7 @@ void approve_reservation(Event &event, Facility &facility)
     cout << "Approved reservation for event: " << event.get_name() << endl;
 }
 
+// Facility manager menu
 void facility_manager_menu(FacilityManager &manager, Facility &facility)
 {
     while (true)
@@ -219,6 +229,7 @@ void facility_manager_menu(FacilityManager &manager, Facility &facility)
             vector<Event> &reservations = facility.get_pending_reservations();
             sort(reservations.begin(), reservations.end(), EventComparator());
 
+            // Approve the first event in the list
             auto it = facility.get_pending_reservations().begin();
             if (it != facility.get_pending_reservations().end())
             {

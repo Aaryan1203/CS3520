@@ -7,9 +7,11 @@
 #include <iostream>
 #include <sstream>
 #include <limits>
+#include <iomanip>
 
 using namespace std;
 
+// Comparator for comparing event names
 struct EventNameComparer
 {
     EventNameComparer(const string &name) : name(name) {}
@@ -22,6 +24,7 @@ private:
     string name;
 };
 
+// Comparator for comparing usernames
 struct UserNameComparer
 {
     UserNameComparer(const string &username) : username(username) {}
@@ -32,6 +35,7 @@ private:
     string username;
 };
 
+// Constructor for the User class
 User::User(const string &username, int balance, const string &city)
     : username(username), balance(balance), city(city) {}
 
@@ -51,6 +55,7 @@ bool User::operator==(const User &other) const
 {
     return username == other.username;
 }
+// getters and setters
 
 string User::get_username() const { return username; }
 
@@ -67,6 +72,7 @@ void User::view_my_information()
     cout << "City: " << city << endl;
 }
 
+// Cancel an approved reservation
 void User::cancel_approved_reservation(Event &event, Facility &facility)
 {
     auto it = find(facility.get_approved_reservations().begin(), facility.get_approved_reservations().end(), event);
@@ -83,6 +89,7 @@ void User::cancel_approved_reservation(Event &event, Facility &facility)
     }
 }
 
+// Cancel a pending reservation
 void User::cancel_pending_reservation(Event &event, Facility &facility)
 {
     auto it = find(facility.get_pending_reservations().begin(), facility.get_pending_reservations().end(), event);
@@ -98,7 +105,7 @@ void User::cancel_pending_reservation(Event &event, Facility &facility)
         return;
     }
 }
-
+// Read users from a file
 vector<User> read_users_from_file(string filename)
 {
     ifstream infile(filename);
@@ -132,6 +139,7 @@ vector<User> read_users_from_file(string filename)
     return users;
 }
 
+// Save a user to a file
 void User::view_my_events(Facility &facility)
 {
     const vector<Event> &approved_reservations =
@@ -152,6 +160,7 @@ void User::view_my_events(Facility &facility)
     }
 }
 
+//checks if a user can sign up
 bool can_user_sign_up(const User &user, const Event &event)
 {
     if (!event.is_public_event())
@@ -175,6 +184,7 @@ bool can_user_sign_up(const User &user, const Event &event)
     return false;
 }
 
+//checks if a user is in an event
 bool is_user_in_event(const User &user, const Event &event)
 {
     for (const auto &attendee : event.get_attendees())
@@ -187,6 +197,7 @@ bool is_user_in_event(const User &user, const Event &event)
     return false;
 }
 
+//checks if a user is in the waitlist
 bool is_user_in_waitlist(const User &user, const Event &event)
 {
     for (const auto &attendee : event.get_waitlist())
@@ -199,6 +210,7 @@ bool is_user_in_waitlist(const User &user, const Event &event)
     return false;
 }
 
+// Views all the upcoming events
 void User::view_upcoming_events(User &user, Facility &facility) const
 {
     const vector<Event> &approved_reservations = facility.get_approved_reservations();
@@ -246,6 +258,7 @@ void User::view_upcoming_events(User &user, Facility &facility) const
     }
 }
 
+// view all my reservations
 void User::view_my_reservations(Facility &facility)
 {
     cout << "+======================================================+\n";
@@ -287,6 +300,7 @@ void User::view_my_reservations(Facility &facility)
     }
 }
 
+// promote user to facility manager
 time_t prompt_for_datetime(const string &prompt)
 {
     tm timeinfo = {};
@@ -338,6 +352,7 @@ int prompt_for_int(const string &prompt)
     return value;
 }
 
+// Prompts the user for a string
 string prompt_for_string(const string &prompt)
 {
     string value;
@@ -351,6 +366,7 @@ string prompt_for_string(const string &prompt)
     return value;
 }
 
+// Prompts the user for a boolean value
 bool prompt_for_bool(const string &prompt)
 {
     string value;
@@ -401,6 +417,7 @@ LayoutType prompt_for_layout_type()
     return static_cast<LayoutType>(layout_int);
 }
 
+// Prompts the user for the type of organizer
 OrganizerType prompt_for_organizer_type()
 {
     int organizer_type_int;
@@ -429,6 +446,7 @@ OrganizerType prompt_for_organizer_type()
     return static_cast<OrganizerType>(organizer_type_int);
 }
 
+// Get the price of an event
 int get_price_of_event(OrganizerType organizer_type, int hours_of_event)
 {
     int price = 10;
@@ -452,6 +470,7 @@ int get_price_of_event(OrganizerType organizer_type, int hours_of_event)
     return price;
 }
 
+// Create an event
 Event User::create_event(Facility &facility)
 {
     try
@@ -528,6 +547,7 @@ Event User::create_event(Facility &facility)
     }
 }
 
+// Buy a ticket for an event
 void User::buy_ticket(Facility &facility)
 {
     try
@@ -609,6 +629,7 @@ void User::buy_ticket(Facility &facility)
     }
 }
 
+// Refund a ticket for an event
 void User::refund_ticket(Facility &facility)
 {
     view_my_events(facility);
@@ -669,8 +690,7 @@ void User::refund_ticket(Facility &facility)
         return;
     }
     else
-    {
-
+    {   // refund the ticket if the user is in the waitlist
         auto it =
             find_if(approved_reservations.begin(), approved_reservations.end(),
                     EventNameComparer(event_name));
@@ -716,6 +736,7 @@ void User::refund_ticket(Facility &facility)
 
 void cancel_reservation(User &user, Facility &facility)
 {
+    // view all the reservations
     user.view_my_reservations(facility);
     bool hasPending = false;
     for (const auto &event : facility.get_pending_reservations())
@@ -756,6 +777,7 @@ void cancel_reservation(User &user, Facility &facility)
     vector<Event>::iterator it_pending = find_if(pending_reservations.begin(), pending_reservations.end(), EventNameComparer(event_name));
     vector<Event>::iterator it_approved = find_if(approved_reservations.begin(), approved_reservations.end(), EventNameComparer(event_name));
 
+    // if the event is found dont show it
     if (it_pending != pending_reservations.end() || it_approved != approved_reservations.end())
     {
         cout << "Are you sure you want to cancel this reservation? (1 for "
@@ -813,6 +835,7 @@ void cancel_reservation(User &user, Facility &facility)
     }
 }
 
+// User menu
 void user_menu(User &user, Facility &facility)
 {
     cout << "Welcome " << user.get_username() << "!\n";
@@ -911,6 +934,7 @@ void user_menu(User &user, Facility &facility)
     }
 }
 
+// Get a user by their username
 bool load_user_from_file(const string &username, User &user)
 {
     ifstream infile("users.txt");
@@ -942,6 +966,7 @@ bool load_user_from_file(const string &username, User &user)
     return false;
 }
 
+// Save a user to a file
 void save_user_to_file(const User &user)
 {
     ofstream outfile("users.txt", ios::app);
@@ -956,6 +981,7 @@ void save_user_to_file(const User &user)
     outfile.close();
 }
 
+// Validate user credentials
 bool validate_user_credentials(const string &username, User &user, Facility &facility)
 {
     if (load_user_from_file(username, user))

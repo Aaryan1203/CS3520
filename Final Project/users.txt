@@ -1,3 +1,2 @@
 laith,1080,la
 aaryan,940,nj
-test,1000,nj

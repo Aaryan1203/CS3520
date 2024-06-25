@@ -11,12 +11,14 @@ int main()
 {
     Facility facility("facility");
 
+    // Load data from files
     vector<User> users = read_users_from_file("users.txt");
     for (auto &user : users)
     {
         facility.add_user(user);
     }
 
+    // Load events from files and save them to the facility
     vector<Event> pending_reservations = retrieve_events_from_file("pending_reservations.txt", facility);
     for (auto &event : pending_reservations)
     {
@@ -74,6 +76,7 @@ int main()
 
         switch (choice)
         {
+        // User login
         case 1:
         {
             string username;
@@ -99,6 +102,7 @@ int main()
             }
             break;
         }
+        // Facility manager login
         case 2:
         {
             string username, password;

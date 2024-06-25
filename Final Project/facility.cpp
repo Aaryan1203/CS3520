@@ -5,6 +5,7 @@
 
 using namespace std;
 
+// UserNameComparer struct implementation
 struct UserNameComparer
 {
     UserNameComparer(const string &username) : username(username) {}
@@ -18,6 +19,7 @@ private:
     string username;
 };
 
+// EventNameComparer struct implementation
 struct EventNameComparer
 {
     EventNameComparer(const string &name) : name(name) {}
@@ -33,6 +35,7 @@ private:
 Facility::Facility(string name, int budget)
     : name(name), budget(budget) {}
 
+// getters and setters
 void Facility::add_user(User &user)
 {
     all_users.push_back(user);
@@ -53,6 +56,7 @@ void Facility::add_approved_reservation(Event &event)
     approved_reservations.push_back(event);
 }
 
+// remove approved reservation
 void Facility::remove_approved_reservation(const Event &event)
 {
     auto it = find_if(approved_reservations.begin(), approved_reservations.end(), EventNameComparer(event.get_name()));
@@ -67,6 +71,7 @@ void Facility::remove_approved_reservation(const Event &event)
     }
 }
 
+// remove reservation
 void Facility::remove_reservation(Event &event)
 {
     auto it = find_if(approved_reservations.begin(), approved_reservations.end(), EventNameComparer(event.get_name()));
@@ -77,6 +82,7 @@ void Facility::remove_reservation(Event &event)
     }
 }
 
+// get user by username
 User *get_user_by_username(string username, Facility &facility)
 {
     for (auto &user : facility.get_all_users())
@@ -123,6 +129,7 @@ void Facility::remove_pending_reservation(const Event &event)
     }
 }
 
+// check if reservation exceeds max reservation time
 bool Facility::exceeds_max_reservation_time() const
 {
     int organization_time = 0;
