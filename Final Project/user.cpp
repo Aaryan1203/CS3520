@@ -383,7 +383,7 @@ LayoutType prompt_for_layout_type()
         cout << "1: LECTURE_STYLE\n";
         cout << "2: WEDDING_STYLE\n";
         cout << "3: DANCE_ROOM_STYLE\n";
-        cout << " (or type 'b' to go back to the main menu): ";
+        cout << "(or type 'b' to go back to the main menu): ";
         string input;
         cin >> input;
         if (input == "b")
@@ -410,7 +410,7 @@ OrganizerType prompt_for_organizer_type()
         cout << "1: ORGANIZATION\n";
         cout << "2: RESIDENT\n";
         cout << "3: NON_RESIDENT\n";
-        cout << " (or type 'b' to go back to the main menu): ";
+        cout << "(or type 'b' to go back to the main menu): ";
         string input;
         cin >> input;
         if (input == "b")
@@ -754,19 +754,13 @@ void cancel_reservation(User &user, Facility &facility)
 
     vector<Event> pending_reservations = retrieve_events_from_file("pending_reservations.txt", facility);
     vector<Event> approved_reservations = retrieve_events_from_file("approved_reservations.txt", facility);
-    for (auto &event : approved_reservations) {
-        cout << event.get_name() << endl;
-    }
-    for (auto &event : pending_reservations) {
-        cout << event.get_name() << endl;
-    }
+
     vector<Event>::iterator it_pending = find_if(pending_reservations.begin(), pending_reservations.end(), EventNameComparer(event_name));
     vector<Event>::iterator it_approved = find_if(approved_reservations.begin(), approved_reservations.end(), EventNameComparer(event_name));
 
     if (it_pending != pending_reservations.end() || it_approved != approved_reservations.end())
     {
-        cout << "Are you sure you want to cancel this reservation? (1 for "
-                "Yes, 0 for No): ";
+        cout << "Are you sure you want to cancel this reservation? (1 for Yes, 0 for No): ";
         int confirm;
         cin >> confirm;
         if (confirm == 1)
@@ -775,6 +769,7 @@ void cancel_reservation(User &user, Facility &facility)
             {
                 user.set_balance(user.get_balance() + it_pending->get_price_of_event());
                 facility.update_user(user);
+                facility.set_budget(facility.get_budget() - it_pending->get_price_of_event());
                 cout << "You will be refunded: " << it_pending->get_price_of_event() << endl;
                 cout << "Your new balance: " << user.get_balance() << endl;
                 user.cancel_pending_reservation(*it_pending, facility);
@@ -796,6 +791,7 @@ void cancel_reservation(User &user, Facility &facility)
                 {
                     user.set_balance(user.get_balance() + it_approved->get_price_of_event());
                     facility.update_user(user);
+                    facility.set_budget(facility.get_budget() - it_approved->get_price_of_event());
                     cout << "You will be refunded: " << it_approved->get_price_of_event() << endl;
                     cout << "Your new balance: " << user.get_balance() << endl;
                 }
@@ -878,7 +874,7 @@ void user_menu(User &user, Facility &facility)
                      << new_event.get_price_of_event() << endl;
                 user.set_balance(user.get_balance() - new_event.get_price_of_event());
                 facility.update_user(user);
-                // rewrite users.txt file
+                facility.set_budget(facility.get_budget() + new_event.get_price_of_event());
                 ofstream outfile("users.txt");
                 outfile.close();
                 for (const auto user : facility.get_all_users())

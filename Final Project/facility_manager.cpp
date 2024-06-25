@@ -44,11 +44,6 @@ void FacilityManager::view_reservations(const string &file_name) const
     file.close();
 }
 
-void FacilityManager::view_budget() const
-{
-    cout << "Current budget: $" << budget << endl;
-}
-
 bool FacilityManager::is_valid_event(const Event &event) const
 {
     // Facility operating hours
@@ -77,11 +72,6 @@ bool FacilityManager::is_valid_layout(const Event &event) const
         return event.get_layout() != LayoutType::WEDDING_STYLE;
     }
     return true;
-}
-
-void FacilityManager::add_budget(double amount)
-{
-    budget += amount;
 }
 
 bool validate_facility_manager_credentials(const string &username, const string &password, FacilityManager &manager)
@@ -221,7 +211,7 @@ void facility_manager_menu(FacilityManager &manager, Facility &facility)
             break;
         }
         case 4:
-            manager.view_budget();
+            facility.get_budget();
             break;
         case 5:
         {

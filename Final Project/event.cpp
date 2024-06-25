@@ -81,6 +81,8 @@ ostream &operator<<(ostream &os, const Event &event)
     os << "+----------------------+------------------+\n";
     os << "| Availability:        | " << event.get_attendees().size() << "/" << event.get_num_guests() << " people coming" << "\n";
     os << "+----------------------+------------------+\n";
+    os << "| Is Public:          | " << (event.is_public ? "Yes" : "No") << "\n";
+    os << "+----------------------+------------------+\n";
     os << "| Attendees:          | ";
     for (const auto &attendee : event.attendees)
     {

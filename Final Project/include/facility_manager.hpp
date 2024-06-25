@@ -13,14 +13,8 @@ class FacilityManager
 {
 public:
     FacilityManager(const string &username, const string &password);
-
     string get_username() const;
-
     void view_reservations(const string &file_name) const;
-    void view_budget() const;
-
-    void add_budget(double amount);
-
 private:
     string username;
     string password;

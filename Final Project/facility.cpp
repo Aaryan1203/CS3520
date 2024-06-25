@@ -30,12 +30,22 @@ private:
     string name;
 };
 
-Facility::Facility(string name)
-    : name(name) {}
+Facility::Facility(string name, int budget)
+    : name(name), budget(budget) {}
 
 void Facility::add_user(User &user)
 {
     all_users.push_back(user);
+}
+
+void Facility::set_budget(int budget)
+{
+    this->budget = budget;
+}
+
+int Facility::get_budget() const
+{
+    return budget;
 }
 
 void Facility::add_approved_reservation(Event &event)

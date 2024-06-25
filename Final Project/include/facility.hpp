@@ -11,7 +11,7 @@ class User;
 class Facility
 {
 public:
-    Facility(string name);
+    Facility(string name, int budget = 0);
     void add_approved_reservation(Event &event);
     void remove_approved_reservation(const Event &event);
     void remove_reservation(Event &event);
@@ -26,12 +26,14 @@ public:
     void update_user(const User &user);
     void update_approved_reservation(const Event &event);
     void update_pending_reservation(const Event &event);
-
+    void set_budget(int budget);
+    int get_budget() const;
 private:
     vector<Event> approved_reservations;
     vector<Event> pending_reservations;
     vector<User> all_users;
     string name;
+    int budget;
 };
 
 #endif
